@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unmasking Rangeland Change: An Interactive Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            color: #212529;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #E9ECEF;
+        }
+        .dark .card {
+             background-color: #343A40;
+             border-color: #495057;
+        }
+        .dark body {
+            background-color: #212529;
+            color: #F8F9FA;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #00B4D8;
+            line-height: 1;
+        }
+        .flow-box {
+            background-color: #E2F6FA;
+            border: 1px solid #ADE8F4;
+        }
+        .flow-box-highlight {
+            background-color: #FFF0F0;
+            border: 1px solid #FDCFCF;
+        }
+        .decision-node {
+            border: 2px solid #0077B6;
+            background-color: #E2F6FA;
+        }
+        .decision-result {
+            background-color: #FFFFFF;
+            border: 2px solid #90E0EF;
+        }
+    </style>
+</head>
+<body class="dark:bg-gray-900">
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4" style="color: #0077B6;">Unmasking Rangeland Change</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-700 dark:text-gray-300">An interactive guide to the methods separating climate noise from true ecosystem degradation, from foundational statistics to the frontier of AI.</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <section id="problem" class="lg:col-span-2 card rounded-xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center" style="color: #0077B6;">The Drylands Dilemma: Signal vs. Noise</h2>
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="w-full md:w-1/2">
+                        <p class="mb-4 text-gray-800 dark:text-gray-600">Monitoring the health of rangelands is incredibly difficult. These ecosystems are defined by wild swings in annual rainfall. This climatic volatility creates massive fluctuations in vegetation productivity, making it nearly impossible to tell the difference between a temporary, drought-induced downturn and persistent, long-term degradation caused by human activity.</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">The core challenge is to isolate the real degradation signal from the overwhelming noise of climate variability.</p>
+                    </div>
+                    <div class="w-full md:w-1/2 flex items-center justify-center p-4 rounded-lg" style="background-color: #E2F6FA;">
+                        <div class="text-center">
+                            <div class="text-7xl font-extrabold" style="color:#F25C54;">~75%</div>
+                            <p class="text-lg font-semibold mt-2" style="color: #0077B6;">of vegetation productivity variance in drylands can be attributed to rainfall alone.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="restrend" class="lg:col-span-2 card rounded-xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center" style="color: #0077B6;">The Original Solution: Residual Trend Analysis (RESTREND)</h2>
+                 <p class="max-w-4xl mx-auto text-center mb-6 text-gray-800 dark:text-gray-600">RESTREND was the first major breakthrough. It uses a simple but powerful idea: model the expected vegetation greenness (NDVI) based on rainfall, and then analyze the trend of the errors (residuals) over time. A consistent negative trend in residuals suggests degradation not caused by rainfall.</p>
+                <div class="flex flex-col lg:flex-row items-center justify-center gap-4 text-center p-4 rounded-lg">
+                    <div class="flex flex-col items-center p-4 rounded-lg w-48 flow-box">
+                        <p class="font-bold text-lg" style="color: #0077B6;">Observed NDVI</p>
+                        <p class="text-gray-700">(Satellite Data)</p>
+                    </div>
+                    <div class="flow-arrow">-</div>
+                    <div class="flex flex-col items-center p-4 rounded-lg w-48 flow-box">
+                        <p class="font-bold text-lg" style="color: #0077B6;">Predicted NDVI</p>
+                        <p class="text-gray-700">(From Rainfall Model)</p>
+                    </div>
+                    <div class="flow-arrow">=</div>
+                     <div class="flex flex-col items-center p-4 rounded-lg w-48 flow-box">
+                        <p class="font-bold text-lg" style="color: #0077B6;">Residuals</p>
+                        <p class="text-gray-700">(Unexplained Change)</p>
+                    </div>
+                    <div class="flow-arrow">&rarr;</div>
+                     <div class="flex flex-col items-center p-4 rounded-lg w-48 flow-box-highlight">
+                        <p class="font-bold text-lg" style="color: #C3423F;">Trend Analysis</p>
+                        <p class="text-gray-700">(Degradation/Recovery)</p>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mt-8 mb-4 text-center" style="color: #F25C54;">The Method's Critical Flaw</h3>
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="w-full md:w-2/3">
+                       <p class="text-gray-800 dark:text-gray-600">RESTREND relies on a stable, significant relationship between rainfall and vegetation. However, severe degradation—the very thing we want to detect—can break this relationship. When that happens, the model fails, and these critical areas are excluded from the analysis. This creates a dangerous blind spot.</p>
+                    </div>
+                     <div class="w-full md:w-1/3">
+                        <div class="chart-container" style="height:250px; max-height:250px;">
+                            <canvas id="restrendFlawChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tss-restrend" class="lg:col-span-2 card rounded-xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center" style="color: #0077B6;">A Better Way: Time Series Segmentation (TSS-RESTREND)</h2>
+                <p class="max-w-4xl mx-auto text-center mb-6 text-gray-800 dark:text-gray-600">TSS-RESTREND solves this problem by actively searching for "breakpoints"—abrupt shifts in the vegetation-climate relationship caused by events like fires, policy changes, or severe degradation. It analyzes the trend in separate segments, providing a much more accurate picture.</p>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
+                    <div class="md:col-span-3">
+                        <div class="chart-container">
+                            <canvas id="tssRestrendComparisonChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                         <div class="chart-container">
+                            <canvas id="australiaCaseStudyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="evolution" class="card rounded-xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center" style="color: #0077B6;">Evolving the Model</h2>
+                <p class="text-center mb-6 text-gray-800 dark:text-gray-600">Science doesn't stand still. Advanced models now go beyond just rainfall to include multiple environmental drivers, creating a more holistic view of ecosystem health.</p>
+                <div class="chart-container">
+                    <canvas id="multivariateChart"></canvas>
+                </div>
+                <p class="text-sm text-center mt-4 text-gray-600 dark:text-gray-400">The radar chart shows how a simple RESTREND model relies only on precipitation, while a modern multivariate model can account for the complex interplay of temperature, soil moisture, and even the global CO₂ fertilization effect.</p>
+            </section>
+
+            <section id="python" class="card rounded-xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center" style="color: #0077B6;">The Python Toolkit: Robust Alternatives</h2>
+                 <p class="text-center mb-6 text-gray-800 dark:text-gray-600">Python's data science ecosystem offers powerful tools to overcome other limitations, like sensitivity to outlier data points common in satellite imagery.</p>
+                <div class="chart-container">
+                    <canvas id="theilSenChart"></canvas>
+                </div>
+                 <p class="text-sm text-center mt-4 text-gray-600 dark:text-gray-400">The Theil-Sen estimator is robust to outliers. The chart shows how a standard OLS regression line (the basis of RESTREND) is skewed by an anomalous data point, while Theil-Sen correctly identifies the underlying trend.</p>
+            </section>
+
+            <section id="foundation" class="lg:col-span-2 card rounded-xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center" style="color: #0077B6;">The New Frontier: Foundation Models like TabPFN</h2>
+                <p class="max-w-4xl mx-auto text-center mb-6 text-gray-800 dark:text-gray-600">A new paradigm is emerging with foundation models. TabPFN, pre-trained on millions of synthetic datasets, can learn complex, non-linear relationships without needing manual tuning. It reframes the problem from statistics to feature engineering.</p>
+                <div class="flex flex-col lg:flex-row items-center justify-center gap-4 text-center p-4 rounded-lg">
+                    <div class="p-4 rounded-lg min-w-[200px] flow-box">
+                        <p class="font-bold text-lg" style="color: #0077B6;">Time Series Data</p>
+                        <p class="text-gray-700">(NDVI, Climate)</p>
+                    </div>
+                     <div class="flow-arrow">&rarr;</div>
+                    <div class="p-4 rounded-lg min-w-[200px] flow-box">
+                        <p class="font-bold text-lg" style="color: #0077B6;">Feature Engineering</p>
+                        <p class="text-gray-700">(Year, Month, Sine/Cosine)</p>
+                    </div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="p-4 rounded-lg min-w-[200px] flow-box">
+                        <p class="font-bold text-lg" style="color: #0077B6;">Tabular Data</p>
+                        <p class="text-gray-700">(Rows & Columns)</p>
+                    </div>
+                    <div class="flow-arrow">&rarr;</div>
+                    <div class="p-4 rounded-lg min-w-[200px] flow-box-highlight">
+                        <p class="font-bold text-lg" style="color: #C3423F;">TabPFN Model</p>
+                        <p class="text-gray-700">(Zero-shot Prediction)</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="decision" class="lg:col-span-2 card rounded-xl shadow-lg p-6 md:p-8">
+                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center" style="color: #0077B6;">Framework: How to Choose Your Method</h2>
+                 <p class="max-w-4xl mx-auto text-center mb-8 text-gray-800 dark:text-gray-600">No single method is perfect for every situation. Your research question dictates the best tool for the job. Follow this decision tree to find the right approach.</p>
+                 <div class="space-y-6">
+                    <div class="p-4 rounded-lg decision-node">
+                        <p class="font-bold text-lg text-gray-900">What is your primary goal?</p>
+                    </div>
+                    <div class="space-y-6 pl-6 md:pl-12">
+                        <div class="relative">
+                           <div class="absolute -left-6 md:-left-9 h-full border-l-2 border-dashed" style="border-color:#90E0EF;"></div>
+                           <p class="font-semibold text-base mb-2" style="color:#0077B6;">Goal: Diagnose the impact and timing of a specific, known event (e.g., a fire, policy change).</p>
+                           <div class="p-4 rounded-lg decision-result">
+                               <p class="font-bold text-gray-800">Recommended Method: <span style="color:#0077B6;">TSS-RESTREND</span></p>
+                               <p class="text-sm text-gray-700">Its explicit breakpoint detection provides a clear "before and after" analysis, and its interpretability is high.</p>
+                           </div>
+                        </div>
+
+                        <div class="relative">
+                           <div class="absolute -left-6 md:-left-9 h-full border-l-2 border-dashed" style="border-color:#90E0EF;"></div>
+                           <p class="font-semibold text-base mb-2" style="color:#0077B6;">Goal: Conduct large-area monitoring where robustness to data errors and outliers is the top priority.</p>
+                           <div class="p-4 rounded-lg decision-result">
+                               <p class="font-bold text-gray-800">Recommended Method: <span style="color:#0077B6;">Custom Python Pipeline (TSS Logic + Theil-Sen)</span></p>
+                               <p class="text-sm text-gray-700">This combines the adaptive power of breakpoint detection with the resilience of non-parametric trend fitting, ideal for noisy, real-world data.</p>
+                           </div>
+                        </div>
+
+                        <div class="relative">
+                           <div class="absolute -left-6 md:-left-9 h-full border-l-2 border-dashed" style="border-color:#90E0EF;"></div>
+                           <p class="font-semibold text-base mb-2" style="color:#0077B6;">Goal: Exploratory analysis to maximize predictive accuracy, focusing on anomaly magnitude.</p>
+                           <div class="p-4 rounded-lg decision-result">
+                               <p class="font-bold text-gray-800">Recommended Method: <span style="color:#0077B6;">Experimental FM-RESTREND (e.g., TabPFN)</span></p>
+                               <p class="text-sm text-gray-700">This is a state-of-the-art research direction for pure prediction, leveraging the power of AI at the cost of lower interpretability.</p>
+                           </div>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+    const palette = {
+        primary: '#0077B6',
+        secondary: '#00B4D8',
+        tertiary: '#90E0EF',
+        accent: '#F25C54',
+        success: '#70C1B3',
+        textDark: '#212529',
+        textLight: '#F8F9FA',
+        bgLight: '#FFFFFF',
+        bgDark: '#343A40'
+    };
+    
+    const isDarkMode = () => document.documentElement.classList.contains('dark');
+
+    const wrapLabel = (str, maxWidth) => {
+        if (str.length <= maxWidth) return str;
+        const words = str.split(' ');
+        let lines = [];
+        let currentLine = '';
+        words.forEach(word => {
+            if ((currentLine + word).length > maxWidth) {
+                lines.push(currentLine.trim());
+                currentLine = '';
+            }
+            currentLine += word + ' ';
+        });
+        lines.push(currentLine.trim());
+        return lines.filter(line => line.length > 0);
+    };
+
+    const tooltipTitleCallback = (tooltipItems) => {
+        const item = tooltipItems[0];
+        let label = item.chart.data.labels[item.dataIndex];
+        return Array.isArray(label) ? label.join(' ') : label;
+    };
+    
+    const getDefaultChartOptions = () => ({
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: isDarkMode() ? palette.textLight : palette.textDark,
+                    font: { size: 14 }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    title: tooltipTitleCallback
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: isDarkMode() ? palette.textLight : palette.textDark },
+                grid: { color: isDarkMode() ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }
+            },
+            y: {
+                ticks: { color: isDarkMode() ? palette.textLight : palette.textDark },
+                grid: { color: isDarkMode() ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }
+            }
+        }
+    });
+
+    const restrendFlawCtx = document.getElementById('restrendFlawChart');
+    if(restrendFlawCtx) {
+        new Chart(restrendFlawCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Degradation Missed by RESTREND', 'Degradation Detected by RESTREND'],
+                datasets: [{
+                    label: 'RESTREND Effectiveness',
+                    data: [61.9, 38.1],
+                    backgroundColor: [palette.accent, palette.success],
+                    borderColor: isDarkMode() ? palette.bgDark : palette.bgLight,
+                    borderWidth: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: isDarkMode() ? palette.textLight : palette.textDark } },
+                    title: { display: true, text: 'RESTREND Misses Most Severe Degradation', color: palette.accent, font: { size: 16 } },
+                     tooltip: { callbacks: { title: tooltipTitleCallback } }
+                }
+            }
+        });
+    }
+
+    const tssRestrendComparisonCtx = document.getElementById('tssRestrendComparisonChart');
+    if(tssRestrendComparisonCtx) {
+        new Chart(tssRestrendComparisonCtx, {
+            type: 'line',
+            data: {
+                labels: ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010'],
+                datasets: [
+                    {
+                        label: 'Observed Productivity',
+                        data: [0.8, 0.82, 0.78, 0.81, 0.3, 0.32, 0.28, 0.33, 0.29, 0.31, 0.27],
+                        borderColor: palette.primary,
+                        backgroundColor: 'rgba(0, 119, 182, 0.2)',
+                        fill: false,
+                        tension: 0.1,
+                        pointRadius: 4,
+                        pointBackgroundColor: palette.primary,
+                    },
+                    {
+                        label: 'RESTREND Fit (Misleading)',
+                        data: [0.75, 0.72, 0.69, 0.66, 0.63, 0.60, 0.57, 0.54, 0.51, 0.48, 0.45],
+                        borderColor: palette.accent,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.1,
+                        pointRadius: 0,
+                    },
+                    {
+                        label: 'TSS-RESTREND Fit (Accurate)',
+                        data: [0.8, 0.8, 0.8, 0.8, null, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3],
+                        borderColor: palette.success,
+                        fill: false,
+                        tension: 0.1,
+                        pointRadius: 0,
+                    }
+                ]
+            },
+            options: {
+                ...getDefaultChartOptions(),
+                plugins: {
+                    ...getDefaultChartOptions().plugins,
+                    title: { display: true, text: 'How TSS-RESTREND Captures Abrupt Breaks', color: isDarkMode() ? palette.textLight : palette.textDark, font: { size: 16 } },
+                },
+                 scales: {
+                    ...getDefaultChartOptions().scales,
+                    y: { ...getDefaultChartOptions().scales.y, title: { display: true, text: 'Vegetation Productivity (NDVI)', color: isDarkMode() ? palette.textLight : palette.textDark }}
+                 }
+            }
+        });
+    }
+
+    const australiaCaseStudyCtx = document.getElementById('australiaCaseStudyChart');
+    if(australiaCaseStudyCtx) {
+        new Chart(australiaCaseStudyCtx, {
+            type: 'bar',
+            data: {
+                labels: ['RESTREND', 'TSS-RESTREND'],
+                datasets: [{
+                    label: 'Degradation Detected (%)',
+                    data: [2.0, 5.25],
+                    backgroundColor: [palette.accent, palette.success],
+                    borderColor: [palette.accent, palette.success],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...getDefaultChartOptions(),
+                 indexAxis: 'y',
+                 plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Australian Case Study: Detected Degradation', color: isDarkMode() ? palette.textLight : palette.textDark, font: { size: 16 } },
+                    tooltip: { callbacks: { title: tooltipTitleCallback } }
+                 },
+                 scales: {
+                    ...getDefaultChartOptions().scales,
+                    x: { ...getDefaultChartOptions().scales.x, title: { display: true, text: '% of Pixels', color: isDarkMode() ? palette.textLight : palette.textDark }}
+                 }
+            }
+        });
+    }
+    
+    const multivariateCtx = document.getElementById('multivariateChart');
+    if (multivariateCtx) {
+        new Chart(multivariateCtx, {
+            type: 'radar',
+            data: {
+                labels: wrapLabel('Precipitation,Temperature,Soil Moisture,CO2 Fertilization,Land Management', 15),
+                datasets: [{
+                    label: 'Simple RESTREND',
+                    data: [10, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(242, 92, 84, 0.4)',
+                    borderColor: palette.accent,
+                    pointBackgroundColor: palette.accent,
+                }, {
+                    label: 'Multivariate Model',
+                    data: [8, 6, 9, 4, 7],
+                    backgroundColor: 'rgba(0, 180, 216, 0.4)',
+                    borderColor: palette.secondary,
+                    pointBackgroundColor: palette.secondary,
+                }]
+            },
+            options: {
+                ...getDefaultChartOptions(),
+                plugins: {
+                    ...getDefaultChartOptions().plugins,
+                    title: { display: true, text: 'Relative Influence of Ecosystem Drivers', color: isDarkMode() ? palette.textLight : palette.textDark, font: { size: 16 } },
+                },
+                scales: {
+                    r: {
+                        angleLines: { color: isDarkMode() ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)' },
+                        grid: { color: isDarkMode() ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)' },
+                        pointLabels: {
+                            color: isDarkMode() ? palette.textLight : palette.textDark,
+                             font: { size: 12 }
+                        },
+                        ticks: {
+                            color: isDarkMode() ? palette.bgDark : palette.bgLight,
+                            backdropColor: isDarkMode() ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const theilSenCtx = document.getElementById('theilSenChart');
+    if (theilSenCtx) {
+        new Chart(theilSenCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Data Points',
+                    data: [{x: 1, y: 1.1}, {x: 2, y: 1.9}, {x: 3, y: 3.2}, {x: 4, y: 4.1}, {x: 5, y: 9.5}, {x: 6, y: 5.9}, {x: 7, y: 7.2}, {x: 8, y: 7.8}],
+                    backgroundColor: palette.primary
+                }, {
+                    label: 'OLS Fit (Skewed by Outlier)',
+                    data: [{x: 1, y: 2.1}, {x: 8, y: 7.4}],
+                    type: 'line',
+                    borderColor: palette.accent,
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
+                }, {
+                    label: 'Theil-Sen Fit (Robust)',
+                    data: [{x: 1, y: 1}, {x: 8, y: 8}],
+                    type: 'line',
+                    borderColor: palette.success,
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                ...getDefaultChartOptions(),
+                plugins: {
+                     ...getDefaultChartOptions().plugins,
+                    title: { display: true, text: 'Robustness to Outliers: OLS vs. Theil-Sen', color: isDarkMode() ? palette.textLight : palette.textDark, font: { size: 16 } },
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

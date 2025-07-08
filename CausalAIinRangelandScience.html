@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographic: Causal AI in Rangeland Science</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #EF5675, #FFA600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .arrow {
+            position: relative;
+            background-color: #BC5090;
+        }
+        .arrow::after {
+            content: '';
+            position: absolute;
+            border-style: solid;
+        }
+        .arrow-right::after {
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px 0 10px 15px;
+            border-color: transparent transparent transparent #BC5090;
+        }
+        .arrow-down::after {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 15px 10px 0 10px;
+            border-color: #BC5090 transparent transparent transparent;
+        }
+    </style>
+</head>
+<body class="text-gray-700">
+
+    <header class="bg-[#003F5C] text-white p-8 md:p-12 text-center">
+        <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tight">Untangling the Grass</h1>
+        <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-300">
+            Can we prove rangeland management works when it's just a whisper in the roar of climate? A new generation of AI aims to find the true signal in the noise.
+        </p>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+            <section id="riddle" class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-[#003F5C] mb-4">The Rangeland Riddle: Signal vs. Noise</h2>
+                        <p class="mb-4">
+                            Rangelands are non-equilibrium systems, meaning their health year-to-year is dominated by large, unpredictable climatic events like droughts or floods. This creates a massive "noise" problem.
+                        </p>
+                        <p>
+                            The subtle effect of a management intervention—the "signal"—is often completely masked by the ecosystem's response to weather. This chart illustrates how a strong climate driver can hide the potential impact of a management action, making simple before-and-after comparisons misleading.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="chart-container">
+                            <canvas id="climateVsManagementChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="counterfactual" class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#003F5C] mb-2">From Correlation to Causation</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">To find the true impact, we can't just look at what happened. We must ask: <span class="font-bold gradient-text">what would have happened</span> if we had done nothing? This is the counterfactual.</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center w-full md:w-1/3">
+                        <h3 class="text-xl font-bold text-[#374C80]">Factual (Observed)</h3>
+                        <p class="text-5xl font-black my-4">📈</p>
+                        <p>Vegetation cover in a parcel <span class="font-bold">after</span> a management intervention.</p>
+                    </div>
+                    <div class="text-5xl font-bold text-[#BC5090]">-</div>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center w-full md:w-1/3">
+                        <h3 class="text-xl font-bold text-[#7A5195]">Counterfactual (Estimated)</h3>
+                        <p class="text-5xl font-black my-4">📉</p>
+                        <p>Estimated vegetation cover in the <span class="font-bold">same parcel</span> at the <span class="font-bold">same time</span>, had the intervention <span class="font-bold">not</span> occurred.</p>
+                    </div>
+                     <div class="text-5xl font-bold text-[#BC5090]">=</div>
+                    <div class="bg-gradient-to-br from-[#EF5675] to-[#FFA600] text-white rounded-lg p-6 text-center shadow-2xl w-full md:w-1/3">
+                        <h3 class="text-xl font-bold">The Causal Effect</h3>
+                        <p class="text-5xl font-black my-4">💡</p>
+                        <p>The true, isolated impact of the management action.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="confounders" class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#003F5C] mb-8">The Challenge of Confounding Variables</h2>
+                <p class="text-center max-w-4xl mx-auto mb-8">A "confounder" is a variable that influences both the management decision and the vegetation outcome. Failing to account for them leads to incorrect conclusions. Causal inference requires measuring and controlling for these factors.</p>
+                <div class="flex flex-col md:flex-row justify-between items-center w-full gap-4">
+                    <div class="w-full md:w-1/4 text-center p-4 bg-blue-50 rounded-lg">
+                        <h3 class="font-bold text-[#374C80]">Static Confounders</h3>
+                        <p class="text-sm">Fixed landscape features.</p>
+                        <ul class="list-disc list-inside text-left text-sm mt-2">
+                            <li>Soil Type & Depth</li>
+                            <li>Topography (Slope, Aspect)</li>
+                        </ul>
+                    </div>
+                    <div class="flex-grow flex justify-center items-center w-full md:w-auto">
+                        <div class="w-full h-1 md:w-1 md:h-24 bg-[#BC5090]"></div>
+                    </div>
+                    <div class="w-full md:w-1/2 p-4 border-2 border-gray-200 rounded-lg">
+                         <div class="text-center mb-4">
+                            <h3 class="font-bold text-[#EF5675]">Management Decisions</h3>
+                            <p class="text-sm">(e.g., Grazing Plan, Seeding)</p>
+                        </div>
+                        <div class="w-16 h-1 mx-auto arrow arrow-down"></div>
+                        <div class="text-center mt-4">
+                            <h3 class="font-bold text-[#FFA600]">Vegetation Outcome</h3>
+                             <p class="text-sm">(e.g., Fractional Cover)</p>
+                        </div>
+                    </div>
+                     <div class="flex-grow flex justify-center items-center w-full md:w-auto">
+                        <div class="w-full h-1 md:w-1 md:h-24 bg-[#BC5090]"></div>
+                    </div>
+                    <div class="w-full md:w-1/4 text-center p-4 bg-blue-50 rounded-lg">
+                        <h3 class="font-bold text-[#374C80]">Dynamic Confounders</h3>
+                         <p class="text-sm">Time-varying factors.</p>
+                         <ul class="list-disc list-inside text-left text-sm mt-2">
+                            <li>Climate (Rain, Temp)</li>
+                            <li>Fire History</li>
+                             <li>Invasive Species</li>
+                        </ul>
+                    </div>
+                </div>
+                 <p class="text-center text-xs text-gray-500 mt-4">Simplified DAG: Confounders (blue boxes) are common causes of both management and outcome, creating spurious correlations that must be broken.</p>
+            </section>
+            
+            <section id="dopfn" class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-[#003F5C] mb-4">Do-PFN: A New Tool for Causal AI</h2>
+                        <p class="mb-4">Do-PFN is a new type of foundation model designed for causal inference. Instead of being trained on one dataset, it's pre-trained on millions of synthetic "causal worlds."</p>
+                        <p class="mb-4">Its core claim is that it learns a general algorithm for causation. When given a new observational dataset, it uses this learned knowledge to estimate the counterfactual outcomes and calculate the <span class="font-bold">Conditional Average Treatment Effect (CATE)</span>—the specific causal effect for each unique time and place on the landscape.</p>
+                        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg">
+                          <p class="font-bold">The Critical Assumption</p>
+                          <p class="text-sm">Do-PFN's validity depends on a "prior match": the true causal structure of rangelands must be represented in its synthetic training data. This is a powerful, untestable assumption.</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-lg bg-gray-100 text-center">
+                            <h3 class="font-semibold text-[#7A5195]">1. Pre-Training on Synthetic Worlds</h3>
+                            <p class="text-sm">Model learns general causal rules from millions of simulated Structural Causal Models (SCMs).</p>
+                        </div>
+                        <div class="w-12 h-1 mx-auto arrow arrow-down"></div>
+                        <div class="p-4 rounded-lg bg-gray-100 text-center">
+                            <h3 class="font-semibold text-[#BC5090]">2. In-Context Inference</h3>
+                            <p class="text-sm">The entire real-world observational dataset (X, T, Y) is fed to the pre-trained model as "context".</p>
+                        </div>
+                        <div class="w-12 h-1 mx-auto arrow arrow-down"></div>
+                        <div class="p-4 rounded-lg bg-gray-100 text-center">
+                            <h3 class="font-semibold text-[#EF5675]">3. Counterfactual Estimation</h3>
+                            <p class="text-sm">Model outputs the Conditional Interventional Distribution P(Y|do(T), X) to estimate the CATE.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="workflow" class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                 <h2 class="text-3xl font-bold text-center text-[#003F5C] mb-8">A Rigorous Framework for Assessment</h2>
+                 <div class="relative flex flex-col md:flex-row justify-between items-center gap-4">
+                     <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 z-0 hidden md:block"></div>
+                     <div class="flex-1 text-center p-4 z-10">
+                         <div class="mx-auto w-16 h-16 rounded-full bg-[#374C80] text-white flex items-center justify-center text-2xl mb-2">1</div>
+                         <h3 class="font-bold">Data Fusion</h3>
+                         <p class="text-sm">Assemble outcome (🛰️), treatment (📝), and confounder (🌦️, ⛰️, 🔥) data into a unified spatio-temporal dataset.</p>
+                     </div>
+                      <div class="flex-1 text-center p-4 z-10">
+                         <div class="mx-auto w-16 h-16 rounded-full bg-[#7A5195] text-white flex items-center justify-center text-2xl mb-2">2</div>
+                         <h3 class="font-bold">Baseline Models</h3>
+                         <p class="text-sm">Establish a performance baseline using traditional methods like BACI or Mixed-Effects Models (📊).</p>
+                     </div>
+                      <div class="flex-1 text-center p-4 z-10">
+                         <div class="mx-auto w-16 h-16 rounded-full bg-[#BC5090] text-white flex items-center justify-center text-2xl mb-2">3</div>
+                         <h3 class="font-bold">Do-PFN Inference</h3>
+                         <p class="text-sm">Apply the pre-trained Do-PFN model to the full dataset to estimate pixel-level CATEs (⚙️).</p>
+                     </div>
+                     <div class="flex-1 text-center p-4 z-10">
+                         <div class="mx-auto w-16 h-16 rounded-full bg-[#EF5675] text-white flex items-center justify-center text-2xl mb-2">4</div>
+                         <h3 class="font-bold">Validation & Mapping</h3>
+                         <p class="text-sm">Compare results, check for ecological plausibility, and create maps of causal effects and uncertainty (🗺️).</p>
+                     </div>
+                 </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h3 class="text-2xl font-bold text-[#003F5C] mb-4">Analysis: Heterogeneous Effects</h3>
+                <p class="text-sm mb-4">A key output is understanding how the causal effect changes with conditions. A scatter plot can reveal if an intervention's effect (CATE) depends on a key confounder, like precipitation. This moves beyond a single "average effect".</p>
+                <div class="chart-container">
+                    <canvas id="cateVsPrecipChart"></canvas>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h3 class="text-2xl font-bold text-[#003F5C] mb-4">Analysis: Disaggregated Outcomes</h3>
+                <p class="text-sm mb-4">Total cover can be misleading. A good management practice might increase green vegetation (PV) but decrease dead litter (NPV). Analyzing components separately provides a more nuanced view of the impact.</p>
+                <div class="chart-container">
+                    <canvas id="outcomeComponentsChart"></canvas>
+                </div>
+            </section>
+            
+            <section id="action" class="lg:col-span-2 bg-[#003F5C] text-white rounded-lg shadow-lg p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-4">From Estimation to Actionable Insight</h2>
+                        <p class="mb-4 text-gray-300">
+                           The ultimate goal is not just to estimate an effect, but to support decisions. Do-PFN can output both the predicted causal effect and its own uncertainty about that prediction.
+                        </p>
+                        <p class="text-gray-200">
+                           This allows managers to move towards risk-aware decision-making: they can identify areas where an intervention is not only predicted to have a high positive impact, but also where the model is most confident in that prediction.
+                        </p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-gray-800/50 p-4 rounded-lg">
+                            <h3 class="font-bold text-lg text-center text-[#FFA600]">🗺️ Map of Predicted Causal Effect</h3>
+                            <div class="h-24 mt-2 rounded-md bg-gradient-to-br from-red-500 via-yellow-400 to-green-500 opacity-75"></div>
+                            <p class="text-xs text-center mt-2">Highlights *where* interventions are predicted to be most effective.</p>
+                        </div>
+                        <div class="bg-gray-800/50 p-4 rounded-lg">
+                            <h3 class="font-bold text-lg text-center text-[#7A5195]">🗺️ Map of Causal Uncertainty</h3>
+                            <div class="h-24 mt-2 rounded-md bg-gradient-to-br from-purple-800 via-purple-500 to-purple-200 opacity-75"></div>
+                             <p class="text-xs text-center mt-2">Highlights *where* the model is most (or least) confident in its predictions.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+    
+    <footer class="text-center p-6 text-sm text-gray-500">
+        <p>Infographic based on the methodological framework for assessing rangeland interventions with causal AI.</p>
+        <p>Visualizations created with Chart.js and Tailwind CSS. No SVG or Mermaid JS used in this output.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const FONT_COLOR = '#374C80';
+            Chart.defaults.color = FONT_COLOR;
+            Chart.defaults.borderColor = '#d1d5db';
+
+            const wrapText = (label) => {
+                const maxLength = 16;
+                if (label.length <= maxLength) return label;
+                
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+
+                words.forEach(word => {
+                    if ((currentLine + word).length > maxLength) {
+                        lines.push(currentLine.trim());
+                        currentLine = '';
+                    }
+                    currentLine += word + ' ';
+                });
+                lines.push(currentLine.trim());
+                return lines;
+            };
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                }
+                return label;
+            };
+            
+            const SHARED_TOOLTIP_OPTIONS = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        }
+                    }
+                }
+            };
+
+            const COLORS = {
+                blue: '#003F5C',
+                purple1: '#7A5195',
+                purple2: '#BC5090',
+                pink: '#EF5675',
+                orange: '#FF764A',
+                yellow: '#FFA600'
+            };
+
+            if (document.getElementById('climateVsManagementChart')) {
+                new Chart(document.getElementById('climateVsManagementChart'), {
+                    type: 'line',
+                    data: {
+                        labels: Array.from({ length: 20 }, (_, i) => `Year ${i + 1}`),
+                        datasets: [{
+                            label: 'Climate Variability (e.g. Rainfall)',
+                            data: [60, 20, 35, 80, 45, 90, 30, 75, 50, 25, 65, 40, 85, 55, 95, 20, 70, 45, 80, 50],
+                            borderColor: COLORS.blue,
+                            backgroundColor: 'rgba(0, 63, 92, 0.2)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Hypothetical Management Effect',
+                            data: [49, 50, 51, 51, 52, 53, 53, 54, 55, 56, 56, 57, 58, 58, 59, 60, 60, 61, 62, 63],
+                            borderColor: COLORS.pink,
+                            backgroundColor: 'rgba(239, 86, 117, 0.2)',
+                            fill: false,
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            ...SHARED_TOOLTIP_OPTIONS.plugins,
+                            title: { display: true, text: 'The Signal vs. Noise Problem', font: {size: 16} },
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { text: 'Climate Metric', display: true }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { text: 'Cover (%)', display: true },
+                                grid: { drawOnChartArea: false },
+                                min: 0,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('cateVsPrecipChart')) {
+                new Chart(document.getElementById('cateVsPrecipChart'), {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Estimated Causal Effect (CATE)',
+                            data: [
+                                {x: 150, y: -0.5}, {x: 200, y: 1.2}, {x: 220, y: 1.5}, {x: 250, y: 2.8}, 
+                                {x: 300, y: 4.5}, {x: 310, y: 5.1}, {x: 350, y: 6.0}, {x: 380, y: 5.8}, 
+                                {x: 420, y: 5.2}, {x: 450, y: 4.8}, {x: 500, y: 4.0}, {x: 550, y: 3.2}
+                            ],
+                            backgroundColor: COLORS.purple2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            ...SHARED_TOOLTIP_OPTIONS.plugins,
+                            title: { display: true, text: 'Management Effect is Conditional on Climate', font: {size: 16} },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Growing Season Precipitation (mm)' }
+                            },
+                            y: {
+                                title: { display: true, text: 'CATE (% Change in Cover)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('outcomeComponentsChart')) {
+                 const rawLabels = ['Unmanaged Control Parcel', 'Managed Treatment Parcel'];
+                 const chartLabels = rawLabels.map(wrapText);
+                 new Chart(document.getElementById('outcomeComponentsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            label: 'Photosynthetic Veg (PV)',
+                            data: [30, 45],
+                            backgroundColor: '#22c55e',
+                        }, {
+                            label: 'Non-Photosynthetic Veg (NPV)',
+                            data: [40, 25],
+                            backgroundColor: '#ca8a04',
+                        }, {
+                            label: 'Bare Ground',
+                            data: [30, 30],
+                            backgroundColor: '#a16207',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                         ...SHARED_TOOLTIP_OPTIONS,
+                        plugins: {
+                             ...SHARED_TOOLTIP_OPTIONS.plugins,
+                            title: { display: true, text: 'Impact on Vegetation Components', font: {size: 16} },
+                        },
+                        scales: {
+                            x: { stacked: true },
+                            y: {
+                                stacked: true,
+                                title: { display: true, text: 'Fractional Cover (%)' },
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
