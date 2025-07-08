@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disentangling Drivers of Rangeland Change</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 500px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .state-box, .trans-arrow, .trans-text {
+            border: 2px solid #374c80;
+            background-color: #ffffff;
+            color: #003f5c;
+        }
+        .arrow-right::after {
+            content: '→';
+            font-size: 2rem;
+            color: #ef5675;
+        }
+        .arrow-down::after {
+            content: '↓';
+            font-size: 2rem;
+            color: #ef5675;
+        }
+        .decision-card {
+            border-left: 4px solid #ff764a;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-700">
+
+    <header class="bg-[#003f5c] text-white text-center py-20 px-4">
+        <h1 class="text-4xl md:text-6xl font-black uppercase text-shadow">Disentangling Drivers of Rangeland Change</h1>
+        <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-shadow">A Visual Guide to Attribution Methods: From Remote Sensing to Causal AI</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <section id="conundrum" class="my-12">
+            <div class="text-center max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#003f5c]">The Rangeland Conundrum</h2>
+                <p class="mt-4 text-lg">The core challenge in rangeland science is separating the impacts of human management (like grazing) from the overwhelming influence of climatic variability (like rainfall and drought). Understanding this difference is critical for sustainable management, but it requires sophisticated analytical tools that can account for the complex, non-linear behavior of these ecosystems.</p>
+            </div>
+
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-center text-[#374c80]">A Shift in Thinking: State-and-Transition Models</h3>
+                    <p class="mt-4">Modern ecology views rangelands not as systems returning to a single "climax" state, but as dynamic landscapes that can shift between multiple stable states. A State-and-Transition Model (STM) helps visualize this. A system can exist in a desirable state (e.g., perennial grassland), but disturbances and management can push it across a threshold into an alternative, often degraded, state (e.g., shrub-dominated) from which recovery is difficult and costly.</p>
+                </div>
+                <div class="flex flex-col items-center p-6 space-y-2">
+                    <div class="state-box font-bold p-4 rounded-lg shadow-md text-center">State A: Perennial Grassland</div>
+                    <div class="flex items-center space-x-2">
+                        <div class="trans-text p-2 rounded-lg text-sm text-center">Community Pathway<br>(Reversible)</div>
+                        <div class="arrow-down"></div>
+                    </div>
+                    <div class="state-box font-bold p-4 rounded-lg shadow-md text-center">State B: Annual Grassland</div>
+                     <div class="flex items-center space-x-2">
+                        <div class="trans-text p-2 rounded-lg text-sm text-center bg-red-100 border-red-500">Ecological Threshold<br>(Irreversible)</div>
+                        <div class="arrow-down"></div>
+                    </div>
+                    <div class="state-box font-bold p-4 rounded-lg shadow-md text-center bg-red-50">State C: Shrub Encroachment</div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t-2 border-gray-200">
+
+        <section id="methods-established" class="my-12">
+            <div class="text-center max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#003f5c]">Established Remote Sensing Methods</h2>
+                <p class="mt-4 text-lg">Leveraging decades of satellite imagery, scientists have developed several methods to track rangeland change. These techniques generally fall into categories based on their approach: comparing sites, modeling climate, or analyzing extreme weather events.</p>
+            </div>
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-center text-[#374c80]">VegMachine: Benchmarking</h3>
+                    <p class="mt-2 text-sm">This method compares the ground cover of a managed paddock to a 'benchmark' area (like a conservation park) with the same land type. Persistent differences in their cover trajectories over time are attributed to management.</p>
+                    <div class="chart-container mt-4">
+                        <canvas id="vegMachineChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-center text-[#7a5195]">TSS-RESTREND: Detecting Breakpoints</h3>
+                    <p class="mt-2 text-sm">An advanced method that first models the expected vegetation response to climate (rain, temperature), then searches the remaining "residual" trend for abrupt changes or "breakpoints," which often signify major degradation or recovery events.</p>
+                    <div class="chart-container mt-4">
+                        <canvas id="tssRestrendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-center text-[#bc5090]">Grazing Gradient Methods (GGM)</h3>
+                    <p class="mt-2 text-sm">GGMs analyze how vegetation responds to rain at varying distances from water points. Suppressed vegetation response near water, where grazing is heaviest, is a clear indicator of grazing impact and potential degradation.</p>
+                    <div class="chart-container mt-4">
+                        <canvas id="ggmChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t-2 border-gray-200">
+
+        <section id="methods-causal" class="my-12">
+            <div class="text-center max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#003f5c]">The Causal Revolution</h2>
+                <p class="mt-4 text-lg">To achieve greater statistical rigor, ecologists are adopting methods from econometrics. These quasi-experimental techniques are designed to estimate true cause-and-effect relationships from observational data by cleverly mimicking randomized experiments.</p>
+            </div>
+
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 md:col-span-2">
+                    <h3 class="text-2xl font-bold text-center text-[#ef5675]">Regression Discontinuity (RDD)</h3>
+                    <p class="mt-4 text-center max-w-2xl mx-auto">RDD is a powerful technique used when a treatment is assigned based on a sharp cutoff (e.g., a park boundary). By comparing outcomes for areas just inside and just outside the boundary, we can isolate the causal effect of the management policy. The sharp jump at the cutoff is the treatment effect.</p>
+                    <div class="chart-container mt-4 max-w-3xl">
+                        <canvas id="rddChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center">
+                     <h3 class="text-xl font-bold text-center text-[#ff764a]">Propensity Score Matching (PSM)</h3>
+                     <p class="mt-2 text-sm">For every 'treated' paddock, PSM finds an untreated 'twin' paddock with similar characteristics (soil, slope, etc.). By comparing the outcomes of these matched pairs, it estimates the treatment's effect.</p>
+                     <div class="mt-4 text-5xl flex justify-center items-center gap-4">
+                        <span class="text-[#003f5c]">🧑‍🌾</span>
+                        <span class="text-gray-300">...</span>
+                        <span class="text-[#ff764a]">🧑‍🌾</span>
+                     </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center">
+                     <h3 class="text-xl font-bold text-center text-[#ffa600]">Instrumental Variables (IV)</h3>
+                     <p class="mt-2 text-sm">IV uses a third, external factor (the 'instrument') that influences management but doesn't directly affect vegetation. This isolates a random component of the management decision to uncover its true causal effect.</p>
+                      <div class="mt-4 text-5xl flex justify-center items-center gap-4">
+                        <span class="text-gray-400">⚡️</span>
+                        <span class="text-[#ffa600]">→</span>
+                        <span class="text-blue-500">👨‍🔧</span>
+                        <span class="text-[#ffa600]">→</span>
+                        <span class="text-green-500">🌱</span>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t-2 border-gray-200">
+
+        <section id="comparison" class="my-12">
+            <div class="text-center max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#003f5c]">Comparing the Methodologies</h2>
+                <p class="mt-4 text-lg">No single method is perfect for every situation. The best choice depends on your specific question, the data you have, and the assumptions you're willing to make. This chart compares key methods across several critical dimensions, providing a visual guide to their respective strengths and weaknesses.</p>
+            </div>
+            <div class="mt-12">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="chart-container">
+                        <canvas id="combinedRadarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t-2 border-gray-200">
+        
+        <section id="decision" class="my-12">
+            <div class="text-center max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#003f5c]">How to Choose Your Method</h2>
+                <p class="mt-4 text-lg">This framework guides you to the most appropriate method based on your primary goal and the nature of your data.</p>
+            </div>
+            <div class="mt-12 max-w-4xl mx-auto space-y-8">
+                <div class="bg-white rounded-lg shadow-md p-6 decision-card">
+                    <p class="text-xl font-bold text-[#003f5c]">1. What is your primary goal?</p>
+                </div>
+
+                <div class="ml-4 md:ml-12 space-y-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="font-bold text-[#374c80]">A) General monitoring and engaging with land managers?</p>
+                        <p class="mt-2">Use <strong class="text-[#ff764a]">VegMachine</strong>. Its intuitive graphs are perfect for collaborative discussion and integrating local knowledge.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="font-bold text-[#7a5195]">B) Large-scale mapping of degradation and trends?</p>
+                        <p class="mt-2">Use <strong class="text-[#ff764a]">TSS-RESTREND</strong>. It is the state-of-the-art for pixel-based attribution and robustly detects non-linear changes over vast areas.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="font-bold text-[#bc5090]">C) Estimating the specific causal effect of a policy or program?</p>
+                        <p class="mt-2"><strong class="text-[#ff764a]">Go to Question 2.</strong> You need a formal causal inference method.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 decision-card">
+                    <p class="text-xl font-bold text-[#003f5c]">2. What does your data for the causal question look like?</p>
+                </div>
+                
+                <div class="ml-4 md:ml-12 space-y-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="font-bold text-[#ef5675]">A) The program was assigned based on a sharp boundary or cutoff score?</p>
+                        <p class="mt-2">Use <strong class="text-[#ffa600]">Regression Discontinuity (RDD)</strong>. This provides very strong causal evidence if its assumptions are met.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="font-bold text-[#374c80]">B) You have data on both participants and non-participants, with lots of background information (covariates)?</p>
+                        <p class="mt-2">Use <strong class="text-[#ffa600]">Propensity Score Matching (PSM)</strong>. It allows you to create a statistical control group, but can't account for unmeasured differences.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#003f5c] text-white text-center py-8 px-4 mt-16">
+        <p>Infographic designed to synthesize key findings from the report: "Disentangling Drivers of Rangeland Change".</p>
+        <p class="text-sm opacity-80 mt-2">Built with HTML, Tailwind CSS, and Chart.js. All visualizations rendered on Canvas.</p>
+    </footer>
+
+    <script>
+        const brilliantBlues = {
+            navy: '#003f5c',
+            royal: '#374c80',
+            purple: '#7a5195',
+            magenta: '#bc5090',
+            pink: '#ef5675',
+            orange: '#ff764a',
+            yellow: '#ffa600',
+        };
+
+        const chartColors = [
+            brilliantBlues.pink,
+            brilliantBlues.orange,
+            brilliantBlues.royal,
+            brilliantBlues.yellow,
+            brilliantBlues.purple,
+        ];
+        
+        const gridColor = 'rgba(0, 63, 92, 0.1)';
+        const fontColor = brilliantBlues.navy;
+
+        function wrapLabels(label, maxWidth) {
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length < maxWidth) {
+                    currentLine += word + ' ';
+                } else {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                }
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+
+        const sharedTooltipConfig = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        };
+
+        const sharedChartOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: fontColor },
+                    grid: { color: gridColor },
+                },
+                x: {
+                    ticks: { color: fontColor },
+                    grid: { display: false },
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: fontColor }
+                },
+                tooltip: sharedTooltipConfig.plugins.tooltip
+            }
+        };
+
+        new Chart(document.getElementById('vegMachineChart'), {
+            type: 'line',
+            data: {
+                labels: ['2000', '2002', '2004', '2006', '2008', '2010', '2012', '2014'],
+                datasets: [{
+                    label: 'Managed Paddock',
+                    data: [45, 40, 55, 50, 60, 55, 42, 38],
+                    borderColor: brilliantBlues.pink,
+                    backgroundColor: brilliantBlues.pink + '33',
+                    fill: false,
+                    tension: 0.3,
+                }, {
+                    label: 'Benchmark Area',
+                    data: [50, 48, 62, 58, 65, 63, 55, 52],
+                    borderColor: brilliantBlues.royal,
+                    backgroundColor: brilliantBlues.royal + '33',
+                    fill: false,
+                    tension: 0.3,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: { ...sharedChartOptions, plugins: { ...sharedChartOptions.plugins, title: { display: true, text: 'Ground Cover (%) Over Time', color: fontColor } } }
+        });
+        
+        new Chart(document.getElementById('tssRestrendChart'), {
+            type: 'line',
+            data: {
+                labels: ['2000', '2002', '2004', '2006', '2008', '2010', '2012', '2014'],
+                datasets: [{
+                    label: 'VPR Residuals',
+                    data: [0.5, 0.8, -0.2, 0.3, -2.5, -3.0, -2.8, -3.5],
+                    borderColor: brilliantBlues.magenta,
+                    backgroundColor: brilliantBlues.magenta + '33',
+                    fill: true,
+                    tension: 0.1,
+                }]
+            },
+            options: {
+                ...sharedChartOptions,
+                plugins: {
+                    ...sharedChartOptions.plugins,
+                    title: { display: true, text: 'Residual Trend with Abrupt Breakpoint', color: fontColor },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                xMin: '2006',
+                                xMax: '2006',
+                                borderColor: 'rgb(255, 99, 132)',
+                                borderWidth: 2,
+                                label: {
+                                    content: 'Breakpoint',
+                                    enabled: true,
+                                    position: 'start'
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { ...sharedChartOptions.scales.y, beginAtZero: false, title: { display: true, text: 'NDVI Residual' } },
+                    x: { ...sharedChartOptions.scales.x }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('ggmChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Dry Period 1', 'Wet Period 1', 'Dry Period 2', 'Wet Period 2'],
+                datasets: [{
+                    label: 'Near Water (<3km)',
+                    data: [20, 45, 18, 35],
+                    backgroundColor: brilliantBlues.orange,
+                }, {
+                    label: 'Far from Water (>3km)',
+                    data: [25, 70, 26, 75],
+                    backgroundColor: brilliantBlues.navy,
+                }]
+            },
+            options: { ...sharedChartOptions, plugins: { ...sharedChartOptions.plugins, title: { display: true, text: 'Vegetation Response to Rain', color: fontColor } }, scales: { y: { ...sharedChartOptions.scales.y, title: { display: true, text: 'Cover (%)' } } } }
+        });
+
+        new Chart(document.getElementById('rddChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Outside Park (Control)',
+                    data: Array.from({length: 20}, () => ({ x: Math.random() * 4.9, y: 30 + Math.random() * 15 + Math.random() * 5 })),
+                    backgroundColor: brilliantBlues.orange,
+                }, {
+                    label: 'Inside Park (Treatment)',
+                    data: Array.from({length: 20}, () => ({ x: 5.1 + Math.random() * 4.9, y: 55 + Math.random() * 15 + Math.random() * 5 })),
+                    backgroundColor: brilliantBlues.royal,
+                }]
+            },
+            options: {
+                 maintainAspectRatio: false,
+                 responsive: true,
+                 plugins: {
+                    ...sharedChartOptions.plugins,
+                    title: { display: true, text: 'Effect of Park Management on Ground Cover', color: fontColor },
+                    legend: { labels: { color: fontColor } },
+                 },
+                 scales: {
+                     y: {
+                         beginAtZero: false,
+                         title: { display: true, text: 'Ground Cover (%)', color: fontColor },
+                         ticks: { color: fontColor },
+                         grid: { color: gridColor },
+                     },
+                     x: {
+                         type: 'linear',
+                         position: 'bottom',
+                         title: { display: true, text: 'Distance from Park Boundary (km)', color: fontColor },
+                         min: 0,
+                         max: 10,
+                         ticks: { color: fontColor },
+                         grid: { display: false }
+                     }
+                 },
+                 annotation: {
+                     annotations: {
+                         line1: {
+                            type: 'line',
+                            xMin: 5,
+                            xMax: 5,
+                            borderColor: brilliantBlues.pink,
+                            borderWidth: 4,
+                            borderDash: [6, 6],
+                            label: {
+                                content: 'Park Boundary (Cutoff)',
+                                enabled: true,
+                                position: 'top',
+                                color: brilliantBlues.pink,
+                                backgroundColor: 'rgba(255,255,255,0.7)'
+                            }
+                         }
+                     }
+                 }
+            }
+        });
+        
+        const combinedRadarOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+                r: {
+                    angleLines: { color: gridColor },
+                    grid: { color: gridColor },
+                    pointLabels: {
+                        color: fontColor,
+                        font: { size: 14 }
+                    },
+                    ticks: {
+                        backdropColor: 'rgba(255, 255, 255, 0.75)',
+                        color: fontColor,
+                        stepSize: 2
+                    },
+                    min: 0,
+                    max: 10
+                }
+            },
+            plugins: {
+                legend: { 
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: fontColor,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: { 
+                    enabled: true,
+                    callbacks: sharedTooltipConfig.plugins.tooltip.callbacks
+                }
+            }
+        };
+
+        const radarLabels = ['Causal Rigor', wrapLabels('Handles Non-Linearity', 16), 'Data Intensity', wrapLabels('Ease of Use', 16), 'Scalability'];
+
+        new Chart(document.getElementById('combinedRadarChart'), {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [
+                    {
+                        label: 'TSS-RESTREND',
+                        data: [5, 9, 7, 6, 9],
+                        backgroundColor: brilliantBlues.royal + '33',
+                        borderColor: brilliantBlues.royal,
+                        pointBackgroundColor: brilliantBlues.royal,
+                    },
+                    {
+                        label: 'SeRGS',
+                        data: [6, 6, 7, 6, 8],
+                        backgroundColor: brilliantBlues.orange + '33',
+                        borderColor: brilliantBlues.orange,
+                        pointBackgroundColor: brilliantBlues.orange,
+                    },
+                    {
+                        label: 'PSM',
+                        data: [7, 8, 8, 5, 6],
+                        backgroundColor: brilliantBlues.magenta + '33',
+                        borderColor: brilliantBlues.magenta,
+                        pointBackgroundColor: brilliantBlues.magenta,
+                    },
+                    {
+                        label: 'RDD',
+                        data: [9, 9, 6, 7, 4],
+                        backgroundColor: brilliantBlues.pink + '33',
+                        borderColor: brilliantBlues.pink,
+                        pointBackgroundColor: brilliantBlues.pink,
+                    }
+                ]
+            },
+            options: combinedRadarOptions
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluating Rangeland Management: A Regression Discontinuity Approach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F4F4;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .flowchart-node {
+            border: 2px solid #004777;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            color: #004777;
+            font-weight: 600;
+        }
+        .flowchart-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #FF7700;
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-black text-[#004777] mb-2">Finding the Signal in the Noise</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">Evaluating rangeland management in Australia is tough. Regression Discontinuity Design (RDD) offers a powerful way to measure what truly works.</p>
+        </header>
+
+        <main class="space-y-16">
+
+            <section id="challenge" class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#A30000] mb-4 text-center">The Core Evaluation Challenge</h2>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <p class="mb-4">Australia's rangelands cover over <span class="text-5xl font-black text-[#FF7700]">75%</span> of the continent. Their health is driven by two main forces: management decisions (like setting stock numbers) and climate (especially extreme rainfall variability).</p>
+                        <p>This creates a fundamental problem: when rangeland condition changes, is it because of the management action, or was it just the climate? Disentangling this "signal" from the "noise" is essential for good policy.</p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center p-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-[#004777]">Management Decisions</div>
+                            <div class="text-4xl my-2">↓</div>
+                        </div>
+                        <div class="bg-[#FFD700] text-black font-bold p-4 rounded-full text-center text-xl shadow-md">
+                            Rangeland Condition
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl my-2">↑</div>
+                            <div class="text-lg font-semibold text-[#004777]">Climate Variability</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="rdd-intro">
+                <h2 class="text-3xl font-bold text-[#004777] mb-6 text-center">A New Tool for Causal Inference: RDD</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">Traditional methods often fail. Randomized trials are infeasible, and simple comparisons suffer from bias. RDD provides a solution by using policy rules to mimic a randomized experiment.</p>
+                <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-center mb-6 text-[#A30000]">How RDD Works: The Logic of the Cutoff</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="flowchart-node">Pastoral Leases</div>
+                        <div class="flowchart-arrow hidden md:block">→</div>
+                         <div class="flowchart-arrow block md:hidden">↓</div>
+                        <div class="flowchart-node">A Policy Rule is set:<br><span class="text-2xl font-black text-[#FF7700]">The Cutoff</span></div>
+                        <div class="flowchart-arrow hidden md:block">→</div>
+                        <div class="flowchart-arrow block md:hidden">↓</div>
+                        <div class="flex flex-col space-y-2 text-center">
+                            <div class="bg-green-100 text-green-800 p-3 rounded-lg border-2 border-green-500">Just ABOVE the cutoff<br><span class="font-normal">(Control Group)</span></div>
+                             <div class="bg-red-100 text-red-800 p-3 rounded-lg border-2 border-red-500">Just BELOW the cutoff<br><span class="font-normal">(Treatment Group)</span></div>
+                        </div>
+                        <div class="flowchart-arrow hidden md:block">→</div>
+                         <div class="flowchart-arrow block md:hidden">↓</div>
+                        <div class="flowchart-node">Compare Outcomes<br> The "jump" at the cutoff is the causal effect.</div>
+                    </div>
+                     <p class="text-center mt-6 text-gray-600">The core idea: properties just above and just below a policy threshold are nearly identical. This makes the comparison fair and isolates the policy's true impact.</p>
+                </div>
+            </section>
+
+            <section id="scenario">
+                <h2 class="text-3xl font-bold text-[#004777] mb-6 text-center">A Real-World Scenario: WA Stocking Policy</h2>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-[#A30000] mb-4">Policy-Based Tiers</h3>
+                        <p class="mb-4">The Pastoral Lands Board of WA uses a policy based on stocking rates as a percentage of a lease's Potential Carrying Capacity (PCC). These tiers create clear, administrative cutoffs perfect for an RDD analysis.</p>
+                        <ul class="space-y-2">
+                           <li class="flex items-center"><span class="font-bold text-white bg-[#A30000] rounded-full h-6 w-6 text-center mr-3 flex items-center justify-center">A</span>Stocking at <10% of PCC is "Effectively Destocked".</li>
+                           <li class="flex items-center"><span class="font-bold text-white bg-[#FF7700] rounded-full h-6 w-6 text-center mr-3 flex items-center justify-center">B</span>Stocking at <30% of PCC is "Very Conservatively Stocked".</li>
+                           <li class="flex items-center"><span class="font-bold text-white bg-[#004777] rounded-full h-6 w-6 text-center mr-3 flex items-center justify-center">C</span>Higher stocking rates fall into other tiers.</li>
+                        </ul>
+                         <p class="mt-4">When a lease drops below a threshold (e.g., 30%), it doesn't automatically get a penalty, but the *probability* of regulatory scrutiny increases. This is a **Fuzzy RDD**.</p>
+                    </div>
+                     <div class="chart-container">
+                        <canvas id="stockingRateChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="climate-solution">
+                <h2 class="text-3xl font-bold text-[#004777] mb-6 text-center">Solving the Climate Problem</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">RDD's greatest strength in this context is its ability to separate a sharp policy effect from the smooth background trend of climate. Climate varies continuously, but policy rules create sharp jumps.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-[#A30000] mb-4 text-center">Isolating the Policy Effect</h3>
+                        <p class="mb-4">This chart shows the concept. The dashed line represents the continuous effect of climate on ground cover. The policy intervention at the 30% cutoff creates a clear, measurable "jump" in the outcome. This jump is the Local Average Treatment Effect (LATE).</p>
+                        <div class="chart-container h-[250px] md:h-[300px]">
+                            <canvas id="rddConceptChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-[#A30000] mb-4 text-center">The Critical Placebo Test</h3>
+                        <p class="mb-4">To prove the jump isn't due to some other factor, we can run a "placebo" test. We check if there's also a jump in a variable the policy *shouldn't* affect, like rainfall. Finding no jump in rainfall validates the design.</p>
+                        <div class="chart-container h-[250px] md:h-[300px]">
+                            <canvas id="placeboChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comparison">
+                <h2 class="text-3xl font-bold text-[#004777] mb-6 text-center">RDD vs. Alternative Methods</h2>
+                <div class="bg-white rounded-lg shadow-lg p-2 md:p-6 overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="p-4 border-b-2 border-[#004777] font-bold text-[#004777]">Method</th>
+                                <th class="p-4 border-b-2 border-[#004777] font-bold text-[#004777]">Key Assumption</th>
+                                <th class="p-4 border-b-2 border-[#004777] font-bold text-[#004777]">Credibility in Rangelands</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 border-b border-gray-200 font-semibold text-[#004777]">Regression Discontinuity (RDD)</td>
+                                <td class="p-4 border-b border-gray-200">Continuity of variables at a policy cutoff; no manipulation of the cutoff.</td>
+                                <td class="p-4 border-b border-gray-200"><span class="font-bold text-green-600">High:</span> Assumptions are testable and plausible for policy rules. Inherently controls for smooth climate trends.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 border-b border-gray-200 font-semibold text-gray-700">Difference-in-Differences (DiD)</td>
+                                <td class="p-4 border-b border-gray-200">"Parallel trends": treatment and control groups would have followed the same path without the intervention.</td>
+                                <td class="p-4 border-b border-gray-200"><span class="font-bold text-orange-600">Low-Moderate:</span> Unlikely to hold. Managers who destock are different, and climate impacts are not uniform across properties.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-4 border-b border-gray-200 font-semibold text-gray-700">Propensity Score Matching (PSM)</td>
+                                <td class="p-4 border-b border-gray-200">"Selection on observables": all key differences between groups are measured and can be controlled for.</td>
+                                <td class="p-4 border-b border-gray-200"><span class="font-bold text-red-600">Low:</span> Almost certainly violated. Critical factors like manager skill, debt, and risk aversion are unobservable.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="roadmap">
+                <h2 class="text-3xl font-bold text-[#004777] mb-8 text-center">A Roadmap for a Pilot Study</h2>
+                <div class="relative w-full">
+                     <div class="border-l-4 border-[#FF7700] absolute h-full top-0 left-4 md:left-1/2 md:-ml-[2px]"></div>
+                     <div class="space-y-12">
+                         <div class="relative flex items-center md:justify-start">
+                            <div class="z-10 bg-[#FF7700] text-white rounded-full h-8 w-8 flex items-center justify-center absolute left-4 -ml-4 md:left-1/2 md:-ml-4">1</div>
+                            <div class="bg-white rounded-lg shadow-md p-4 w-full ml-8 md:w-5/12 md:ml-0 md:mr-auto">
+                                <h3 class="font-bold text-[#004777]">Phase 1: Data Acquisition</h3>
+                                <p class="text-sm">Establish data-sharing agreements with state agencies to acquire historical lease-level stock returns and policy action records.</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center md:justify-end">
+                            <div class="z-10 bg-[#FF7700] text-white rounded-full h-8 w-8 flex items-center justify-center absolute left-4 -ml-4 md:left-1/2 md:-ml-4">2</div>
+                            <div class="bg-white rounded-lg shadow-md p-4 w-full ml-8 md:w-5/12 md:ml-0 md:ml-auto">
+                                <h3 class="font-bold text-[#004777]">Phase 2: Validation</h3>
+                                <p class="text-sm">Integrate administrative, geospatial, and climate data. Run diagnostic tests (e.g., McCrary test) to check for strategic manipulation of stocking numbers.</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center md:justify-start">
+                            <div class="z-10 bg-[#FF7700] text-white rounded-full h-8 w-8 flex items-center justify-center absolute left-4 -ml-4 md:left-1/2 md:-ml-4">3</div>
+                            <div class="bg-white rounded-lg shadow-md p-4 w-full ml-8 md:w-5/12 md:ml-0 md:mr-auto">
+                                <h3 class="font-bold text-[#004777]">Phase 3: Estimation</h3>
+                                <p class="text-sm">Implement the Fuzzy RDD model to estimate the Local Average Treatment Effect (LATE). Conduct extensive robustness checks.</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center md:justify-end">
+                            <div class="z-10 bg-[#FF7700] text-white rounded-full h-8 w-8 flex items-center justify-center absolute left-4 -ml-4 md:left-1/2 md:-ml-4">4</div>
+                            <div class="bg-white rounded-lg shadow-md p-4 w-full ml-8 md:w-5/12 md:ml-0 md:ml-auto">
+                                <h3 class="font-bold text-[#004777]">Phase 4: Dissemination</h3>
+                                <p class="text-sm">Interpret and communicate the findings, including limitations, to policymakers, land managers, and scientists.</p>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-300">
+            <p class="text-gray-500">Infographic based on the research paper: "Applying Regression Discontinuity Design to Evaluate Rangeland Management Interventions in Australia: A Feasibility Analysis in a Variable Climate".</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const vibrantPalette = {
+            blue: '#004777',
+            red: '#A30000',
+            orange: '#FF7700',
+            gold: '#FFD700',
+            gray: '#F4F4F4'
+        };
+
+        function processLabels(labels, maxLength = 16) {
+            return labels.map(label => {
+                if (typeof label === 'string' && label.length > maxLength) {
+                    const words = label.split(' ');
+                    const lines = [];
+                    let currentLine = '';
+                    for (const word of words) {
+                        if ((currentLine + ' ' + word).trim().length > maxLength) {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        } else {
+                            currentLine = (currentLine + ' ' + word).trim();
+                        }
+                    }
+                    if (currentLine) {
+                        lines.push(currentLine);
+                    }
+                    return lines;
+                }
+                return label;
+            });
+        }
+        
+        const tooltipTitleCallback = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            } else {
+                              return label;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const stockingRateCtx = document.getElementById('stockingRateChart').getContext('2d');
+        new Chart(stockingRateCtx, {
+            type: 'bar',
+            data: {
+                labels: processLabels(['Conventionally Stocked (>30%)', 'Very Conservatively Stocked (<30%)', 'Effectively Destocked (<10%)']),
+                datasets: [{
+                    label: 'Policy Tier by Stocking Rate (% of PCC)',
+                    data: [100, 30, 10], 
+                    backgroundColor: [vibrantPalette.blue, vibrantPalette.orange, vibrantPalette.red],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Stocking Rate Threshold (% of PCC)'
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    ...tooltipTitleCallback.plugins,
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'WA Pastoral Lands Board Stocking Tiers'
+                    }
+                }
+            }
+        });
+
+        function generateRDDData(cutoff, jump) {
+            let data = [];
+            for (let i = 0; i <= 60; i++) {
+                let baseValue = 50 + i * 0.5 + Math.random() * 10 - 5;
+                if (i >= cutoff) {
+                    baseValue += jump;
+                }
+                data.push({ x: i, y: baseValue });
+            }
+            return data;
+        }
+
+        const rddConceptCtx = document.getElementById('rddConceptChart').getContext('2d');
+        const rddData = generateRDDData(30, 15);
+        new Chart(rddConceptCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Lease Ground Cover (%)',
+                    data: rddData,
+                    backgroundColor: rddData.map(p => p.x < 30 ? vibrantPalette.orange : vibrantPalette.blue)
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Stocking Rate (% of PCC)'
+                        }
+                    },
+                    y: {
+                         title: {
+                            display: true,
+                            text: 'Outcome (e.g., Ground Cover)'
+                        }
+                    }
+                },
+                plugins: {
+                    ...tooltipTitleCallback.plugins,
+                    legend: {
+                        display: false
+                    },
+                     annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                xMin: 30,
+                                xMax: 30,
+                                borderColor: vibrantPalette.red,
+                                borderWidth: 4,
+                                label: {
+                                    content: 'Policy Cutoff',
+                                    enabled: true,
+                                    position: 'start'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        const placeboCtx = document.getElementById('placeboChart').getContext('2d');
+        const placeboData = generateRDDData(30, 0); 
+        new Chart(placeboCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Lease Average Rainfall (mm)',
+                    data: placeboData,
+                    backgroundColor: vibrantPalette.blue,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Stocking Rate (% of PCC)'
+                        }
+                    },
+                    y: {
+                         title: {
+                            display: true,
+                            text: 'Placebo Outcome (e.g., Rainfall)'
+                        }
+                    }
+                },
+                plugins: {
+                    ...tooltipTitleCallback.plugins,
+                    legend: {
+                        display: false
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                xMin: 30,
+                                xMax: 30,
+                                borderColor: vibrantPalette.red,
+                                borderWidth: 4,
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

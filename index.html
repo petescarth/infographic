@@ -3,421 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Cost of Pasture Decline: An Infographic for Producers</title>
+    <title>Rangeland Science Infographics</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
-        }
-        .stat-card {
-            background-color: #005f73;
-            color: white;
-        }
-        .stat-number {
-            font-size: 4rem;
-            font-weight: 900;
-            line-height: 1;
-            color: #94d2bd;
-        }
-        .flow-arrow {
-            font-size: 2rem;
-            color: #0a9396;
-            line-height: 1;
-        }
-        .icon-bg {
-            background-color: #e9d8a6;
-            color: #001219;
-            width: 60px;
-            height: 60px;
-            font-size: 2rem;
+            background-color: #F4F4F4;
         }
     </style>
 </head>
-<body class="text-[#001219]">
+<body class="text-gray-800">
 
-    <header class="bg-white shadow-md sticky top-0 z-10">
-        <div class="container mx-auto px-6 py-4">
-            <h1 class="text-2xl md:text-3xl font-bold text-[#005f73]">The Silent Thief in Your Paddocks</h1>
-            <p class="text-md text-gray-600">How the Feedbase Information Gap is Costing Your Operation</p>
-        </div>
-    </header>
+    <div class="container mx-auto p-4 md:p-8">
 
-    <main class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-black text-[#004777] mb-2">Rangeland Science & Management Infographics</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">A collection of visual guides exploring complex topics in rangeland ecology, management, and policy evaluation.</p>
+        </header>
 
-        <section id="problem" class="mb-12">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl md:text-4xl font-bold mb-2">The Perception-Action Gap: Seeing is Deceiving</h2>
-                <p class="max-w-3xl mx-auto text-gray-700">The most critical decline in your pasture isn't what you see from the ute. It's the invisible drop in nutritional quality that happens weeks before the grass looks stressed or the mob loses condition. This delay is where profit is lost.</p>
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8 hover:shadow-xl transition-shadow">
+                <h2 class="text-2xl font-bold text-[#005f73] mb-3">The Feedbase Perception-Action Gap</h2>
+                <p class="text-gray-700 mb-4">A producer-focused look at the hidden costs of delayed reactions to pasture quality decline and the benefits of proactive feedbase management.</p>
+                <a href="feedbasePerceptionAction.html" class="font-semibold text-[#0a9396] hover:underline">View Infographic &rarr;</a>
             </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
-                <h3 class="text-xl font-bold text-center mb-6">The Timeline of Unseen Loss</h3>
-                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
-                    <div class="text-center flex-1">
-                        <div class="icon-bg rounded-full flex items-center justify-center mx-auto mb-2">📉</div>
-                        <h4 class="font-bold">1. Quality Declines</h4>
-                        <p class="text-sm text-gray-600">Pasture protein and energy levels drop. This is invisible to the eye.</p>
-                    </div>
-                    <div class="flow-arrow hidden md:block transform rotate-90 md:rotate-0">→</div>
-                    <div class="text-center flex-1">
-                        <div class="icon-bg rounded-full flex items-center justify-center mx-auto mb-2">⏳</div>
-                        <h4 class="font-bold">2. The Critical Time Lag</h4>
-                        <p class="text-sm text-gray-600">Weeks or months pass. Sub-clinical nutritional stress begins, impacting fertility and growth.</p>
-                    </div>
-                    <div class="flow-arrow hidden md:block transform rotate-90 md:rotate-0">→</div>
-                    <div class="text-center flex-1">
-                        <div class="icon-bg rounded-full flex items-center justify-center mx-auto mb-2">🐄</div>
-                        <h4 class="font-bold">3. Condition Drops</h4>
-                        <p class="text-sm text-gray-600">Visible loss in animal condition and pasture mass. The problem is now obvious.</p>
-                    </div>
-                    <div class="flow-arrow hidden md:block transform rotate-90 md:rotate-0">→</div>
-                    <div class="text-center flex-1">
-                        <div class="icon-bg rounded-full flex items-center justify-center mx-auto mb-2">💸</div>
-                        <h4 class="font-bold">4. Costly Reaction</h4>
-                        <p class="text-sm text-gray-600">Forced to start supplementary feeding or destock into a poor market.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="costs" class="mb-12">
-             <div class="text-center mb-8">
-                <h2 class="text-3xl md:text-4xl font-bold mb-2">The Domino Effect of Delay</h2>
-                <p class="max-w-3xl mx-auto text-gray-700">A small, undetected issue in the paddock multiplies into major financial and production losses, systematically increasing your business risk.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="stat-card rounded-lg shadow-lg p-8 text-center flex flex-col justify-center">
-                    <span class="stat-number">$17B</span>
-                    <p class="text-2xl font-semibold mt-2">Projected 30-year cost of pasture rundown in Northern Australia alone.</p>
-                </div>
-                <div class="stat-card rounded-lg shadow-lg p-8 text-center flex flex-col justify-center">
-                     <span class="stat-number">50%</span>
-                    <p class="text-2xl font-semibold mt-2">Potential production slash caused by the decline of sown grass pastures.</p>
-                </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8 hover:shadow-xl transition-shadow">
+                <h2 class="text-2xl font-bold text-[#003f5c] mb-3">Assessing Rangeland Management</h2>
+                <p class="text-gray-700 mb-4">An overview of methods to distinguish management impacts from climate effects on rangelands, comparing techniques from simple trend analysis to causal inference.</p>
+                <a href="assessingRangelandManagement.html" class="font-semibold text-[#4d7c8a] hover:underline">View Infographic &rarr;</a>
             </div>
 
-            <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-xl font-bold text-center mb-4">Financial Drain: A Chain Reaction</h3>
-                    <p class="text-center text-sm text-gray-600 mb-6">A declining feedbase sets off a cascade of compounding costs that hit your bottom line.</p>
-                    <div class="space-y-4">
-                        <div class="flex items-center"><div class="font-bold text-lg text-[#005f73] mr-4">1.</div><div>Reduced Carrying Capacity & Lower Production</div></div>
-                        <div class="flex justify-center"><div class="flow-arrow">▼</div></div>
-                        <div class="flex items-center"><div class="font-bold text-lg text-[#005f73] mr-4">2.</div><div>Forced & Unplanned Supplementary Feeding Costs</div></div>
-                        <div class="flex justify-center"><div class="flow-arrow">▼</div></div>
-                        <div class="flex items-center"><div class="font-bold text-lg text-[#005f73] mr-4">3.</div><div>Forced Destocking into Flooded, Low-Priced Markets</div></div>
-                        <div class="flex justify-center"><div class="flow-arrow">▼</div></div>
-                        <div class="flex items-center"><div class="font-bold text-lg text-[#005f73] mr-4">4.</div><div>Increased Vulnerability to Drought & Market Shocks</div></div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-xl font-bold text-center mb-4">Animal Health Toll: The Fertility-Condition Loop</h3>
-                    <p class="text-center text-sm text-gray-600 mb-6">Poor nutrition initiates a vicious cycle of declining health and reproductive failure.</p>
-                    <div class="chart-container">
-                        <canvas id="fertilityLoopChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="assessment" class="mb-12">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl md:text-4xl font-bold mb-2">From Guesswork to Precision</h2>
-                <p class="max-w-3xl mx-auto text-gray-700">Traditional pasture assessment is a small sample of a big picture. Remote sensing provides the complete, objective view needed for proactive management.</p>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
-                 <h3 class="text-xl font-bold text-center mb-4">Comparing Assessment Methods</h3>
-                <div class="chart-container">
-                    <canvas id="assessmentCompareChart"></canvas>
-                </div>
-                <p class="text-center text-sm text-gray-600 mt-4">Ground-based Rising Plate Meters can have error margins up to 1,566 kg DM/ha. Remote sensing provides consistent, whole-paddock accuracy.</p>
-            </div>
-        </section>
-
-        <section id="solution" class="bg-white rounded-lg shadow-lg p-6 md:p-8 mb-12">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl md:text-4xl font-bold text-[#005f73] mb-2">The Cibo Labs Solution: Confidence to Act</h2>
-                <p class="max-w-4xl mx-auto text-gray-700">PastureKey translates raw satellite data into actionable intelligence. It delivers weekly, calibrated Feed on Offer (FOO) and Total Standing Dry Matter (TSDM) measurements (kg DM/ha) for every paddock, closing the information gap.</p>
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8 hover:shadow-xl transition-shadow">
+                <h2 class="text-2xl font-bold text-[#003f5c] mb-3">Attributing Rangeland Change</h2>
+                <p class="text-gray-700 mb-4">A deep dive into various scientific methods for attributing rangeland change to specific drivers, covering both established and cutting-edge causal AI approaches.</p>
+                <a href="rangelandChangeAttribution.html" class="font-semibold text-[#ef5675] hover:underline">View Infographic &rarr;</a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-10">
-                <div>
-                    <div class="icon-bg rounded-full flex items-center justify-center mx-auto mb-3">🕒</div>
-                    <h4 class="text-lg font-bold">Save Time & Labour</h4>
-                    <p class="text-gray-600">Eliminate hours of manual pasture checks. Get the data you need in minutes.</p>
-                </div>
-                <div>
-                    <div class="icon-bg rounded-full flex items-center justify-center mx-auto mb-3">📈</div>
-                    <h4 class="text-lg font-bold">Optimise Grazing</h4>
-                    <p class="text-gray-600">Match stocking rates to actual feed availability and improve ground cover.</p>
-                </div>
-                <div>
-                    <div class="icon-bg rounded-full flex items-center justify-center mx-auto mb-3">✅</div>
-                    <h4 class="text-lg font-bold">Make Better Decisions</h4>
-                    <p class="text-gray-600">Use objective data to back your experience and act with confidence.</p>
-                </div>
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8 hover:shadow-xl transition-shadow">
+                <h2 class="text-2xl font-bold text-[#A30000] mb-3">Evaluating Policy with RDD</h2>
+                <p class="text-gray-700 mb-4">A detailed explanation of Regression Discontinuity Design (RDD) as a powerful tool for evaluating the effectiveness of policy and management interventions in a variable climate.</p>
+                <a href="rangelandRDD.html" class="font-semibold text-[#FF7700] hover:underline">View Infographic &rarr;</a>
             </div>
 
-             <h3 class="text-2xl font-bold text-center mb-6">Transforming Your Key Decisions</h3>
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <div class="p-4 border-2 border-dashed border-red-400 rounded-lg">
-                     <h4 class="text-xl font-semibold text-center text-red-800">Approach 1: Guesswork</h4>
-                     <p class="text-center text-sm text-gray-600 mb-4">High risk, low confidence, reactive.</p>
-                     <div class="chart-container" style="height: 300px;">
-                        <canvas id="guessworkChart"></canvas>
-                     </div>
-                 </div>
-                 <div class="p-4 border-2 border-dashed border-green-500 rounded-lg">
-                     <h4 class="text-xl font-semibold text-center text-green-800">Approach 2: Precision Data</h4>
-                     <p class="text-center text-sm text-gray-600 mb-4">Low risk, high confidence, proactive.</p>
-                     <div class="chart-container" style="height: 300px;">
-                        <canvas id="precisionChart"></canvas>
-                     </div>
-                 </div>
-             </div>
-             <p class="text-center text-gray-700 mt-6 max-w-3xl mx-auto">Objective data transforms decision-making from an unbalanced state of high risk and uncertainty to a balanced state of high confidence and efficiency, allowing you to be proactive instead of reactive.</p>
+        </main>
 
-        </section>
-
-        <footer class="text-center pt-8 border-t">
-            <h2 class="text-2xl font-bold">Take Control of Your Most Valuable Asset</h2>
-            <p class="max-w-3xl mx-auto text-gray-700 mt-2">Managing your feedbase proactively is the most effective form of risk management available. By closing the information gap with objective data, you can turn your pastures into your greatest competitive advantage.</p>
+        <footer class="text-center mt-16 pt-8 border-t border-gray-300">
+            <p class="text-gray-500">All infographics built with HTML, Tailwind CSS, and Chart.js.</p>
         </footer>
 
-    </main>
+    </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    const palette = {
-        primary: '#005f73',
-        accent1: '#0a9396',
-        accent2: '#94d2bd',
-        background: '#e9d8a6',
-        textDark: '#001219',
-        danger: '#ae2012',
-        success: '#0a9396'
-    };
-    
-    const defaultChartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    color: palette.textDark,
-                    font: {
-                       family: "'Inter', sans-serif"
-                    }
-                }
-            },
-            tooltip: {
-                enabled: true
-            }
-        },
-        scales: {
-            x: {
-                ticks: { color: palette.textDark },
-                grid: { display: false }
-            },
-            y: {
-                ticks: { color: palette.textDark },
-                grid: { color: '#e0e0e0' }
-            }
-        }
-    };
-
-    const fertilityLoopCtx = document.getElementById('fertilityLoopChart');
-    if(fertilityLoopCtx) {
-        new Chart(fertilityLoopCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Poor Nutrition', 'Loss of Body Condition', 'Lower Conception Rates', 'Longer Calving Interval'],
-                datasets: [{
-                    label: 'Fertility-Condition Feedback Loop',
-                    data: [25, 25, 25, 25],
-                    backgroundColor: [
-                        palette.danger,
-                        '#bb3e03',
-                        palette.accent1,
-                        palette.primary
-                    ],
-                    borderColor: '#ffffff',
-                    borderWidth: 4,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '50%',
-                plugins: {
-                    legend: {
-                        position: 'right',
-                         labels: {
-                            color: palette.textDark,
-                            font: { family: "'Inter', sans-serif" },
-                            boxWidth: 20
-                        }
-                    },
-                    tooltip: {
-                         enabled: true
-                    },
-                    title: {
-                        display: false
-                    }
-                }
-            }
-        });
-    }
-
-    const assessmentCompareCtx = document.getElementById('assessmentCompareChart');
-    if(assessmentCompareCtx) {
-        new Chart(assessmentCompareCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Time & Labour Cost', 'Subjectivity / Bias', 'Scalability (Coverage)', 'Objective Accuracy'],
-                datasets: [
-                    {
-                        label: 'Ground Assessment (e.g., RPM)',
-                        data: [8, 9, 2, 3],
-                        backgroundColor: palette.danger,
-                        borderColor: palette.danger,
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Remote Sensing (Satellite)',
-                        data: [2, 1, 10, 9],
-                        backgroundColor: palette.success,
-                        borderColor: palette.success,
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                ...defaultChartOptions,
-                indexAxis: 'y',
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Rating (1=Low/Good, 10=High/Bad)',
-                            color: palette.textDark
-                        },
-                         ticks: { color: palette.textDark },
-                         grid: { color: '#e0e0e0' }
-                    },
-                    y: {
-                        ticks: { color: palette.textDark },
-                        grid: { display: false }
-                    }
-                },
-                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                         labels: {
-                            color: palette.textDark,
-                            font: { family: "'Inter', sans-serif" }
-                        }
-                    },
-                    tooltip: {
-                        enabled: true
-                    }
-                }
-            }
-        });
-    }
-
-    const radarLabels = ['Financial Risk', 'Data Lag', 'Cost Uncertainty', 'Management Confidence'];
-    const radarOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: { enabled: true }
-        },
-        scales: {
-            r: {
-                angleLines: { color: '#ddd' },
-                grid: { color: '#ddd' },
-                pointLabels: {
-                    font: { size: 14, family: "'Inter', sans-serif" },
-                    color: palette.textDark
-                },
-                ticks: {
-                    backdropColor: '#f0f4f8',
-                    color: '#666',
-                    stepSize: 2
-                },
-                min: 0,
-                max: 10
-            }
-        }
-    };
-
-    const guessworkCtx = document.getElementById('guessworkChart');
-    if(guessworkCtx) {
-        new Chart(guessworkCtx, {
-            type: 'radar',
-            data: {
-                labels: radarLabels,
-                datasets: [{
-                    label: 'Guesswork',
-                    data: [8, 9, 7, 3],
-                    backgroundColor: 'rgba(174, 32, 18, 0.2)',
-                    borderColor: 'rgba(174, 32, 18, 1)',
-                    pointBackgroundColor: 'rgba(174, 32, 18, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(174, 32, 18, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: radarOptions
-        });
-    }
-
-    const precisionCtx = document.getElementById('precisionChart');
-    if(precisionCtx) {
-        new Chart(precisionCtx, {
-            type: 'radar',
-            data: {
-                labels: radarLabels,
-                datasets: [{
-                    label: 'Precision Data',
-                    data: [2, 1, 3, 9],
-                    backgroundColor: 'rgba(10, 147, 150, 0.2)',
-                    borderColor: 'rgba(10, 147, 150, 1)',
-                    pointBackgroundColor: 'rgba(10, 147, 150, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(10, 147, 150, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: radarOptions
-        });
-    }
-});
-</script>
 </body>
 </html>
