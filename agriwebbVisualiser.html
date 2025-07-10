@@ -29,10 +29,13 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-6xl">
         <header class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900">Farm Field TSDM Visualizer</h1>
-            <p class="text-gray-600 mt-2">Upload your csv file to generate sparklines for the "Total Standing Dry Matter" (TSDM) of each field. Rows with a TSDM value of 0 will be ignored.</p>
+            <p class="text-gray-600 mt-2">
+                Upload your CSV file to generate sparklines for each field.
+                The CSV must contain the columns: <code>name</code>, <code>date</code>, <code>tsdm_p50</code>, and <code>area_ha</code>.
+            </p>
         </header>
 
         <!-- File Upload Section -->
@@ -75,13 +78,18 @@
         function processData(csvData) {
             // Use D3 to parse the CSV data
             const rows = d3.csvParse(csvData, (d) => {
+                // Check for required columns
+                if (d.name === undefined || d.date === undefined || d.tsdm_p50 === undefined || d.area_ha === undefined) {
+                    return null; // Skip rows with missing essential data
+                }
                 // Format each row as it's parsed
                 return {
                     name: d.name,
                     date: new Date(d.date),
-                    tsdm: +d.tsdm_p50 // Convert to number
+                    tsdm: +d.tsdm_p50, // Convert to number
+                    area: +d.area_ha  // Convert area to number
                 };
-            });
+            }).filter(d => d !== null); // Filter out invalid rows
 
             // 1. Filter out rows where tsdm is 0 (no-data)
             const filteredData = rows.filter(d => d.tsdm > 0);
@@ -97,18 +105,20 @@
                 outputContainer.innerHTML = `
                     <div class="text-center text-red-500 py-16 bg-white rounded-xl shadow-sm border border-red-200">
                         <h3 class="text-sm font-medium text-red-900">No Valid Data Found</h3>
-                        <p class="mt-1 text-sm text-red-500">The uploaded file does not contain any valid TSDM data points (values > 0).</p>
+                        <p class="mt-1 text-sm text-red-500">Check if the file contains data and the required columns: name, date, tsdm_p50, area_ha.</p>
                     </div>`;
                 return;
             }
             
             // Create a header for the results table
             const header = document.createElement('div');
-            header.className = "grid grid-cols-3 md:grid-cols-4 gap-4 items-center px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider";
+            header.className = "grid grid-cols-10 gap-4 items-center px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-100 rounded-t-lg";
             header.innerHTML = `
-                <span class="col-span-1 md:col-span-2">Field Name</span>
-                <span class="col-span-1 text-center">Trend</span>
-                <span class="col-span-1 text-right">Latest TSDM</span>
+                <span class="col-span-3">Field Name</span>
+                <span class="col-span-1 text-right">Area (ha)</span>
+                <span class="col-span-2 text-center">TSDM Trend</span>
+                <span class="col-span-2 text-right">Latest TSDM</span>
+                <span class="col-span-2 text-right">Food on Offer (tDM)</span>
             `;
             outputContainer.appendChild(header);
 
@@ -119,27 +129,42 @@
                 data.sort((a, b) => a.date - b.date);
 
                 const latestEntry = data[data.length - 1];
+                // Area should be consistent for a field, so we can take it from the latest entry.
+                const area = latestEntry.area; 
+                const foodOnOffer = (area * latestEntry.tsdm) / 1000; // Convert from kg to tonnes
 
                 // Create the container for this row
                 const row = document.createElement('div');
-                row.className = "grid grid-cols-3 md:grid-cols-4 gap-4 items-center bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors duration-150";
+                row.className = "grid grid-cols-10 gap-4 items-center bg-white p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150";
 
                 // Field Name
                 const nameEl = document.createElement('div');
-                nameEl.className = "col-span-1 md:col-span-2 font-medium text-gray-900 truncate";
+                nameEl.className = "col-span-3 font-medium text-gray-900 truncate";
                 nameEl.textContent = name;
                 row.appendChild(nameEl);
+                
+                // Area
+                const areaEl = document.createElement('div');
+                areaEl.className = "col-span-1 text-right text-gray-600";
+                areaEl.textContent = area.toFixed(2); // Format to 2 decimal places
+                row.appendChild(areaEl);
 
                 // Sparkline SVG container
                 const sparklineContainer = document.createElement('div');
-                sparklineContainer.className = "col-span-1 flex justify-center items-center";
+                sparklineContainer.className = "col-span-2 flex justify-center items-center";
                 row.appendChild(sparklineContainer);
 
-                // Latest Value
+                // Latest TSDM Value
                 const valueEl = document.createElement('div');
-                valueEl.className = "col-span-1 text-right font-semibold text-blue-600";
+                valueEl.className = "col-span-2 text-right font-semibold text-blue-600";
                 valueEl.textContent = latestEntry.tsdm.toLocaleString(); // Format number with commas
                 row.appendChild(valueEl);
+                
+                // Food on Offer
+                const foodEl = document.createElement('div');
+                foodEl.className = "col-span-2 text-right font-bold text-green-600";
+                foodEl.textContent = foodOnOffer.toFixed(2); // Display as tonnes with 2 decimal places
+                row.appendChild(foodEl);
                 
                 outputContainer.appendChild(row);
 
