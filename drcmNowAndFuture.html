@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolving Rangeland Monitoring: From DRCM to a Next-Generation Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F4F8;
+            color: #102A43;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .flow-arrow::after {
+            content: '→';
+            font-size: 2rem;
+            line-height: 1;
+            color: #4F9DDE;
+            margin: 0 1rem;
+        }
+        .flow-arrow-down::after {
+            content: '↓';
+            font-size: 2rem;
+            line-height: 1;
+            color: #4F9DDE;
+            margin: 1rem 0;
+        }
+        .latex {
+            font-family: "Times New Roman", serif;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#065A82] mb-4">Evolving Rangeland Monitoring</h1>
+            <p class="text-xl text-[#334E68] max-w-4xl mx-auto">A deep dive into the Dynamic Reference Cover Method (DRCM), its limitations, and a next-generation framework for assessing landscape function using satellite time-series.</p>
+        </header>
+
+        <main class="space-y-20">
+
+            <section id="challenge" class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#065A82] mb-4 text-center">The Core Rangeland Challenge</h2>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <p class="mb-4 text-lg">In Australia's vast rangelands, covering over <span class="font-bold text-5xl text-[#1C77C3]">81%</span> of the continent, the overwhelming influence of climate (droughts and floods) can easily mask the more subtle effects of land management (like grazing). Disentangling these signals is the central problem for sustainable management.</p>
+                        <p class="text-lg">Traditional monitoring is difficult because pristine, ungrazed reference areas are often unavailable for comparison, necessitating a new approach.</p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center space-y-4">
+                        <div class="text-center p-4 border-2 border-dashed border-[#87BEEA] rounded-lg">
+                            <span class="text-5xl">☁️</span>
+                            <p class="font-semibold text-xl text-[#065A82]">Climate Variability</p>
+                            <p>(Dominant Signal)</p>
+                        </div>
+                        <div class="text-4xl font-bold text-[#4F9DDE]">+</div>
+                        <div class="text-center p-4 border-2 border-dashed border-[#87BEEA] rounded-lg">
+                            <span class="text-5xl">🐄</span>
+                            <p class="font-semibold text-xl text-[#065A82]">Land Management</p>
+                            <p>(Subtle Signal)</p>
+                        </div>
+                         <div class="text-4xl font-bold text-[#4F9DDE]">=</div>
+                        <div class="text-center p-4 bg-[#DCEEFB] rounded-lg">
+                             <p class="font-semibold text-xl text-[#065A82]">Observed Landscape Change</p>
+                             <p class="text-2xl font-bold text-red-500">?</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="drcm" class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#065A82] mb-6 text-center">The DRCM Solution: A Foundational Approach</h2>
+                <p class="max-w-4xl mx-auto text-center text-lg mb-8">DRCM, developed by Gary Bastin, was a pioneering method that created an internal, dynamic benchmark from the satellite data itself. It assesses condition by comparing a pixel's ground cover in a dry year to the most stable parts of its local neighborhood.</p>
+                <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-[#1C77C3] mb-4">How DRCM Works:</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-[#F0F4F8] rounded-lg"><strong>1. Data Input:</strong> Uses a long-term (e.g., Landsat 1987-present) time series of total vegetation cover.</div>
+                            <div class="p-4 bg-[#F0F4F8] rounded-lg"><strong>2. Identify Reference Pixels:</strong> Designates the top 5-10% of pixels with the highest minimum cover as stable "reference" points.</div>
+                            <div class="p-4 bg-[#F0F4F8] rounded-lg"><strong>3. Dynamic Comparison:</strong> A large moving window calculates the average cover of reference pixels to find the "expected cover".</div>
+                            <div class="p-4 bg-[#F0F4F8] rounded-lg"><strong>4. Calculate Deficit:</strong> The output is a Ground-Cover Deficit (<span class="latex">ΔGC</span>) and its change over time (<span class="latex">ΔΔGC</span>).<br>
+                                <span class="latex block text-center mt-2">ΔGC = Actual Cover - Reference Cover</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-green-600 mb-4">A Legacy of Success:</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                <p><strong class="text-green-700">📈 Reliable Trend Detection:</strong> The change metric (<span class="latex">ΔΔGC</span>) has proven highly effective at tracking landscape recovery or decline over decades, successfully separating the management signal from climate noise.</p>
+                            </div>
+                            <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                <p><strong class="text-green-700">🚧 Robust to Infrastructure:</strong> Unaffected by changes in fences or waterpoints, making it ideal for consistent, long-term historical analysis where farm infrastructure has changed.</p>
+                            </div>
+                            <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                <p><strong class="text-green-700">🌍 Scalable & Independent:</strong> Operationally simple once set up and functions without needing detailed farm maps, allowing for consistent monitoring across vast, data-poor regions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-red-600 mb-4">Limitations to Address:</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p><strong class="text-red-700">Single Index Problem:</strong> Aggregating all cover types masks critical ecological differences (e.g., desirable grass vs. undesirable shrub).</p>
+                            </div>
+                            <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p><strong class="text-red-700">Arbitrary Condition State:</strong> The deficit value can be misleading, as it compares pixels based on proximity, not true ecological similarity.</p>
+                            </div>
+                        </div>
+                         <div class="chart-container mt-6">
+                            <canvas id="singleIndexChart"></canvas>
+                        </div>
+                         <p class="text-center text-sm text-[#334E68] mt-2">A single cover value can represent functionally opposite landscape conditions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="evolution" class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#065A82] mb-6 text-center">Evolution 1: A More Meaningful Benchmark</h2>
+                <p class="max-w-3xl mx-auto text-center text-lg mb-8">The DRCM benchmark is relative and local. We can create more powerful, absolute benchmarks by leveraging landscape-wide data and ecological modeling, moving from "How does this pixel compare to its neighbors?" to "How does it compare to its true capability?"</p>
+                <div class="grid md:grid-cols-2 gap-12 items-start">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-[#1C77C3] mb-4">Intermediate Step: Regional Percentiles</h3>
+                        <p class="mb-4">A first improvement is to stratify the landscape into Ecologically Similar Units (ESUs) based on soil and landform. We then compare a property's performance to the full statistical distribution of all similar land in the region for a given year.</p>
+                        <div class="chart-container">
+                            <canvas id="percentileRankChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-[#334E68] mt-2">This property's bare soil is at the 70th percentile, meaning 70% of similar land has less bare soil (is in better condition).</p>
+                    </div>
+                    <div>
+                         <h3 class="text-2xl font-semibold text-[#1C77C3] mb-4">Ultimate Goal: Modeled Ecological Potential</h3>
+                        <p class="mb-4">The most robust benchmark is a model of a site's Ecological Potential (EP)—the cover it *could* support given its fundamental constraints, in the absence of degradation. This is the approach used by systems like the US RCMAP project.</p>
+                        <div class="text-center p-4 bg-[#F0F4F8] rounded-lg">
+                            <div class="flex justify-center items-center space-x-4 mb-2">
+                                <div class="text-center"><span class="text-3xl">🏞️</span><p>Topography</p></div>
+                                <div class="text-center"><span class="text-3xl">🧱</span><p>Soil Data</p></div>
+                                <div class="text-center"><span class="text-3xl">☀️</span><p>Climate</p></div>
+                            </div>
+                             <div class="flow-arrow-down my-2"></div>
+                            <div class="font-semibold text-lg text-[#065A82] mb-2">Machine Learning Model<br>(e.g., Random Forest)</div>
+                             <div class="flow-arrow-down my-2"></div>
+                            <div class="p-3 bg-[#DCEEFB] rounded">Potential Cover Map</div>
+                        </div>
+                        <p class="mt-4">The new metric becomes <strong class="text-[#1C77C3]">Departure from Potential</strong>, e.g., `Observed Bare Soil - Potential Bare Soil`. This provides a true, absolute measure of condition.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="analysis" class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#065A82] mb-6 text-center">Evolution 2: A More Powerful Analysis</h2>
+                <p class="max-w-3xl mx-auto text-center text-lg mb-8">Instead of a single index, we analyze the harmonized time series of functionally distinct cover types from Landsat and Sentinel: Photosynthetic Vegetation (PV), Non-Photosynthetic Vegetation (NPV), and Bare Soil (BS).</p>
+                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <div class="lg:col-span-2">
+                        <h3 class="text-2xl font-semibold text-[#1C77C3] mb-4 text-center">Disaggregating the Cover Signal</h3>
+                        <p class="text-center mb-4 max-w-4xl mx-auto">Analyzing the three core fractions separately provides a true diagnosis of landscape function. A healthy rangeland maintains high, stable NPV (litter cover) and low Bare Soil, even during drought. This is the key to soil health and water retention.</p>
+                        <div class="chart-container mx-auto max-w-4xl h-[400px]">
+                            <canvas id="fractionalCoverChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-[#334E68] mt-2">This time series shows the distinct dynamics of green vegetation, dry litter, and exposed soil over two decades.</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl font-semibold text-[#1C77C3] mb-4">Detecting Abrupt Changes (Breakpoints)</h3>
+                        <p class="mb-4">Algorithms like BFAST or TSS-RESTREND can decompose the time series and pinpoint the exact year a significant change occurred. This allows managers to link landscape response directly to management interventions or major climatic events.</p>
+                        <div class="chart-container">
+                            <canvas id="breakpointChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-[#334E68] mt-2">A change in management in 2010 arrested a declining trend in protective cover, demonstrating a positive response.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-[#1C77C3] mb-4">Quantifying Resilience & Resistance</h3>
+                        <p class="mb-4">We can now measure how landscapes respond to drought. <strong class="text-[#1C77C3]">Resistance</strong> is the ability to withstand drought, while <strong class="text-[#1C77C3]">Resilience</strong> is the speed of recovery after. These are forward-looking indicators of vulnerability and opportunity.</p>
+                        <div class="chart-container">
+                            <canvas id="resilienceRadarChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-[#334E68] mt-2">Paddock A is more productive but less stable and resistant to drought than Paddock B.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="framework" class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#065A82] mb-6 text-center">The Next-Generation Monitoring Framework</h2>
+                <p class="max-w-4xl mx-auto text-center text-lg mb-8">By integrating these advancements, we create a powerful, process-based diagnostic system that moves far beyond the original DRCM to directly inform adaptive management.</p>
+                
+                <h3 class="text-2xl font-semibold text-[#1C77C3] mb-6 text-center">Integrated Workflow</h3>
+                 <div class="flex flex-col md:flex-row justify-center items-stretch text-center p-4 space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="p-4 bg-[#F0F4F8] rounded-lg w-full md:w-1/4 flex flex-col justify-center">
+                        <p class="font-bold text-lg">1. Data Foundation</p>
+                        <p class="text-sm mt-2">Harmonized Landsat & Sentinel-2 time series (1987-present) of PV, NPV, BS.</p>
+                    </div>
+                    <div class="flow-arrow hidden md:flex items-center"></div>
+                    <div class="flow-arrow-down md:hidden self-center"></div>
+                    <div class="p-4 bg-[#F0F4F8] rounded-lg w-full md:w-1/4 flex flex-col justify-center">
+                        <p class="font-bold text-lg">2. Benchmarking</p>
+                        <p class="text-sm mt-2">Model Ecological Potential (EP) based on soils, climate, topography.</p>
+                    </div>
+                     <div class="flow-arrow hidden md:flex items-center"></div>
+                    <div class="flow-arrow-down md:hidden self-center"></div>
+                    <div class="p-4 bg-[#F0F4F8] rounded-lg w-full md:w-1/4 flex flex-col justify-center">
+                        <p class="font-bold text-lg">3. Time-Series Analysis</p>
+                        <p class="text-sm mt-2">Calculate trends, breakpoints, departure from EP, resilience & resistance.</p>
+                    </div>
+                     <div class="flow-arrow hidden md:flex items-center"></div>
+                    <div class="flow-arrow-down md:hidden self-center"></div>
+                    <div class="p-4 bg-[#F0F4F8] rounded-lg w-full md:w-1/4 flex flex-col justify-center">
+                        <p class="font-bold text-lg">4. Reporting</p>
+                        <p class="text-sm mt-2">Deliver a "dashboard" of function metrics, not a single index, to inform adaptive management.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold text-[#1C77C3] mt-12 mb-6 text-center">From Data to Decisions: A Modern Toolkit</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-[#DCEEFB]">
+                                <th class="p-3 font-bold uppercase text-[#065A82] border border-[#87BEEA]">Metric/Map</th>
+                                <th class="p-3 font-bold uppercase text-[#065A82] border border-[#87BEEA]">Management Question Answered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-[#F0F4F8]">
+                                <td class="p-3 font-semibold border border-[#87BEEA]">Condition (Bare Soil Departure from EP)</td>
+                                <td class="p-3 border border-[#87BEEA]">Which areas are currently degraded (have more bare soil than their potential) and need remedial action?</td>
+                            </tr>
+                            <tr class="hover:bg-[#F0F4F8]">
+                                <td class="p-3 font-semibold border border-[#87BEEA]">Trend (NPV Stability & Trend)</td>
+                                <td class="p-3 border border-[#87BEEA]">Which areas are losing protective litter cover and require a change in management to prevent long-term decline?</td>
+                            </tr>
+                             <tr class="hover:bg-[#F0F4F8]">
+                                <td class="p-3 font-semibold border border-[#87BEEA]">Productivity Trend (PV Trend)</td>
+                                <td class="p-3 border border-[#87BEEA]">Is the forage base improving or declining over the long term, independent of seasonal rain?</td>
+                            </tr>
+                            <tr class="hover:bg-[#F0F4F8]">
+                                <td class="p-3 font-semibold border border-[#87BEEA]">Vulnerability (Drought Resistance)</td>
+                                <td class="p-3 border border-[#87BEEA]">Which "brittle" areas are most sensitive to drought and should be destocked first to manage risk?</td>
+                            </tr>
+                            <tr class="hover:bg-[#F0F4F8]">
+                                <td class="p-3 font-semibold border border-[#87BEEA]">Opportunity (Recovery Rate)</td>
+                                <td class="p-3 border border-[#87BEEA]">Which resilient areas recover fastest and can be used as strategic grazing reserves post-drought?</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="text-center mt-16 pt-8 border-t-2 border-[#87BEEA]">
+            <p class="text-[#334E68]">This infographic synthesizes contemporary research on rangeland monitoring to propose an evolution of the DRCM framework.</p>
+            <p class="text-sm text-[#627D98] mt-2">Infographic generated using Chart.js and Tailwind CSS. No SVG or Mermaid.js assets were used in this output.</p>
+        </footer>
+    </div>
+
+<script>
+const brilliantBlues = {
+    background: 'rgba(240, 244, 248, 0.5)',
+    text: '#102A43',
+    accent1: '#065A82',
+    accent2: '#1C77C3',
+    accent3: '#4F9DDE',
+    accent4: '#87BEEA',
+    highlight: '#DCEEFB'
+};
+
+const commonChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            labels: {
+                color: brilliantBlues.text,
+                font: {
+                    family: "'Inter', sans-serif"
+                }
+            }
+        },
+        tooltip: {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                      return label.join(' ');
+                    } else {
+                      return label;
+                    }
+                }
+            }
+        }
+    },
+    scales: {
+        x: {
+            ticks: { color: brilliantBlues.text },
+            grid: { color: 'rgba(135, 190, 234, 0.2)' }
+        },
+        y: {
+            ticks: { color: brilliantBlues.text },
+            grid: { color: 'rgba(135, 190, 234, 0.2)' }
+        }
+    }
+};
+
+new Chart(document.getElementById('singleIndexChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Desirable Grass', 'Undesirable Shrub'],
+        datasets: [{
+            label: '70% Total Cover could be...',
+            data: [70, 70],
+            backgroundColor: [brilliantBlues.accent3, brilliantBlues.accent2],
+            borderColor: brilliantBlues.background,
+            borderWidth: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Example: 70% Total Cover',
+                color: brilliantBlues.accent1,
+                font: { size: 16 }
+            },
+            legend: {
+                position: 'bottom',
+                 labels: {
+                    color: brilliantBlues.text,
+                    font: { family: "'Inter', sans-serif" }
+                }
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById('percentileRankChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Your Property', 'ESU Median', 'ESU 90th Percentile'],
+        datasets: [{
+            label: 'Bare Soil Cover (%)',
+            data: [25, 15, 5],
+            backgroundColor: [brilliantBlues.accent3, brilliantBlues.accent4, brilliantBlues.highlight],
+            borderColor: brilliantBlues.accent2,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        ...commonChartOptions,
+        indexAxis: 'y',
+        plugins: {
+            ...commonChartOptions.plugins,
+            title: {
+                display: true,
+                text: 'Performance vs. Regional Benchmark',
+                color: brilliantBlues.accent1,
+                font: { size: 16 }
+            },
+             legend: { display: false }
+        }
+    }
+});
+
+const years = Array.from({length: 21}, (_, i) => 2000 + i);
+new Chart(document.getElementById('fractionalCoverChart'), {
+    type: 'line',
+    data: {
+        labels: years,
+        datasets: [
+            {
+                label: 'Bare Soil (BS)',
+                data: years.map(y => 15 + 10 * Math.sin((y - 2000) / 5) + (y > 2010 ? (y-2010)*0.8 : 0) + Math.random() * 3),
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                fill: true,
+                tension: 0.3
+            },
+            {
+                label: 'Non-Photosynthetic Veg. (NPV)',
+                data: years.map(y => 50 - 5 * Math.sin((y - 2000) / 5) - (y > 2010 ? (y-2010)*1.2 : 0) + Math.random() * 5),
+                borderColor: brilliantBlues.accent2,
+                backgroundColor: 'rgba(28, 119, 195, 0.2)',
+                fill: true,
+                tension: 0.3
+            },
+            {
+                label: 'Photosynthetic Veg. (PV)',
+                data: years.map(y => 10 + 8 * Math.cos((y - 2000) / 2.5 * Math.PI) + Math.random() * 4),
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                fill: true,
+                tension: 0.3
+            }
+        ]
+    },
+    options: {
+        ...commonChartOptions,
+        scales: { ...commonChartOptions.scales, y: { ...commonChartOptions.scales.y, stacked: true, title: { display: true, text: 'Cover (%)' } } },
+        plugins: {
+            ...commonChartOptions.plugins,
+            title: { display: true, text: 'Fractional Cover Time Series (2000-2020)', color: brilliantBlues.accent1, font: { size: 16 } },
+        },
+        interaction: {
+            mode: 'index',
+            intersect: false
+        }
+    }
+});
+
+new Chart(document.getElementById('breakpointChart'), {
+    type: 'line',
+    data: {
+        labels: Array.from({length: 16}, (_, i) => 2005 + i),
+        datasets: [{
+            label: 'Protective Cover (NPV %)',
+            data: [45, 42, 38, 35, 33, 35, 38, 40, 42, 44, 45, 47, 48, 49, 50, 52],
+            borderColor: brilliantBlues.accent2,
+            tension: 0.1,
+            pointBackgroundColor: brilliantBlues.accent2
+        }]
+    },
+    options: {
+        ...commonChartOptions,
+        plugins: {
+            ...commonChartOptions.plugins,
+            title: { display: true, text: 'NPV Trend with Management Breakpoint', color: brilliantBlues.accent1, font: { size: 16 } },
+            legend: { display: false },
+            annotation: {
+                 annotations: {
+                    line1: {
+                        type: 'line',
+                        xMin: 5,
+                        xMax: 5,
+                        borderColor: '#ef4444',
+                        borderWidth: 3,
+                        borderDash: [6, 6],
+                        label: {
+                            content: 'Management Change (2010)',
+                            position: 'start',
+                            yAdjust: -15,
+                            backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                            color: 'white',
+                            font: { size: 12 },
+                            borderRadius: 6,
+                            padding: 6,
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById('resilienceRadarChart'), {
+    type: 'radar',
+    data: {
+        labels: [
+            'Productivity',
+            ['Drought', 'Resistance'],
+            'Stability (NPV)',
+            ['Post-Drought', 'Recovery Rate'],
+            'Overall Health'
+        ],
+        datasets: [{
+            label: 'Paddock A (High Production)',
+            data: [9, 4, 5, 5, 6],
+            fill: true,
+            backgroundColor: 'rgba(28, 119, 195, 0.2)',
+            borderColor: brilliantBlues.accent2,
+            pointBackgroundColor: brilliantBlues.accent2
+        }, {
+            label: 'Paddock B (High Resilience)',
+            data: [6, 8, 9, 8, 8],
+            fill: true,
+            backgroundColor: 'rgba(135, 190, 234, 0.2)',
+            borderColor: brilliantBlues.accent4,
+            pointBackgroundColor: brilliantBlues.accent4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+             ...commonChartOptions.plugins,
+            title: { display: true, text: 'Functional Profile Comparison', color: brilliantBlues.accent1, font: { size: 16 } }
+        },
+        scales: {
+            r: {
+                angleLines: { color: 'rgba(135, 190, 234, 0.4)' },
+                grid: { color: 'rgba(135, 190, 234, 0.4)' },
+                pointLabels: {
+                    color: brilliantBlues.text,
+                    font: {
+                        family: "'Inter', sans-serif",
+                        size: 12
+                    }
+                },
+                ticks: {
+                    backdropColor: brilliantBlues.background,
+                    color: brilliantBlues.text
+                },
+                suggestedMin: 0,
+                suggestedMax: 10
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>
