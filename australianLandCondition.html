@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Australian Land Condition Monitoring: A Visual Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+                max-height: 500px;
+            }
+        }
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+        .map-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            aspect-ratio: 4 / 3;
+        }
+        .map-label {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 63, 92, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .state {
+            position: absolute;
+            border: 1px solid #93c5fd;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        .wa { top: 12%; left: 0; width: 40%; height: 78%; background-color: #e0f2fe; border-top-left-radius: 20px; border-bottom-left-radius: 20px; }
+        .nt { top: 0; left: 40%; width: 25%; height: 45%; background-color: #cffafe; }
+        .sa { top: 45%; left: 40%; width: 28%; height: 42%; background-color: #e0e7ff; border-bottom-right-radius: 40% 20%; border-bottom-left-radius: 10px; }
+        .qld { top: 0; left: 65%; width: 25%; height: 65%; background-color: #dcfce7; border-top-left-radius: 10px; border-top-right-radius: 20px 40%; }
+        .nsw { top: 65%; left: 68%; width: 20%; height: 25%; background-color: #fef9c3; }
+        .vic { top: 90%; left: 72%; width: 15%; height: 10%; background-color: #fee2e2; transform: skew(-15deg); }
+        .tas { top: 102%; left: 75%; width: 10%; height: 8%; background-color: #f3e8ff; border-radius: 40%; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12 md:mb-20">
+            <h1 class="text-4xl md:text-6xl font-black text-[#003F5C] text-shadow tracking-tight">Two Worlds of 'Condition'</h1>
+            <p class="text-lg md:text-xl mt-4 max-w-3xl mx-auto text-gray-600">A detailed visual guide to Australian land monitoring, revealing a fundamental divide in how we measure, map, and manage the health of our landscapes.</p>
+        </header>
+
+        <main class="space-y-16 md:space-y-24">
+            
+            <section id="the-divide">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[#003F5C]">What is 'Land Condition'? It Depends Who You Ask.</h2>
+                    <p class="mt-2 text-gray-600 max-w-2xl mx-auto">The term 'land condition' isn't a scientific absolute. Its meaning, and what we measure, is shaped by purpose and perspective. This creates two distinct worlds of assessment.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6 border-l-8 border-[#FFA600]">
+                        <h3 class="text-2xl font-bold text-[#003F5C] mb-3">The Grazing Perspective</h3>
+                        <p class="text-gray-500 mb-4 font-semibold">AUDIENCE: Land Manager / Pastoralist</p>
+                        <p class="mb-4">Condition is defined as the capacity of land to produce useful forage for livestock. The focus is on economic productivity and business sustainability.</p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center"><span class="icon mr-3">🌾</span> <span class="font-semibold text-gray-700">Key Metric:</span> Carrying Capacity</li>
+                            <li class="flex items-center"><span class="icon mr-3">🌿</span> <span class="font-semibold text-gray-700">Primary Indicator:</span> Dominance of "3P" grasses (Perennial, Palatable, Productive)</li>
+                            <li class="flex items-center"><span class="icon mr-3">📉</span> <span class="font-semibold text-gray-700">Goal:</span> Maximize sustainable production.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 border-l-8 border-[#7A5195]">
+                        <h3 class="text-2xl font-bold text-[#003F5C] mb-3">The Biodiversity Perspective</h3>
+                        <p class="text-gray-500 mb-4 font-semibold">AUDIENCE: Government / Scientist</p>
+                        <p class="mb-4">Condition is defined as the integrity of an ecosystem compared to a 'reference state'. The focus is on biodiversity conservation and policy reporting.</p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center"><span class="icon mr-3">🌳</span> <span class="font-semibold text-gray-700">Key Metric:</span> Ecosystem Integrity Score</li>
+                            <li class="flex items-center"><span class="icon mr-3">🦋</span> <span class="font-semibold text-gray-700">Primary Indicator:</span> Native species richness & habitat structure</li>
+                            <li class="flex items-center"><span class="icon mr-3">📜</span> <span class="font-semibold text-gray-700">Goal:</span> Inform conservation policy and planning.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="map-of-methods">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[#003F5C]">A Map of Methods</h2>
+                    <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Different states and territories have developed distinct, fit-for-purpose monitoring systems, creating a complex national patchwork.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                    <div class="map-container">
+                        <div class="relative w-full h-full">
+                            <div class="state wa"></div>
+                            <div class="state nt"></div>
+                            <div class="state sa"></div>
+                            <div class="state qld"></div>
+                            <div class="state nsw"></div>
+                            <div class="state vic"></div>
+                            <div class="state tas"></div>
+
+                            <div class="map-label" style="top: 50%; left: 20%;">WA Rangeland Monitoring<br>(WARMS / RCM)</div>
+                            <div class="map-label" style="top: 22%; left: 52%;">NT Pastoral Monitoring</div>
+                            <div class="map-label" style="top: 65%; left: 54%;">SA Pastoral Assessment</div>
+                            <div class="map-label" style="top: 35%; left: 80%;">ABCD Framework &<br>Spatial BioCondition (QLD)</div>
+                            <div class="map-label" style="top: 78%; left: 80%;">LLS Monitoring (NSW)</div>
+                            <div class="map-label" style="top: 98%; left: 80%;">VIC / TAS</div>
+                            <div class="map-label" style="top: 5%; left: 52%;">National Systems<br>(e.g., HCAS)</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="framework-comparison-radar">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[#003F5C]">Comparing Framework DNA</h2>
+                    <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Radar charts reveal the unique character of each framework across key attributes, showing how they are optimized for different purposes.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-center text-[#003F5C] mb-4">ABCD Framework</h3>
+                        <div class="chart-container h-72"><canvas id="abcdRadar"></canvas></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-center text-[#003F5C] mb-4">NT Pastoral Monitoring</h3>
+                        <div class="chart-container h-72"><canvas id="ntRadar"></canvas></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2 lg:col-span-1">
+                        <h3 class="text-xl font-bold text-center text-[#003F5C] mb-4">HCAS (National)</h3>
+                        <div class="chart-container h-72"><canvas id="hcasRadar"></canvas></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="framework-deep-dive">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[#003F5C]">Framework Deep Dive: A Comparative View</h2>
+                    <p class="mt-2 text-gray-600 max-w-2xl mx-auto">A closer look at the core components of key frameworks, highlighting their different goals, methods, and outputs.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col space-y-4 border-t-8 border-[#FFA600]">
+                        <h3 class="text-2xl font-bold text-center text-[#003F5C]">ABCD Framework (QLD)</h3>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🎯</span><div><h4 class="font-bold">Purpose</h4><p class="text-sm text-gray-600">Tactical grazing management & landholder education.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">👤</span><div><h4 class="font-bold">Audience</h4><p class="text-sm text-gray-600">Land Managers / Pastoralists.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🌿</span><div><h4 class="font-bold">Key Indicators</h4><p class="text-sm text-gray-600">3P Grasses, Bare Ground, Soil Erosion.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📍</span><div><h4 class="font-bold">Scale</h4><p class="text-sm text-gray-600">Paddock / Site.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📊</span><div><h4 class="font-bold">Output</h4><p class="text-sm text-gray-600">A, B, C, D Rating & % Carrying Capacity.</p></div></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col space-y-4 border-t-8 border-[#EF5675]">
+                        <h3 class="text-2xl font-bold text-center text-[#003F5C]">NT Pastoral Monitoring</h3>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📜</span><div><h4 class="font-bold">Purpose</h4><p class="text-sm text-gray-600">Statutory compliance & sustainable use.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🏛️</span><div><h4 class="font-bold">Audience</h4><p class="text-sm text-gray-600">Pastoral Land Board & Land Managers.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📸</span><div><h4 class="font-bold">Key Indicators</h4><p class="text-sm text-gray-600">Photopoints, Pasture Composition, Grazing Pressure.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🗺️</span><div><h4 class="font-bold">Scale</h4><p class="text-sm text-gray-600">Site, Lease, & Regional.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📋</span><div><h4 class="font-bold">Output</h4><p class="text-sm text-gray-600">Condition Rating (Good/Fair/Poor) & Trend.</p></div></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col space-y-4 border-t-8 border-[#374C80]">
+                        <h3 class="text-2xl font-bold text-center text-[#003F5C]">WA Rangeland Monitoring</h3>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🎯</span><div><h4 class="font-bold">Purpose</h4><p class="text-sm text-gray-600">Lessee compliance (RCM) & regional trend analysis (WARMS).</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">👥</span><div><h4 class="font-bold">Audience</h4><p class="text-sm text-gray-600">Pastoral Land Board, Lessees, & Government.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🌿</span><div><h4 class="font-bold">Key Indicators</h4><p class="text-sm text-gray-600">Grass frequency (North) or Shrub density (South).</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🗺️</span><div><h4 class="font-bold">Scale</h4><p class="text-sm text-gray-600">Site/Lease (RCM) & Regional (WARMS).</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📈</span><div><h4 class="font-bold">Output</h4><p class="text-sm text-gray-600">Condition Trend (Improved, Stable, Declined).</p></div></div>
+                    </div>
+                     <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col space-y-4 border-t-8 border-[#FF764A]">
+                        <h3 class="text-2xl font-bold text-center text-[#003F5C]">SA Pastoral Assessment</h3>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📜</span><div><h4 class="font-bold">Purpose</h4><p class="text-sm text-gray-600">Statutory compliance & lease renewal.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🏛️</span><div><h4 class="font-bold">Audience</h4><p class="text-sm text-gray-600">Pastoral Board & Land Managers.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🏞️</span><div><h4 class="font-bold">Key Indicators</h4><p class="text-sm text-gray-600">Soil stability, native vegetation resilience, pest control.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📍</span><div><h4 class="font-bold">Scale</h4><p class="text-sm text-gray-600">Lease.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📋</span><div><h4 class="font-bold">Output</h4><p class="text-sm text-gray-600">Compliance report & lease conditions.</p></div></div>
+                    </div>
+                     <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col space-y-4 border-t-8 border-[#BC5090]">
+                        <h3 class="text-2xl font-bold text-center text-[#003F5C]">NSW LLS Monitoring</h3>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🎯</span><div><h4 class="font-bold">Purpose</h4><p class="text-sm text-gray-600">Tactical grazing decisions based on pasture nutrition.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">👤</span><div><h4 class="font-bold">Audience</h4><p class="text-sm text-gray-600">Land Managers / Pastoralists.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🧪</span><div><h4 class="font-bold">Key Indicators</h4><p class="text-sm text-gray-600">Pasture nutritional value (protein, energy), ground cover.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📍</span><div><h4 class="font-bold">Scale</h4><p class="text-sm text-gray-600">Paddock / Site.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📊</span><div><h4 class="font-bold">Output</h4><p class="text-sm text-gray-600">Feed test results & cover percentages.</p></div></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col space-y-4 border-t-8 border-[#003F5C]">
+                        <h3 class="text-2xl font-bold text-center text-[#003F5C]">Spatial BioCondition (QLD)</h3>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🦋</span><div><h4 class="font-bold">Purpose</h4><p class="text-sm text-gray-600">Biodiversity monitoring, offsets, & natural capital accounting.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">👩‍🔬</span><div><h4 class="font-bold">Audience</h4><p class="text-sm text-gray-600">Government agencies, NRM bodies, Researchers.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🛰️</span><div><h4 class="font-bold">Key Indicators</h4><p class="text-sm text-gray-600">Modelled score based on large trees, canopy cover, etc.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🗺️</span><div><h4 class="font-bold">Scale</h4><p class="text-sm text-gray-600">Bioregional (30m pixel).</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📈</span><div><h4 class="font-bold">Output</h4><p class="text-sm text-gray-600">BioCondition score (0-100) spatial map.</p></div></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col space-y-4 border-t-8 border-[#7A5195]">
+                        <h3 class="text-2xl font-bold text-center text-[#003F5C]">HCAS (National)</h3>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🌐</span><div><h4 class="font-bold">Purpose</h4><p class="text-sm text-gray-600">National environmental reporting & policy support.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">👩‍🔬</span><div><h4 class="font-bold">Audience</h4><p class="text-sm text-gray-600">Federal Government & Researchers.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🛰️</span><div><h4 class="font-bold">Key Indicators</h4><p class="text-sm text-gray-600">Modelled score based on deviation from reference state.</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">🌍</span><div><h4 class="font-bold">Scale</h4><p class="text-sm text-gray-600">National (90m-250m pixel).</p></div></div>
+                        <div class="flex items-start space-x-4"><span class="text-3xl">📈</span><div><h4 class="font-bold">Output</h4><p class="text-sm text-gray-600">Habitat Condition Score (0-1) Map.</p></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="methodology-in-action">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[#003F5C]">Methodology in Action</h2>
+                    <p class="mt-2 text-gray-600 max-w-2xl mx-auto">From a simple visual check to complex algorithms, the "how" of monitoring defines what can be known and by whom.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h3 class="text-xl font-bold text-[#003F5C] mb-4">The 'Rolling Ball' Model (QLD)</h3>
+                        <p class="text-gray-600 mb-6">This powerful analogy communicates the non-linear nature of degradation. It's easy to slip from B to C, but very hard to push the ball back up the hill.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center"><span class="font-bold text-xl text-green-500 mr-4">A</span><div class="w-full h-1 bg-gray-200"></div><span class="text-4xl ml-2">●</span></div>
+                            <div class="flex items-center"><span class="font-bold text-xl text-yellow-500 mr-4">B</span><div class="w-full h-1 bg-gray-200" style="transform: rotate(-5deg);"></div><span class="text-4xl ml-2">●</span></div>
+                            <div class="flex items-center"><span class="font-bold text-xl text-orange-500 mr-4">C</span><div class="w-full h-1 bg-gray-200" style="transform: rotate(-15deg);"></div><span class="text-4xl ml-2">●</span></div>
+                            <div class="flex items-center"><span class="font-bold text-xl text-red-500 mr-4">D</span><div class="w-1 h-12 bg-gray-200 ml-2"></div><span class="text-4xl ml-2">●</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h3 class="text-xl font-bold text-[#003F5C] mb-4">The Machine Learning Model (National)</h3>
+                        <p class="text-gray-600 mb-6">These systems learn the "look" of healthy land from reference sites and satellite data, then predict condition everywhere else.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-800 mr-4">INPUTS</span><p class="text-sm text-blue-700">Satellite Imagery + Ground-truth Data + Environmental Layers</p></div>
+                            <div class="text-center text-2xl text-gray-400">↓</div>
+                            <div class="flex items-center bg-purple-50 p-3 rounded-lg"><span class="font-bold text-purple-800 mr-4">MODEL</span><p class="text-sm text-purple-700">AI algorithm learns the relationship between inputs and condition.</p></div>
+                            <div class="text-center text-2xl text-gray-400">↓</div>
+                            <div class="flex items-center bg-green-50 p-3 rounded-lg"><span class="font-bold text-green-800 mr-4">OUTPUT</span><p class="text-sm text-green-700">A "wall-to-wall" map of predicted habitat condition.</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h3 class="text-xl font-bold text-[#003F5C] mb-4">The Two-Tiered System (NT)</h3>
+                        <p class="text-gray-600 mb-6">Integrates participatory, on-ground assessment with broad-scale remote sensing to inform the Pastoral Land Board.</p>
+                        <div class="flex flex-col space-y-4">
+                            <div class="flex items-start bg-yellow-50 p-4 rounded-lg">
+                                <span class="text-4xl mr-4">👤</span>
+                                <div>
+                                    <h4 class="font-bold text-yellow-800">Tier 1: Ground Truth</h4>
+                                    <p class="text-sm text-yellow-700">Land managers and officers assess photopoints, species, and soil on-site.</p>
+                                </div>
+                            </div>
+                            <div class="text-center text-2xl font-bold text-gray-400">+</div>
+                            <div class="flex items-start bg-blue-50 p-4 rounded-lg">
+                                <span class="text-4xl mr-4">🛰️</span>
+                                <div>
+                                    <h4 class="font-bold text-blue-800">Tier 2: Sky View</h4>
+                                    <p class="text-sm text-blue-700">Satellite data is used to track landscape-scale vegetation trends over time.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h3 class="text-xl font-bold text-[#003F5C] mb-4">The Dual-Methodology Approach (WA)</h3>
+                        <p class="text-gray-600 mb-6">Employs different on-ground techniques tailored to the distinct ecologies of the state's northern and southern rangelands.</p>
+                        <div class="flex flex-col space-y-4">
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-green-800">Northern Grasslands 🌿</h4>
+                                <p class="text-sm text-green-700 mt-1">Uses a <b>Frequency Rating</b>: recording the presence/absence of key grass species in many small quadrats.</p>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-red-800">Southern Shrublands 🌳</h4>
+                                <p class="text-sm text-red-700 mt-1">Uses a <b>Plant Count</b>: a direct census of key indicator shrub species within a larger defined plot.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="indigenous-knowledge">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[#003F5C]">Integrating Knowledge Systems</h2>
+                    <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Effective and ethical monitoring requires weaving together Western science with Indigenous knowledge, governance, and rights.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-8 border-t-8 border-[#EF5675]">
+                    <h3 class="text-2xl font-bold text-center text-[#003F5C] mb-2">Indigenous Data Sovereignty</h3>
+                    <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">This is the right of Indigenous peoples to govern their own data, from collection to application. The CARE Principles provide a crucial ethical framework for all partners.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-3xl font-black text-[#EF5675]">C</p>
+                            <h4 class="font-bold mt-1">Collective Benefit</h4>
+                            <p class="text-sm text-gray-600 mt-2">Data must benefit Indigenous communities.</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-3xl font-black text-[#EF5675]">A</p>
+                            <h4 class="font-bold mt-1">Authority to Control</h4>
+                            <p class="text-sm text-gray-600 mt-2">Recognize Indigenous rights to control their data.</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-3xl font-black text-[#EF5675]">R</p>
+                            <h4 class="font-bold mt-1">Responsibility</h4>
+                            <p class="text-sm text-gray-600 mt-2">Share how data is used to support self-determination.</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-3xl font-black text-[#EF5675]">E</p>
+                            <h4 class="font-bold mt-1">Ethics</h4>
+                            <p class="text-sm text-gray-600 mt-2">Indigenous rights and wellbeing are the primary concern.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="path-forward">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[#003F5C]">The Path Forward: A Federated Future</h2>
+                    <p class="mt-2 text-gray-600 max-w-2xl mx-auto">The solution isn't one perfect method, but a national system of governance that connects different, fit-for-purpose frameworks.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-bold text-center text-gray-700 mb-6">1. Foundational Inputs: Integrating All Ways of Knowing</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                                <div class="bg-blue-50 p-4 rounded-lg border-2 border-blue-200"><span class="text-3xl">👤</span><h4 class="font-bold text-blue-800 mt-2">Paddock Data</h4><p class="text-sm text-blue-600">(ABCD, Photopoints)</p></div>
+                                <div class="bg-purple-50 p-4 rounded-lg border-2 border-purple-200"><span class="text-3xl">🗺️</span><h4 class="font-bold text-purple-800 mt-2">Regional Data</h4><p class="text-sm text-purple-600">(WARMS, BioCondition)</p></div>
+                                <div class="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-200"><span class="text-3xl">🛰️</span><h4 class="font-bold text-indigo-800 mt-2">National Data</h4><p class="text-sm text-indigo-600">(HCAS, Satellite)</p></div>
+                                <div class="bg-teal-50 p-4 rounded-lg border-2 border-teal-200"><span class="text-3xl">🌿</span><h4 class="font-bold text-teal-800 mt-2">Indigenous Knowledge</h4><p class="text-sm text-teal-600">(Cultural Values, IEK)</p></div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center items-center text-4xl text-gray-400">↓</div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-center text-gray-700 mb-2">2. The Engine: A National Adaptive Governance Framework</h3>
+                            <p class="text-center text-sm text-gray-500 mb-6">Critical national investment in the 'scaffolding' that connects systems and people.</p>
+                            <div class="bg-gray-100 p-6 rounded-lg border-2 border-dashed border-gray-400">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="flex items-start space-x-3"><span class="text-2xl mt-1">🔗</span><div><h4 class="font-semibold text-gray-700">Shared Data Infrastructure</h4><p class="text-xs text-gray-500">Common standards for interoperability (e.g., EMSA).</p></div></div>
+                                    <div class="flex items-start space-x-3"><span class="text-2xl mt-1">🔄</span><div><h4 class="font-semibold text-gray-700">Calibration & Translation</h4><p class="text-xs text-gray-500">Robust models to translate between ABCD, BioCondition, HCAS, etc.</p></div></div>
+                                    <div class="flex items-start space-x-3"><span class="text-2xl mt-1">🤝</span><div><h4 class="font-semibold text-gray-700">Knowledge Broker Institutions</h4><p class="text-xs text-gray-500">NRM bodies & extension services to bridge science and practice.</p></div></div>
+                                    <div class="flex items-start space-x-3"><span class="text-2xl mt-1">⚖️</span><div><h4 class="font-semibold text-gray-700">Indigenous Data Governance</h4><p class="text-xs text-gray-500">Upholding CARE principles for ethical, co-designed monitoring.</p></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center items-center text-4xl text-gray-400">↓</div>
+
+                        <div>
+                             <h3 class="text-xl font-bold text-center text-gray-700 mb-6">3. Integrated Outputs: Delivering Value for All</h3>
+                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                                <div class="bg-green-50 p-4 rounded-lg border-2 border-green-200">
+                                    <h4 class="font-bold text-green-800">For Land Managers</h4>
+                                    <p class="text-sm text-green-600 mt-2">Actionable insights for improved productivity and sustainability.</p>
+                                </div>
+                                <div class="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
+                                    <h4 class="font-bold text-orange-800">For Policy & Markets</h4>
+                                    <p class="text-sm text-orange-600 mt-2">Consistent reporting & trusted data for Natural Capital / Carbon.</p>
+                                </div>
+                                <div class="bg-red-50 p-4 rounded-lg border-2 border-red-200">
+                                    <h4 class="font-bold text-red-800">For Australia</h4>
+                                    <p class="text-sm text-red-600 mt-2">Climate-resilient landscapes & sustainable industries.</p>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const vibrantPalette = {
+            darkBlue: '#003F5C',
+            midBlue: '#374C80',
+            purple: '#7A5195',
+            magenta: '#BC5090',
+            coral: '#EF5675',
+            orange: '#FF764A',
+            gold: '#FFA600'
+        };
+
+        const chartPlugins = {
+            tooltip: {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            },
+            legend: {
+                labels: {
+                    font: {
+                        family: "'Inter', sans-serif"
+                    }
+                }
+            }
+        };
+
+        const radarLabels = ['Paddock Scale', 'Policy Focus', 'Landholder Usability', 'Technical Complexity', 'Biodiversity Focus'];
+        
+        const radarOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: chartPlugins,
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                    pointLabels: {
+                        display: true
+                    },
+                    ticks: {
+                        backdropColor: 'rgba(255, 255, 255, 0.75)',
+                        color: 'rgba(0, 0, 0, 0.5)'
+                    },
+                    min: 0,
+                    max: 5
+                }
+            }
+        };
+
+        new Chart(document.getElementById('abcdRadar'), {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [{
+                    label: 'ABCD',
+                    data: [5, 1, 5, 1, 1],
+                    fill: true,
+                    backgroundColor: 'rgba(255, 166, 0, 0.2)',
+                    borderColor: vibrantPalette.gold,
+                    pointBackgroundColor: vibrantPalette.gold
+                }]
+            },
+            options: radarOptions
+        });
+
+        new Chart(document.getElementById('ntRadar'), {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [{
+                    label: 'NT Monitoring',
+                    data: [4, 4, 3, 3, 2],
+                    fill: true,
+                    backgroundColor: 'rgba(239, 86, 117, 0.2)',
+                    borderColor: vibrantPalette.coral,
+                    pointBackgroundColor: vibrantPalette.coral
+                }]
+            },
+            options: radarOptions
+        });
+        
+        new Chart(document.getElementById('hcasRadar'), {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [{
+                    label: 'HCAS',
+                    data: [1, 5, 1, 5, 5],
+                    fill: true,
+                    backgroundColor: 'rgba(122, 81, 149, 0.2)',
+                    borderColor: vibrantPalette.purple,
+                    pointBackgroundColor: vibrantPalette.purple
+                }]
+            },
+            options: radarOptions
+        });
+
+    </script>
+</body>
+</html>
