@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EUDR Readiness Assessment: Botswana & Namibia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .accent-bg { background-color: #EDC951; }
+        .accent-text { color: #CC333F; }
+        .primary-text { color: #00A0B0; }
+        .secondary-text { color: #6A4A3C; }
+        .flowchart-step {
+            border: 2px solid #EB6841;
+            background-color: #FFFFFF;
+            color: #6A4A3C;
+        }
+        .flowchart-arrow {
+            color: #EB6841;
+            align-self: center;
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-2xl md:text-3xl font-bold primary-text">EUDR Readiness Assessment</h1>
+            <p class="text-md secondary-text">Adapting CIBO Labs' Platform for Botswana & Namibia</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <section id="summary" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold accent-text mb-4">Executive Summary</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h3 class="font-bold text-lg primary-text">Market Opportunity</h3>
+                        <ul class="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                            <li>Significant demand for EUDR compliance solutions for beef and charcoal exports.</li>
+                            <li>First-mover advantage exists as local, specialized solutions are not yet established.</li>
+                            <li>Strong potential for partnership with regional bodies like SASSCAL to accelerate adoption.</li>
+                        </ul>
+                    </div>
+                    <div class="border-l-4 border-yellow-500 pl-4">
+                        <h3 class="font-bold text-lg primary-text">Data & Technology Readiness</h3>
+                        <ul class="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                            <li>Global satellite datasets provide a solid foundation but require regional calibration.</li>
+                            <li>The primary technical challenge is validating a definitive 2020 "forest" baseline for savanna ecosystems.</li>
+                            <li>A multi-source approach (combining ESA, Google, NASA data) is recommended for robust monitoring.</li>
+                        </ul>
+                    </div>
+                    <div class="border-l-4 border-red-500 pl-4">
+                        <h3 class="font-bold text-lg primary-text">Strategic Requirements</h3>
+                        <ul class="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                            <li>Validate and refine a 2020 forest baseline using local expertise and high-resolution imagery.</li>
+                            <li>Calibrate change detection algorithms for specific drivers in savanna biomes (e.g., fire, grazing pressure).</li>
+                            <li>Engage with local stakeholders (government, industry) to build trust and ensure solution relevance.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="compliance-facts" class="mb-12">
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-red-100 border-t-4 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md">
+                    <h3 class="font-bold">High Stakes Penalties</h3>
+                    <p class="text-sm">Fines up to 4% of total EU turnover for non-compliance.</p>
+                </div>
+                <div class="bg-yellow-100 border-t-4 border-yellow-500 rounded-b text-yellow-900 px-4 py-3 shadow-md">
+                    <h3 class="font-bold">Critical Cut-Off Date</h3>
+                    <p class="text-sm">No deforestation or degradation on plot of land after Dec 31, 2020.</p>
+                </div>
+                <div class="bg-blue-100 border-t-4 border-blue-500 rounded-b text-blue-900 px-4 py-3 shadow-md">
+                    <h3 class="font-bold">Imminent Deadline</h3>
+                    <p class="text-sm">Compliance mandatory from Dec 30, 2024 for large operators.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="eudr-challenge" class="mb-12">
+            <h2 class="text-2xl font-bold accent-text mb-4 text-center">The EUDR Challenge in Southern Africa</h2>
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                 <h3 class="text-xl font-semibold text-center secondary-text mb-6">Simplified EUDR Compliance Flow</h3>
+                <div class="flex flex-col md:flex-row justify-around items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="text-center flowchart-step rounded-lg p-4 shadow w-full md:w-1/4">
+                        <div class="text-4xl font-extrabold primary-text">1</div>
+                        <h4 class="font-bold mt-2">Plot Geolocation</h4>
+                        <p class="text-sm">Identify precise boundaries of land used for production.</p>
+                    </div>
+                    <div class="flowchart-arrow transform md:rotate-0 rotate-90">&rarr;</div>
+                    <div class="text-center flowchart-step rounded-lg p-4 shadow w-full md:w-1/4">
+                        <div class="text-4xl font-extrabold primary-text">2</div>
+                        <h4 class="font-bold mt-2">Risk Assessment</h4>
+                        <p class="text-sm">Assess risk of non-compliance based on plot data.</p>
+                    </div>
+                    <div class="flowchart-arrow transform md:rotate-0 rotate-90">&rarr;</div>
+                     <div class="text-center flowchart-step rounded-lg p-4 shadow w-full md:w-1/4">
+                        <div class="text-4xl font-extrabold primary-text">3</div>
+                        <h4 class="font-bold mt-2">Due Diligence Report</h4>
+                        <p class="text-sm">Submit verifiable proof that risk is negligible.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="font-bold text-lg primary-text mb-2">Reversed Burden of Proof</h3>
+                    <p class="text-gray-700">The responsibility is on the exporter to PROVE their supply chain is clean. Regulators do not need to prove deforestation occurred; the company must provide verifiable evidence that it did NOT.</p>
+                </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="font-bold text-lg accent-text mb-2">The "No Mixing" Rule</h3>
+                    <p class="text-gray-700">If a single non-compliant product (e.g., from one farm) is mixed with compliant products, the ENTIRE BATCH is deemed non-compliant. This makes plot-level traceability absolutely critical.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="commodities" class="mb-12">
+            <h2 class="text-2xl font-bold accent-text mb-4 text-center">Key Commodity Landscape</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-center mb-4 secondary-text">Botswana: Beef Exports</h4>
+                    <div class="chart-container">
+                        <canvas id="botswanaChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-600 mt-4">Botswana exports 9,000 tonnes of beef annually to the EU under a preferential trade agreement, making EUDR compliance a national economic priority.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-center mb-4 secondary-text">Namibia: Beef & Charcoal</h4>
+                    <div class="chart-container">
+                        <canvas id="namibiaChart"></canvas>
+                    </div>
+                     <p class="text-center text-sm text-gray-600 mt-4">The EU is the primary market for Namibian beef (~$23.5M annually) and charcoal (270,000 tons in 2023), placing immense pressure on both industries.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="nuance" class="mb-12">
+            <h2 class="text-2xl font-bold accent-text mb-6 text-center">The Critical Nuance: Deforestation vs. Bush Encroachment</h2>
+            <div class="bg-white rounded-lg shadow-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <h3 class="font-bold text-lg text-red-600">Deforestation</h3>
+                    <p class="text-gray-700 mt-2">The conversion of forest to another land use, such as agriculture. This is what the EUDR aims to prevent.</p>
+                    <img src="https://placehold.co/600x400/CC333F/FFFFFF?text=Forest+Cleared" alt="Deforestation" class="mt-4 rounded-lg shadow-md">
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg text-green-600">Bush Encroachment Management</h3>
+                    <p class="text-gray-700 mt-2">The clearing of invasive native woody shrubs to restore savanna rangeland health. This is an ecologically beneficial practice in Namibia and Botswana, but satellite algorithms can misinterpret it as deforestation.</p>
+                    <img src="https://placehold.co/600x400/00A0B0/FFFFFF?text=Savanna+Restored" alt="Bush Encroachment Management" class="mt-4 rounded-lg shadow-md">
+                </div>
+            </div>
+        </section>
+        
+        <section id="data-assessment" class="mb-12">
+            <h2 class="text-2xl font-bold accent-text mb-4 text-center">Global Data Product Accuracy Assessment</h2>
+            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-8">
+               Successful EUDR compliance hinges on accurate satellite data. We assessed leading global products for their suitability in the savanna and woodland biomes of Botswana and Namibia. While powerful, all require regional calibration for optimal performance.
+            </p>
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold text-center mb-4 secondary-text">Data Product Suitability Comparison</h3>
+                <div class="chart-container h-96 md:h-[450px] max-h-[500px] mx-auto">
+                    <canvas id="accuracyChart"></canvas>
+                </div>
+            </div>
+             <div class="mt-8">
+                <h3 class="text-xl font-bold secondary-text mb-4 text-center">Data Product Deep Dive: Critical Weaknesses for Savannas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow"><h4 class="font-bold">GFW (Hansen)</h4><p class="text-sm text-gray-600 mt-1">Defines trees as >5m tall, which is ill-suited for many savanna woodlands. Has documented low accuracy in Sub-Saharan Africa.</p></div>
+                    <div class="bg-white p-4 rounded-lg shadow"><h4 class="font-bold">NASA OPERA</h4><p class="text-sm text-gray-600 mt-1">Detects all vegetation loss, not just deforestation. High risk of false positives from natural savanna seasonality (droughts, fires).</p></div>
+                    <div class="bg-white p-4 rounded-lg shadow"><h4 class="font-bold">ESA WorldCover 10m</h4><p class="text-sm text-gray-600 mt-1">Accuracy drops to ~44% in Southern Africa due to major confusion between essential grassland and shrubland classes.</p></div>
+                    <div class="bg-white p-4 rounded-lg shadow"><h4 class="font-bold">Google Dynamic World</h4><p class="text-sm text-gray-600 mt-1">Shows profound spatial disagreements with other products on grass vs. shrub classification, highlighting ambiguity.</p></div>
+                    <div class="bg-white p-4 rounded-lg shadow md:col-span-2 lg:col-span-1"><h4 class="font-bold">Google 'Natural forests'</h4><p class="text-sm text-gray-600 mt-1">Excellent starting point, but its >5m height threshold may systematically exclude relevant open-canopy woodlands.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="path-forward" class="mb-12">
+            <h2 class="text-2xl font-bold accent-text mb-8 text-center">Path Forward: A 4-Step Adaptation Plan</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="space-y-8">
+                    <div class="flex items-start space-x-4"><div class="flex-shrink-0 bg-red-500 text-white text-2xl font-bold rounded-full h-12 w-12 flex items-center justify-center">1</div><div><h3 class="text-xl font-bold secondary-text">Baseline Validation & Refinement</h3><p class="text-gray-600 mt-1">Combine global products (e.g., Google's Natural Forests) with local expert knowledge from partners like SASSCAL and high-resolution imagery to create a legally defensible 2020 baseline that accurately defines "forest" in the regional context.</p></div></div>
+                    <div class="flex items-start space-x-4"><div class="flex-shrink-0 bg-yellow-500 text-white text-2xl font-bold rounded-full h-12 w-12 flex items-center justify-center">2</div><div><h3 class="text-xl font-bold secondary-text">Algorithm Calibration</h3><p class="text-gray-600 mt-1">Develop a region-specific machine learning model by fusing Sentinel-1 (radar) and Sentinel-2 (optical) data. Train it to distinguish genuine deforestation from seasonal variations, fire scars, and sustainable woodland management (debushing).</p></div></div>
+                    <div class="flex items-start space-x-4"><div class="flex-shrink-0 bg-green-500 text-white text-2xl font-bold rounded-full h-12 w-12 flex items-center justify-center">3</div><div><h3 class="text-xl font-bold secondary-text">Stakeholder Engagement & UI/UX Localization</h3><p class="text-gray-600 mt-1">Conduct workshops with Namibian and Botswana producers. Ingest key contextual data like farm boundaries and FSC-certified concession polygons to tailor the platform and reduce false positives.</p></div></div>
+                    <div class="flex items-start space-x-4"><div class="flex-shrink-0 bg-blue-500 text-white text-2xl font-bold rounded-full h-12 w-12 flex items-center justify-center">4</div><div><h3 class="text-xl font-bold secondary-text">Pilot Program Launch</h3><p class="text-gray-600 mt-1">Launch a pilot with select exporters (e.g., members of Namibia's LLPBN) to iterate on the platform's accuracy and generate auditable due diligence statements as a service before a full commercial rollout.</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="g2m" class="mb-12">
+            <h2 class="text-2xl font-bold accent-text mb-8 text-center">Go-to-Market Strategy</h2>
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="font-bold text-lg primary-text text-center">1. Targeted Partnerships</h3>
+                        <p class="text-sm text-gray-600 mt-2">Prioritize formal partnerships with industry bodies (Namibia's LLPBN, Biomass Group) and scientific institutions (SASSCAL) who control access to essential producer and validation data.</p>
+                    </div>
+                     <div>
+                        <h3 class="font-bold text-lg primary-text text-center">2. Phased Market Entry</h3>
+                        <p class="text-sm text-gray-600 mt-2">Focus on Namibia first. The industry is more organized, the commercial need is acute, and the "bush encroachment" problem provides a compelling value proposition. Leverage learnings for a faster Botswana entry.</p>
+                    </div>
+                     <div>
+                        <h3 class="font-bold text-lg primary-text text-center">3. Solution-Oriented SaaS Model</h3>
+                        <p class="text-sm text-gray-600 mt-2">Position the platform as a B2B risk management service, not a technology product. The value proposition: "We provide the guaranteed, auditable proof that secures your access to the EU market."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto p-6 text-center">
+            <p>&copy; 2025 CIBO Labs. EUDR Readiness Assessment.</p>
+            <p class="text-xs text-gray-400 mt-2">This infographic is for strategic planning purposes. All data is illustrative and based on expert analysis of publicly available information.</p>
+        </div>
+    </footer>
+    
+    <script>
+        const chartColors = {
+            blue: '#00A0B0',
+            brown: '#6A4A3C',
+            red: '#CC333F',
+            orange: '#EB6841',
+            yellow: '#EDC951',
+            grey: '#D3D3D3'
+        };
+
+        const tooltipTitleCallback = function(tooltipItems) {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            } else {
+                return label;
+            }
+        };
+        
+        const sharedDonutOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#6A4A3C'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('botswanaChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Beef', 'Diamonds', 'Tourism', 'Other'],
+                datasets: [{
+                    label: 'Export Value',
+                    data: [40, 35, 15, 10],
+                    backgroundColor: [chartColors.red, chartColors.blue, chartColors.yellow, chartColors.grey],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: sharedDonutOptions
+        });
+        
+        new Chart(document.getElementById('namibiaChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Beef', 'Charcoal', 'Grapes', 'Fish', 'Other'],
+                datasets: [{
+                    label: 'Export Value',
+                    data: [35, 20, 15, 20, 10],
+                    backgroundColor: [chartColors.red, chartColors.brown, chartColors.orange, chartColors.blue, chartColors.grey],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: sharedDonutOptions
+        });
+
+        const wrapLabel = (label, maxLength = 16) => {
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + ' ' + word).trim().length > maxLength) {
+                    lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            }
+            if (currentLine) {
+                lines.push(currentLine.trim());
+            }
+            return lines.length > 1 ? lines : lines[0] || '';
+        };
+
+        const accuracyLabels = [
+            'GFW (Hansen)', 
+            'NASA OPERA', 
+            'ESA WorldCover 10m', 
+            wrapLabel("Google Dynamic World"), 
+            wrapLabel("Google 'Natural forests of the world'")
+        ];
+
+        new Chart(document.getElementById('accuracyChart'), {
+            type: 'bar',
+            data: {
+                labels: accuracyLabels,
+                datasets: [
+                    {
+                        label: 'Suitability for Savannas (%)',
+                        data: [60, 75, 85, 80, 70],
+                        backgroundColor: chartColors.orange,
+                        borderColor: chartColors.orange,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Relevance for EUDR Baseline (%)',
+                        data: [70, 50, 95, 60, 90],
+                        backgroundColor: chartColors.blue,
+                        borderColor: chartColors.blue,
+                        borderWidth: 1
+                    },
+                     {
+                        label: 'Overall Stated Accuracy (%)',
+                        data: [90, 88, 81, 79, 85],
+                        backgroundColor: chartColors.brown,
+                        borderColor: chartColors.brown,
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)',
+                            color: '#6A4A3C'
+                        },
+                        ticks: {
+                           color: '#6A4A3C'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                           color: '#6A4A3C'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#6A4A3C'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
