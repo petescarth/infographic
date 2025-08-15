@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PermuCATE in Rangeland Science: A Visual Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .flowchart-step {
+            transition: all 0.3s ease-in-out;
+        }
+        .flowchart-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .arrow {
+            color: #FF6B6B;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#1A535C] mb-2">Unearthing Causality in the Rangelands</h1>
+            <p class="text-lg md:text-xl text-[#4ECDC4] font-medium">Using PermuCATE to Isolate Management Effects from Climate Noise</p>
+        </header>
+
+        <main>
+            <section id="challenge" class="mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-[#1A535C] mb-4 text-center">The Core Challenge: Signal vs. Noise</h2>
+                    <p class="text-base md:text-lg mb-6 text-center max-w-3xl mx-auto">In rangeland science, determining if a management change (like rotational grazing) truly improved groundcover is difficult. The effect of the management 'signal' is often drowned out by the 'noise' of a highly variable climate. Did the pasture improve because of the new strategy, or was it just a wet year? Simple correlation isn't enough; we need to establish causation.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="text-center">
+                             <div class="chart-container h-64 md:h-80">
+                                <canvas id="correlationChart"></canvas>
+                            </div>
+                            <p class="mt-4 text-sm text-gray-600">This chart illustrates the problem. A new management strategy is implemented, and groundcover improves. However, precipitation also increased during the same period. We cannot tell from this simple observation which factor caused the improvement. This is the confounding effect we must overcome.</p>
+                        </div>
+                        <div class="text-center p-6 bg-[#F7FFF7] rounded-lg">
+                            <h3 class="text-2xl font-bold text-[#1A535C] mb-3">The Critical Question Shifts</h3>
+                            <p class="text-5xl font-bold text-[#FF6B6B] mb-4">➔</p>
+                            <p class="text-xl font-semibold text-gray-700">From: "Did the strategy work?"</p>
+                            <p class="text-xl font-semibold text-gray-700 mt-2">To: <span class="text-[#1A535C]">"Under which climatic conditions</span> does this strategy work best?"</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cate" class="mb-16">
+                 <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-[#1A535C] mb-4 text-center">Beyond Averages: The CATE Framework</h2>
+                    <p class="text-base md:text-lg mb-8 text-center max-w-3xl mx-auto">Instead of a single Average Treatment Effect (ATE), we estimate the Conditional Average Treatment Effect (CATE). CATE is a function, not a number. It tells us the expected effect of a management change for a pasture with a specific set of characteristics (e.g., high rainfall and sandy soil vs. low rainfall and clay soil).</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <div class="chart-container h-80 md:h-96">
+                                <canvas id="cateVsAteChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-base md:text-lg text-gray-700 leading-relaxed">The chart on the left demonstrates the power of CATE. The Average Treatment Effect (ATE) is near zero, suggesting the management change has no effect. However, the CATE function reveals the truth: the strategy is highly beneficial in high moisture conditions but is actually harmful in dry conditions. Relying on the average alone would lead to poor management decisions.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="methodology" class="mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-[#1A535C] mb-6 text-center">The Analytical Workflow: A Robust Process</h2>
+                    <p class="text-base md:text-lg mb-8 text-center max-w-3xl mx-auto">To find the important climate drivers, we follow a rigorous, multi-step process using causal machine learning. This ensures our conclusions are statistically sound and guards against common modeling errors.</p>
+                    <div class="space-y-4">
+                        <div class="flowchart-step bg-[#F7FFF7] p-6 rounded-lg shadow">
+                            <h3 class="text-xl font-semibold text-[#1A535C]">Step 1: Estimate CATE with a DR-Learner</h3>
+                            <p class="text-gray-600 mt-2">We use a Doubly Robust (DR) Learner to estimate the CATE function. This advanced method is a "safety net": it provides an unbiased estimate if we correctly model *either* the manager's decision process *or* the ecological response of the groundcover. We don't have to get both perfect.</p>
+                        </div>
+                        <div class="text-center text-3xl font-bold arrow">↓</div>
+                        <div class="flowchart-step bg-[#F7FFF7] p-6 rounded-lg shadow">
+                            <h3 class="text-xl font-semibold text-[#1A535C]">Step 2: Cluster Correlated Climate Variables</h3>
+                            <p class="text-gray-600 mt-2">Many climate variables are highly correlated (e.g., summer temperature and heat stress days). To get a clear signal, we group them into meaningful clusters like "Growing Season Moisture" or "Summer Heat Stress" using hierarchical clustering.</p>
+                        </div>
+                        <div class="text-center text-3xl font-bold arrow">↓</div>
+                         <div class="flowchart-step bg-[#F7FFF7] p-6 rounded-lg shadow">
+                            <h3 class="text-xl font-semibold text-[#1A535C]">Step 3: Run PermuCATE for Variable Importance</h3>
+                            <p class="text-gray-600 mt-2">PermuCATE assesses importance by measuring the drop in the CATE model's performance when a variable's information is disrupted. Crucially, it uses a "smart shuffle" to preserve the data's natural correlation structure, avoiding the errors of naive permutation.</p>
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <h4 class="text-lg font-semibold text-center text-[#1A535C] mb-3">How the 'Smart Shuffle' Works:</h4>
+                                <div class="flex flex-col md:flex-row justify-around items-center text-center space-y-4 md:space-y-0 md:space-x-4">
+                                    <div class="flex-1 p-3 bg-white rounded-md border">
+                                        <p class="font-bold text-lg text-[#4ECDC4]">1. Model</p>
+                                        <p class="text-sm text-gray-600">Predict the variable (e.g., Summer Heat) using all other climate variables to find its predictable component.</p>
+                                    </div>
+                                    <div class="font-bold text-2xl text-gray-400 mx-2">+</div>
+                                    <div class="flex-1 p-3 bg-white rounded-md border">
+                                        <p class="font-bold text-lg text-[#FF6B6B]">2. Isolate</p>
+                                        <p class="text-sm text-gray-600">Separate the predictable part from the unpredictable, random part (the residuals).</p>
+                                    </div>
+                                     <div class="font-bold text-2xl text-gray-400 mx-2">➔</div>
+                                    <div class="flex-1 p-3 bg-white rounded-md border">
+                                        <p class="font-bold text-lg text-[#1A535C]">3. Shuffle</p>
+                                        <p class="text-sm text-gray-600">Shuffle *only* the random part and add it back to the predictable part. This disrupts the signal while keeping correlations intact.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="results" class="mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-[#1A535C] mb-2 text-center">Identifying the Key Drivers of Heterogeneity</h2>
+                    <p class="text-base md:text-lg mb-8 text-center max-w-3xl mx-auto">PermuCATE delivers a clear, statistically rigorous ranking of which environmental factors matter most. The output, a Total Sobol Index, quantifies each variable's total contribution to the variation in management effects. Unlike other methods, it has higher statistical power, meaning it's better at detecting true effects with limited data.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                        <div>
+                             <div class="chart-container h-80 md:h-96">
+                                <canvas id="permucateResultsChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-[#1A535C] mb-3">Interpreting the Results:</h3>
+                             <p class="text-base md:text-lg text-gray-700 leading-relaxed">The bar chart shows the importance scores from PermuCATE. A higher score means the variable has a greater influence on whether the management strategy succeeds or fails. Here, 'Growing Season Moisture' is clearly the most critical factor. 'Summer Heat Stress' also has a significant, though smaller, impact. 'Winter Conditions' do not appear to significantly alter the management's effectiveness. This provides clear, actionable guidance for land managers.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="comparison" class="mb-16">
+                 <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-[#1A535C] mb-4 text-center">Why PermuCATE? Higher Statistical Power</h2>
+                    <p class="text-base md:text-lg mb-8 text-center max-w-3xl mx-auto">PermuCATE's main advantage over the alternative Leave-One-Covariate-Out (LOCO) method is its higher statistical power. This comes from having lower estimation variance in real-world, finite-sample scenarios.</p>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="p-6 bg-gray-100 rounded-lg border-l-4 border-[#FF6B6B]">
+                            <h3 class="text-xl font-semibold text-gray-800">LOCO's Challenge: High Variance</h3>
+                            <p class="mt-2 text-gray-600">LOCO must completely retrain a complex CATE model for every variable it tests. This retraining introduces significant noise and variance, making it harder to detect true effects (lower power).</p>
+                        </div>
+                        <div class="p-6 bg-gray-100 rounded-lg border-l-4 border-[#4ECDC4]">
+                             <h3 class="text-xl font-semibold text-gray-800">PermuCATE's Edge: Lower Variance</h3>
+                             <p class="mt-2 text-gray-600">PermuCATE trains the CATE model only once. Its variance comes from the simpler, more stable task of modeling relationships between covariates for its "smart shuffle". This leads to more precise estimates and a greater ability to find the true drivers of heterogeneity.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="example-analysis" class="mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-[#1A535C] mb-6 text-center">Example Analysis: A Practical Walkthrough</h2>
+                    <p class="text-base md:text-lg mb-8 text-center max-w-3xl mx-auto">Let's apply this to a real-world scenario. Imagine you have historical data for hundreds of pastures, including satellite-derived fractional ground cover, daily rainfall records, and GIS data showing which pastures implemented a new grazing strategy and when.</p>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-[#1A535C] text-white text-xl font-bold rounded-full flex items-center justify-center">1</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-[#1A535C]">Data Assembly & Feature Engineering</h3>
+                                <p class="text-gray-600 mt-1">For each pasture-year, you calculate: <br>• **Outcome (Y):** Average ground cover during the peak growing season. <br>• **Treatment (A):** A binary flag (1 if new strategy was used that year, 0 otherwise). <br>• **Covariates (X):** Total rainfall, number of rain days, longest dry spell, average temperature, soil type, elevation, etc.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-[#1A535C] text-white text-xl font-bold rounded-full flex items-center justify-center">2</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-[#1A535C]">CATE Estimation</h3>
+                                <p class="text-gray-600 mt-1">You train a DR-Learner. It learns to predict ground cover based on climate and management, and also learns to predict the manager's decision to apply the treatment based on climate. It combines these to estimate the CATE function, $\tau(x)$.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-[#1A535C] text-white text-xl font-bold rounded-full flex items-center justify-center">3</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-[#1A535C]">PermuCATE Execution</h3>
+                                <p class="text-gray-600 mt-1">You run PermuCATE on the trained CATE model. It takes the "Total Rainfall" variable, uses the other climate data to predict its expected value, and then shuffles the random, unpredictable part of rainfall. It measures how much this "smart shuffle" hurts the model's ability to explain the CATE, giving a precise importance score for rainfall.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-[#4ECDC4] text-white text-xl font-bold rounded-full flex items-center justify-center">4</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-[#1A535C]">Actionable Insight</h3>
+                                <p class="text-gray-600 mt-1">The result shows rainfall is highly significant (p < 0.01). By plotting the CATE against rainfall, you discover the new strategy provides a +5% groundcover benefit in wet years (>400mm) but a -2% deficit in dry years (<250mm). The recommendation is clear: implement the strategy, but consider destocking or providing supplemental feed during years with poor early-season rainfall forecasts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-300">
+            <p class="text-gray-600">This infographic visualizes a methodology for applying the PermuCATE algorithm to rangeland science, based on the principles of causal machine learning for heterogeneous treatment effects. All data is illustrative. No SVG or Mermaid JS was used in this production.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const vibrantPalette = {
+            darkGreen: '#1A535C',
+            turquoise: '#4ECDC4',
+            lightGreen: '#F7FFF7',
+            red: '#FF6B6B',
+            yellow: '#FFE66D',
+            gray: '#5F5F5F'
+        };
+
+        function wrapLabels(label) {
+            if (typeof label === 'string' && label.length > 16) {
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + word).length > 16) {
+                        lines.push(currentLine.trim());
+                        currentLine = '';
+                    }
+                    currentLine += word + ' ';
+                }
+                lines.push(currentLine.trim());
+                return lines;
+            }
+            return label;
+        }
+        
+        const tooltipTitleCallback = function(tooltipItems) {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            } else {
+                return label;
+            }
+        };
+
+        const defaultChartOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: vibrantPalette.gray
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: vibrantPalette.gray },
+                    grid: { color: '#e0e0e0' }
+                },
+                x: {
+                    ticks: { color: vibrantPalette.gray },
+                    grid: { display: false }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('correlationChart'), {
+            type: 'line',
+            data: {
+                labels: ['Year 1', 'Year 2', 'Year 3 (New Mgt)', 'Year 4', 'Year 5'],
+                datasets: [{
+                    label: 'Groundcover (%)',
+                    data: [30, 28, 45, 50, 55],
+                    borderColor: vibrantPalette.turquoise,
+                    backgroundColor: 'rgba(78, 205, 196, 0.2)',
+                    fill: true,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Precipitation (mm)',
+                    data: [350, 320, 500, 550, 600],
+                    borderColor: vibrantPalette.red,
+                    backgroundColor: 'rgba(255, 107, 107, 0.2)',
+                    fill: true,
+                    tension: 0.1,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                ...defaultChartOptions,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'Groundcover (%)', color: vibrantPalette.darkGreen },
+                        ticks: { color: vibrantPalette.gray },
+                        grid: { color: '#e0e0e0' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Precipitation (mm)', color: vibrantPalette.darkGreen },
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: vibrantPalette.gray }
+                    },
+                    x: {
+                        ticks: { color: vibrantPalette.gray },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('cateVsAteChart'), {
+            type: 'line',
+            data: {
+                labels: ['Very Dry', 'Dry', 'Average', 'Wet', 'Very Wet'],
+                datasets: [{
+                    label: 'CATE (Management Effect)',
+                    data: [-5, -2, 1, 8, 12],
+                    borderColor: vibrantPalette.turquoise,
+                    backgroundColor: 'rgba(78, 205, 196, 0.5)',
+                    fill: false,
+                    tension: 0.4
+                }, {
+                    label: 'ATE (Average Effect)',
+                    data: [2.8, 2.8, 2.8, 2.8, 2.8],
+                    borderColor: vibrantPalette.red,
+                    borderDash: [5, 5],
+                    fill: false
+                }]
+            },
+            options: {
+                ...defaultChartOptions,
+                plugins: {
+                    ...defaultChartOptions.plugins,
+                    title: {
+                        display: true,
+                        text: 'CATE vs. ATE by Moisture Condition',
+                        color: vibrantPalette.darkGreen,
+                        font: { size: 16 }
+                    }
+                },
+                 scales: {
+                    y: {
+                        title: { display: true, text: 'Change in Groundcover (%)', color: vibrantPalette.darkGreen },
+                        ticks: { color: vibrantPalette.gray },
+                        grid: { color: '#e0e0e0' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Growing Season Moisture', color: vibrantPalette.darkGreen },
+                        ticks: { color: vibrantPalette.gray },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+        
+        const permucateLabels = ['Growing Season Moisture', 'Summer Heat Stress', 'Precipitation Extremes', 'Static Soil Type', 'Winter Conditions'];
+        new Chart(document.getElementById('permucateResultsChart'), {
+            type: 'bar',
+            data: {
+                labels: permucateLabels.map(wrapLabels),
+                datasets: [{
+                    label: 'PermuCATE Importance Score',
+                    data: [0.85, 0.42, 0.21, 0.15, 0.05],
+                    backgroundColor: [
+                        vibrantPalette.turquoise,
+                        vibrantPalette.yellow,
+                        vibrantPalette.red,
+                        '#FFC1A6',
+                        '#A6D4FF'
+                    ],
+                    borderColor: vibrantPalette.darkGreen,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...defaultChartOptions,
+                indexAxis: 'y',
+                plugins: {
+                    ...defaultChartOptions.plugins,
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Importance of Climate Factors on Management Effect',
+                        color: vibrantPalette.darkGreen,
+                        font: { size: 16 }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: { color: vibrantPalette.gray },
+                        grid: { display: false }
+                    },
+                    x: {
+                        title: { display: true, text: 'Total Sobol Index (Importance)', color: vibrantPalette.darkGreen },
+                        ticks: { color: vibrantPalette.gray },
+                        grid: { color: '#e0e0e0' }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
