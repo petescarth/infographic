@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Multi-Scalar Ecological Classification Framework for Australian Rangelands</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F4F8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .flowchart-step {
+            border: 2px solid #4A5568;
+            background-color: #FFFFFF;
+            color: #1A202C;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .flowchart-step:hover {
+            transform: translateY(-5px);
+        }
+        .flowchart-arrow {
+            font-size: 2rem;
+            color: #2D3748;
+            line-height: 1;
+        }
+        .pyramid-level {
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            margin-bottom: -1.5rem;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .songline-node {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            position: absolute;
+            z-index: 10;
+        }
+        .songline-path {
+            position: absolute;
+            height: 2px;
+            background-color: #77aadd;
+            transform-origin: left center;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#00429d] mb-4">A New Vision for Rangeland Assessment</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">Integrating advanced geospatial analysis with Indigenous ecological knowledge to create a dynamic, multi-scalar classification framework for Northern Australia.</p>
+        </header>
+
+        <main>
+            <section id="introduction" class="mb-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    <div class="md:col-span-1 bg-white p-6 rounded-lg shadow-lg text-center">
+                        <div class="text-6xl font-bold text-[#5e84b5]">1 ha</div>
+                        <h3 class="text-xl font-semibold mt-2 text-gray-700">Foundation Unit</h3>
+                        <p class="mt-2 text-gray-600">Our framework begins with the 'EcoSegment,' a 1-hectare base unit, enabling highly detailed, property-scale analysis and management.</p>
+                    </div>
+                    <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold text-[#00429d] mb-4">The Challenge: Beyond Static Maps</h2>
+                        <p class="text-gray-700 mb-4">Traditional land classification systems often fail to capture the dynamic and variable nature of Australia's vast rangelands. They are frequently static, too coarse for local management, and lack the ability to integrate different knowledge systems.</p>
+                        <p class="text-gray-700">This new framework proposes a paradigm shift: a bottom-up, data-driven approach that builds a rich, hierarchical understanding of the landscape from the ground up, while respectfully weaving in the deep ecological knowledge of Indigenous Australians.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="taxonomy" class="mb-16">
+                <h2 class="text-3xl font-bold text-center text-[#00429d] mb-8">A Six-Level Hierarchical Taxonomy</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">The framework organizes the landscape into a nested hierarchy, scaling from a single hectare to entire bioregions. Each level represents a distinct scale of ecological pattern and process, providing a comprehensive view for planning and management.</p>
+                
+                <div class="w-full max-w-4xl mx-auto">
+                    <div class="pyramid-level" style="background-color: #96c1e7; width: 100%;">
+                        <span class="text-sm md:text-base">LEVEL 6</span>
+                        <span class="text-lg md:text-xl">Bioregion</span>
+                        <div class="text-xs font-normal mt-1 opacity-90 px-4">
+                            <p class="italic mb-1">A very large area with common climate, geology, and characteristic biota.</p>
+                            <p>Scale: >1,000,000s ha | Example: The 'Top End Coastal' Bioregion</p>
+                        </div>
+                    </div>
+                    <div class="pyramid-level" style="background-color: #77aadd; width: 90%; margin-left: auto; margin-right: auto;">
+                        <span class="text-sm md:text-base">LEVEL 5</span>
+                        <span class="text-lg md:text-xl">Sub-Bioregion</span>
+                         <div class="text-xs font-normal mt-1 opacity-90 px-4">
+                            <p class="italic mb-1">A large area of broad geomorphic and macro-climatic similarity.</p>
+                            <p>Scale: 100,000s - 1,000,000s ha | Example: The 'Daly Basin' Sub-Bioregion</p>
+                        </div>
+                    </div>
+                    <div class="pyramid-level" style="background-color: #5e84b5; width: 80%; margin-left: auto; margin-right: auto;">
+                        <span class="text-sm md:text-base">LEVEL 4</span>
+                        <span class="text-lg md:text-xl">Land System</span>
+                         <div class="text-xs font-normal mt-1 opacity-90 px-4">
+                            <p class="italic mb-1">A recurring pattern of ecofacets linked by common geology and hydrology.</p>
+                            <p>Scale: 1,000s - 100,000s ha | Example: The 'Wave Hill Land System'</p>
+                        </div>
+                    </div>
+                    <div class="pyramid-level" style="background-color: #436a98; width: 70%; margin-left: auto; margin-right: auto;">
+                        <span class="text-sm md:text-base">LEVEL 3</span>
+                        <span class="text-lg md:text-xl">Ecofacet</span>
+                         <div class="text-xs font-normal mt-1 opacity-90 px-4">
+                            <p class="italic mb-1">A recurring mosaic of associated ecotopes defined by a specific landform.</p>
+                            <p>Scale: 100s - 1,000s ha | Example: A 'Lateritic breakaway'</p>
+                        </div>
+                    </div>
+                    <div class="pyramid-level" style="background-color: #2a517c; width: 60%; margin-left: auto; margin-right: auto;">
+                        <span class="text-sm md:text-base">LEVEL 2</span>
+                        <span class="text-lg md:text-xl">Ecotope</span>
+                         <div class="text-xs font-normal mt-1 opacity-90 px-4">
+                            <p class="italic mb-1">The smallest ecologically distinct, relatively homogeneous landscape unit.</p>
+                            <p>Scale: 1 - 100s ha | Example: 'Ribbon grass on a cracking clay flat'</p>
+                        </div>
+                    </div>
+                    <div class="pyramid-level" style="background-color: #00429d; width: 50%; margin-left: auto; margin-right: auto;">
+                        <span class="text-sm md:text-base">LEVEL 1</span>
+                        <span class="text-lg md:text-xl">EcoSegment</span>
+                         <div class="text-xs font-normal mt-1 opacity-90 px-4">
+                            <p class="italic mb-1">The foundational base unit; a nominal 1ha grid cell or polygon.</p>
+                            <p>Scale: 1 ha | Example: A single 100x100m data pixel</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comparison" class="mb-16">
+                <h2 class="text-3xl font-bold text-center text-[#00429d] mb-8">A Legacy of Landscape Classification</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">Our proposed framework builds upon a rich history of ecological classification. Understanding these foundational systems highlights the specific gaps our data-driven, multi-scalar approach is designed to fill.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+                        <h3 class="text-xl font-bold text-[#436a98] mb-3">IBRA Framework</h3>
+                        <p class="text-gray-700 mb-4 flex-grow">The national standard (Interim Biogeographic Regionalisation for Australia) that classifies the continent into 89 Bioregions and 419 Subregions.</p>
+                        <div class="text-sm">
+                            <p class="mb-2"><strong class="text-green-600">Strength:</strong> Provides the essential macro-scale context for conservation planning.</p>
+                            <p><strong class="text-red-600">Limitation:</strong> Too coarse for property-level management or dynamic condition monitoring.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+                        <h3 class="text-xl font-bold text-[#436a98] mb-3">CSIRO Land Systems</h3>
+                        <p class="text-gray-700 mb-4 flex-grow">Pioneering work in Australia that defined a Land System as a recurring pattern of geology, topography, soils, and vegetation, identified from aerial photos.</p>
+                        <div class="text-sm">
+                            <p class="mb-2"><strong class="text-green-600">Strength:</strong> Highly relevant to the patterned nature of Australian rangelands.</p>
+                            <p><strong class="text-red-600">Limitation:</strong> Primarily qualitative/descriptive; not easily derived from modern digital data.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+                        <h3 class="text-xl font-bold text-[#436a98] mb-3">Queensland Regional Ecosystems</h3>
+                        <p class="text-gray-700 mb-4 flex-grow">A state-wide system that classifies and maps vegetation communities based on their geology, landform, and characteristic flora.</p>
+                        <div class="text-sm">
+                            <p class="mb-2"><strong class="text-green-600">Strength:</strong> Provides a detailed, legally mandated framework for biodiversity conservation.</p>
+                            <p><strong class="text-red-600">Limitation:</strong> Primarily focused on remnant vegetation and expert-defined classes.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+                        <h3 class="text-xl font-bold text-[#436a98] mb-3">NT Rangeland Monitoring</h3>
+                        <p class="text-gray-700 mb-4 flex-grow">A system focused on assessing pastoral land condition, building on the Land System legacy with a network of ground monitoring sites (e.g., Tier 2 sites).</p>
+                        <div class="text-sm">
+                            <p class="mb-2"><strong class="text-green-600">Strength:</strong> Directly tailored to pastoral management with strong field-based assessment.</p>
+                            <p><strong class="text-red-600">Limitation:</strong> Site-based data can be difficult to extrapolate across vast, heterogeneous areas.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="connectivity" class="mb-16">
+                <h2 class="text-3xl font-bold text-center text-[#00429d] mb-8">Two Ways of Knowing: Weaving Knowledge Systems</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">This framework's core innovation is bridging these two powerful worldviews. The <b>hierarchical taxonomy</b> provides a common, structured language to describe the <i>patterns</i> of Country, while the <b>connectivity analysis</b> models the <i>processes</i> that link them, creating a unified view that respects and integrates both scientific and Indigenous perspectives.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold text-[#436a98] mb-4">Western Science: Landscape Ecology</h3>
+                        <p class="text-gray-700 mb-4">Landscape ecology uses quantitative methods to model the landscape as a mosaic of patches and corridors. Graph theory helps analyze this structure, identifying critical habitats and pathways for species movement and resource flow.</p>
+                        <div class="chart-container h-[300px] max-h-[350px]">
+                            <canvas id="graphTheoryChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold text-[#5e84b5] mb-4">Indigenous Knowledge: Songlines</h3>
+                        <p class="text-gray-700 mb-4">Songlines are a profound, process-oriented framework of connectivity. They represent pathways of Ancestral Beings, encoding deep ecological knowledge about resources, navigation, and the reciprocal relationship of "Caring for Country".</p>
+                        <div id="songline-container" class="relative w-full h-[300px] max-h-[350px] border-2 border-dashed border-gray-300 rounded-lg p-4">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="methodology" class="mb-16">
+                <h2 class="text-3xl font-bold text-center text-[#00429d] mb-12">A Data-Driven Workflow for Dynamic Assessment</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="flowchart-step">
+                        <span class="text-2xl">📊</span>
+                        <h3 class="font-semibold mt-2">1. Data Ingestion</h3>
+                        <p class="text-sm mt-auto">Static physical data (soil, topography) and climate/satellite archives are compiled.</p>
+                    </div>
+                    <div class="flowchart-step">
+                        <span class="text-2xl">⌛</span>
+                        <h3 class="font-semibold mt-2">2. Time-Series Attribution</h3>
+                        <p class="text-sm mt-auto">Each 1ha EcoSegment is attributed with a 35-year time series of ground cover and key climate variables.</p>
+                    </div>
+                    <div class="flowchart-step">
+                        <span class="text-2xl">🧩</span>
+                        <h3 class="font-semibold mt-2">3. Segmentation & Classification</h3>
+                        <p class="text-sm mt-auto">Object-Based Image Analysis (OBIA) groups segments into Ecotopes based on physical properties and long-term patterns.</p>
+                    </div>
+                </div>
+                <div class="flex justify-center my-4">
+                    <div class="flowchart-arrow text-center">&darr;</div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold text-center text-[#00429d] mb-4">4. Signal Separation: Disentangling Management from Climate</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flowchart-step !border-blue-300">
+                            <span class="text-2xl">📏</span>
+                            <h4 class="font-semibold mt-2">Benchmarking Methods (Spatial)</h4>
+                            <p class="text-sm mt-auto">Assess a target area's performance against reference sites or a population of similar sites. The difference is attributed to management.</p>
+                            <p class="text-xs font-bold mt-2 text-gray-600">Examples: DRCM, Grazing Gradients</p>
+                        </div>
+                        <div class="flowchart-step !border-blue-300">
+                            <span class="text-2xl">📈</span>
+                            <h4 class="font-semibold mt-2">Climate-Correction Methods (Temporal)</h4>
+                            <p class="text-sm mt-auto">Model the expected vegetation response to climate over time. The "residual" trend—what climate doesn't explain—is the management signal.</p>
+                            <p class="text-xs font-bold mt-2 text-gray-600">Examples: RESTREND, TSS-RESTREND, SeRGS</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center my-4">
+                    <div class="flowchart-arrow text-center">&darr;</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div class="flowchart-step">
+                        <span class="text-2xl">🔗</span>
+                        <h3 class="font-semibold mt-2">5. Connectivity Analysis</h3>
+                        <p class="text-sm mt-auto">Using the classified Ecotopes as nodes, graph theory links the structural taxonomy to a functional analysis of the landscape, modeling habitat connectivity and integrating cultural corridors.</p>
+                    </div>
+                    <div class="flowchart-step">
+                        <span class="text-2xl">🗺️</span>
+                        <h3 class="font-semibold mt-2">6. Decision Support</h3>
+                        <p class="text-sm mt-auto">The synthesis of the structural classification and functional connectivity provides a unified, two-systems view to support collaborative management and planning.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-300">
+            <p class="text-gray-600">@petescarth</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const vibrantBluesPalette = {
+            primary: '#00429d',
+            secondary: '#436a98',
+            tertiary: '#5e84b5',
+            accent1: '#77aadd',
+            accent2: '#96c1e7',
+            neutral: '#b2d8f2',
+            light: '#d2ecfa',
+            textDark: '#1A202C',
+            textLight: '#FFFFFF',
+        };
+
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            let lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxWidth) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+        
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            } else {
+                return label;
+            }
+        };
+
+        const graphTheoryChartCtx = document.getElementById('graphTheoryChart').getContext('2d');
+        new Chart(graphTheoryChartCtx, {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Habitat Patches (Nodes)',
+                    data: [
+                        {x: 2, y: 8, r: 25}, {x: 4, y: 4, r: 15},
+                        {x: 7, y: 7, r: 20}, {x: 10, y: 3, r: 18},
+                        {x: 13, y: 9, r: 22}, {x: 16, y: 5, r: 12}
+                    ],
+                    backgroundColor: vibrantBluesPalette.secondary,
+                    borderColor: vibrantBluesPalette.primary
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: { type: 'line', xMin: 2.5, xMax: 6.5, yMin: 7.5, yMax: 4.5, borderColor: vibrantBluesPalette.accent1, borderWidth: 2 },
+                            line2: { type: 'line', xMin: 7, xMax: 4.5, yMin: 7, yMax: 4.5, borderColor: vibrantBluesPalette.accent1, borderWidth: 2, borderDash: [6, 6] },
+                            line3: { type: 'line', xMin: 7.5, xMax: 9.5, yMin: 7, yMax: 3.5, borderColor: vibrantBluesPalette.accent1, borderWidth: 2 },
+                            line4: { type: 'line', xMin: 7.5, xMax: 12.5, yMin: 7.5, yMax: 8.5, borderColor: vibrantBluesPalette.accent1, borderWidth: 2 },
+                            line5: { type: 'line', xMin: 10.5, xMax: 15.5, yMin: 3.5, yMax: 5, borderColor: vibrantBluesPalette.accent1, borderWidth: 2, borderDash: [6, 6] },
+                            line6: { type: 'line', xMin: 13.5, xMax: 15.5, yMin: 8.5, yMax: 5.5, borderColor: vibrantBluesPalette.accent1, borderWidth: 2 },
+                        }
+                    }
+                },
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                }
+            }
+        });
+        
+        function createSongline() {
+            const container = document.getElementById('songline-container');
+            container.innerHTML = ''; 
+            const nodes = [
+                { x: 10, y: 75, icon: '💧', label: 'Waterhole' },
+                { x: 35, y: 25, icon: '🌄', label: 'Ridge' },
+                { x: 60, y: 80, icon: '🌳', label: 'Resource Patch' },
+                { x: 85, y: 40, icon: '🗿', label: 'Ceremonial Site' }
+            ];
+
+            nodes.forEach((node, index) => {
+                const nodeEl = document.createElement('div');
+                nodeEl.className = 'songline-node bg-white border-2 border-blue-800';
+                nodeEl.style.left = `calc(${node.x}% - 1.25rem)`;
+                nodeEl.style.top = `calc(${node.y}% - 1.25rem)`;
+                nodeEl.innerHTML = node.icon;
+                nodeEl.title = node.label;
+                container.appendChild(nodeEl);
+
+                if (index > 0) {
+                    const prevNode = nodes[index - 1];
+                    const path = document.createElement('div');
+                    path.className = 'songline-path';
+                    
+                    const dx = (node.x / 100 * container.offsetWidth) - (prevNode.x / 100 * container.offsetWidth);
+                    const dy = (node.y / 100 * container.offsetHeight) - (prevNode.y / 100 * container.offsetHeight);
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                    path.style.width = `${distance}px`;
+                    path.style.left = `${prevNode.x}%`;
+                    path.style.top = `${prevNode.y}%`;
+                    path.style.transform = `rotate(${angle}deg)`;
+                    container.appendChild(path);
+                }
+            });
+        }
+
+        window.addEventListener('load', createSongline);
+        window.addEventListener('resize', createSongline);
+
+    </script>
+</body>
+</html>
