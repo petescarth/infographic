@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Method for Determining Drought Onset</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .step-connector::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 3rem; /* 48px */
+            background-color: #d1d5db; /* gray-300 */
+        }
+        .icon-shadow {
+             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+        .card-hover {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">A Hybrid Method for Determining Drought Onset</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Combining vegetation impact with meteorological data to identify, classify, and understand droughts.</p>
+            <p class="text-md text-gray-500 max-w-3xl mx-auto mt-2">Insights and timings are adapted from studies focusing on the Australian continent.</p>
+        </header>
+
+        <div class="space-y-12">
+
+            <!-- Step 1: Data Preparation -->
+            <section id="step1" class="text-center relative">
+                <div class="inline-block bg-white p-6 rounded-full shadow-lg border-4 border-blue-200 mb-4">
+                     <span class="text-4xl font-bold text-blue-600">1</span>
+                </div>
+                <h2 class="text-3xl font-bold mb-6">Data Preparation & Standardization</h2>
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-md border card-hover">
+                    <p class="text-gray-600 mb-8">All data is processed to a 5-day (pentad) scale. Meteorological data is converted to standardized anomalies to identify unusual conditions.</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                        <div class="flex flex-col items-center">
+                            <svg class="w-16 h-16 text-green-500 icon-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.884 5.064A9 9 0 1116.116 5.064M12 22V18"></path></svg>
+                            <h3 class="font-semibold mt-2">Fractional Cover</h3>
+                            <p class="text-sm text-gray-500">(PV, NPV, Soil)</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <svg class="w-16 h-16 text-blue-500 icon-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                            <h3 class="font-semibold mt-2">Rainfall</h3>
+                            <p class="text-sm text-gray-500">(Standardized Anomaly)</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                             <svg class="w-16 h-16 text-yellow-500 icon-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <h3 class="font-semibold mt-2">Solar Radiation</h3>
+                             <p class="text-sm text-gray-500">(Standardized Anomaly)</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <svg class="w-16 h-16 text-cyan-500 icon-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.354 15.354A4 4 0 0112 12c1.657 0 3 1.343 3 3 0 .645-.25 1.22-.646 1.646"></path></svg>
+                            <h3 class="font-semibold mt-2">Evapotranspiration</h3>
+                            <p class="text-sm text-gray-500">(Standardized Anomaly)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+            </section>
+
+            <!-- Step 2: Vegetation Stress Indicator -->
+            <section id="step2" class="text-center relative">
+                <div class="inline-block bg-white p-6 rounded-full shadow-lg border-4 border-green-200 mb-4">
+                     <span class="text-4xl font-bold text-green-600">2</span>
+                </div>
+                <h2 class="text-3xl font-bold mb-6">The Vegetation Stress Indicator</h2>
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-md border card-hover">
+                    <p class="text-gray-600 mb-4">We calculate the <strong class="font-semibold">Normalized Difference Fraction Index (NDFI)</strong> to measure the balance between healthy and stressed vegetation.</p>
+                    <div class="bg-gray-100 p-4 rounded-lg my-6 text-center text-lg font-mono">
+                        NDFI = ((f<sub class="text-sm">NPV</sub> - f<sub class="text-sm">NPV_base</sub>) + f<sub class="text-sm">soil</sub>) - f<sub class="text-sm">PV</sub> &nbsp;/&nbsp; ((f<sub class="text-sm">NPV</sub> - f<sub class="text-sm">NPV_base</sub>) + f<sub class="text-sm">PV</sub> + f<sub class="text-sm">soil</sub>)
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center justify-around gap-8 mt-8">
+                        <div class="text-center">
+                            <div class="relative w-48 h-48 bg-green-100 rounded-lg flex items-end">
+                                <div class="w-full bg-green-500 rounded-b-lg" style="height: 80%;"></div>
+                            </div>
+                            <h3 class="font-semibold mt-4 text-green-700">NDFI < 0</h3>
+                            <p class="text-sm text-gray-500">Healthy: Green vegetation is dominant.</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="relative w-48 h-48 bg-yellow-800/10 rounded-lg flex items-end">
+                                <div class="w-full bg-yellow-800 rounded-b-lg" style="height: 20%;"></div>
+                            </div>
+                            <h3 class="font-semibold mt-4 text-yellow-900">NDFI > 0</h3>
+                            <p class="text-sm text-gray-500">Stressed: Dry vegetation & soil are dominant.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interlude: How it works across Australia -->
+             <section class="text-center relative -mt-4">
+                 <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-md border card-hover">
+                    <h3 class="text-2xl font-bold text-center mb-6">How NDFI Works Across Australia's Pastures</h3>
+                    <p class="text-gray-600 text-center mb-8 max-w-3xl mx-auto">The key is the <strong class="font-semibold text-gray-800">f<sub class="text-sm">NPV_base</sub></strong> term. It creates a seasonal baseline, allowing the index to distinguish <strong class="font-semibold text-red-600">anomalous drought</strong> from <strong class="font-semibold text-blue-600">predictable seasonal drying</strong>.</p>
+                     <div class="grid md:grid-cols-2 gap-8 pt-8 border-t">
+                        <!-- Northern Pastures -->
+                        <div class="bg-orange-50 p-6 rounded-lg text-left border border-orange-200">
+                             <div class="flex items-center mb-3">
+                                <svg class="w-10 h-10 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                <h4 class="font-bold text-lg ml-2">Northern Monsoonal Pastures</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4">Focuses on deviations from the strong wet/dry cycle. It detects when the landscape dries out <strong class="font-semibold">faster, earlier, or more severely</strong> than the normal dry season.</p>
+                            <p class="font-semibold text-sm mb-2 text-gray-700">Drought Triggers Detected:</p>
+                             <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                                <li>Delayed or failed monsoon onset</li>
+                                <li>Mid-wet season "break" period</li>
+                                <li>Early end to the wet season</li>
+                            </ul>
+                        </div>
+                        <!-- Southern Pastures -->
+                         <div class="bg-green-50 p-6 rounded-lg text-left border border-green-200">
+                             <div class="flex items-center mb-3">
+                                 <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a8 8 0 11-12.856 0M12 21v-4M12 3v4M4.929 4.929L7.05 7.05M16.95 16.95l2.122 2.122M4.929 19.071L7.05 16.95M16.95 7.05l2.122-2.121"></path></svg>
+                                 <h4 class="font-bold text-lg ml-2">Southern Temperate Pastures</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4">Sensitive to any rapid increase in dry vegetation (NPV), especially outside the typical summer dry-down period.</p>
+                            <p class="font-semibold text-sm mb-2 text-gray-700">Drought Triggers Detected:</p>
+                             <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                                 <li>Intense summer heatwaves</li>
+                                 <li>Prolonged winter/spring dry spells</li>
+                                 <li>Rapid drying after a wet period</li>
+                             </ul>
+                        </div>
+                    </div>
+                </div>
+                 <div class="step-connector"></div>
+            </section>
+
+
+            <!-- Step 3: Define Onset -->
+            <section id="step3" class="text-center relative">
+                <div class="inline-block bg-white p-6 rounded-full shadow-lg border-4 border-yellow-300 mb-4">
+                     <span class="text-4xl font-bold text-yellow-600">3</span>
+                </div>
+                <h2 class="text-3xl font-bold mb-6">Defining Drought Onset</h2>
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-md border card-hover">
+                     <p class="text-gray-600 mb-6">An onset event is a continuous transition from healthy to stressed conditions, followed by a persistence period.</p>
+                     <div class="bg-gray-100 p-4 rounded-lg">
+                        <svg id="onset-chart" viewBox="0 0 300 120" class="w-full">
+                            <!-- Dashed Lines and Labels -->
+                            <line x1="0" y1="30" x2="300" y2="30" stroke="#f59e0b" stroke-dasharray="4" stroke-width="1"/>
+                            <text x="5" y="25" class="text-xs fill-current text-yellow-600 font-semibold">Drought Threshold (NDFI ≥ 0.1)</text>
+                            
+                            <line x1="0" y1="80" x2="300" y2="80" stroke="#10b981" stroke-dasharray="4" stroke-width="1"/>
+                            <text x="5" y="95" class="text-xs fill-current text-green-600 font-semibold">Non-Drought Threshold (NDFI ≤ -0.1)</text>
+
+                            <!-- Onset line -->
+                            <path d="M 0 100 C 40 100, 50 85, 80 85 S 130 15, 150 15" stroke="#dc2626" fill="none" stroke-width="2.5"/>
+
+                             <!-- Persistence Period -->
+                            <path d="M 150 15 C 170 18, 190 10, 210 12 C 230 15, 250 22, 270 20" stroke="#dc2626" fill="none" stroke-width="2.5"/>
+
+                             <!-- Onset Duration Arrow -->
+                            <line x1="80" y1="110" x2="150" y2="110" stroke="#334155" stroke-width="1.5" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+                            <text x="90" y="105" class="text-xs fill-current text-slate-700 font-bold">Onset Duration</text>
+                            
+                             <!-- Persistence Arrow -->
+                             <line x1="150" y1="45" x2="270" y2="45" stroke="#334155" stroke-width="1.5" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+                            <text x="170" y="40" class="text-xs fill-current text-slate-700 font-bold">Persistence Period</text>
+
+                            <defs>
+                                <marker id="arrow-start" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+                                  <path d="M0,0 L6,3 L0,6 z" fill="#334155"/>
+                                </marker>
+                                <marker id="arrow-end" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                  <path d="M0,0 L6,3 L0,6 z" fill="#334155"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                     </div>
+                     <p class="mt-4 text-sm text-gray-500">A drought is only confirmed if NDFI remains > 0 for at least 15-20 days.</p>
+                </div>
+                <div class="step-connector"></div>
+            </section>
+
+             <!-- Step 4: Classify Droughts -->
+            <section id="step4" class="text-center relative">
+                <div class="inline-block bg-white p-6 rounded-full shadow-lg border-4 border-red-200 mb-4">
+                     <span class="text-4xl font-bold text-red-600">4</span>
+                </div>
+                <h2 class="text-3xl font-bold mb-6">Classifying the Drought</h2>
+                 <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                    <!-- Flash Drought -->
+                    <div class="bg-white p-8 rounded-2xl shadow-md border-2 border-red-400 card-hover">
+                        <div class="flex items-center justify-center mb-4">
+                            <svg class="w-16 h-16 text-red-500 icon-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <h3 class="text-2xl font-bold ml-3">Flash Drought</h3>
+                        </div>
+                        <p class="text-gray-600">A rapid-onset event characterized by an exceptionally short development period.</p>
+                        <div class="mt-4 bg-red-50 text-red-800 p-3 rounded-lg font-semibold">
+                           Median Onset in Australia: ~15 days
+                        </div>
+                    </div>
+                     <!-- Conventional Drought -->
+                    <div class="bg-white p-8 rounded-2xl shadow-md border card-hover">
+                        <div class="flex items-center justify-center mb-4">
+                            <svg class="w-16 h-16 text-orange-500 icon-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" transform="rotate(-90 12 12)"></path></svg>
+                            <h3 class="text-2xl font-bold ml-3">Conventional Drought</h3>
+                        </div>
+                        <p class="text-gray-600">A slow-onset event that develops over a longer timescale.</p>
+                         <div class="mt-4 bg-orange-50 text-orange-800 p-3 rounded-lg font-semibold">
+                            Median Onset in Australia: ~30 days
+                        </div>
+                    </div>
+                </div>
+                 <div class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-md border card-hover">
+                    <h4 class="text-xl font-bold text-center mb-4">Key Finding: Onset Durations Can Be Deceptively Similar</h4>
+                    <p class="text-gray-600 text-center mb-6">The study found only a small margin separates the median onset times, challenging the idea that conventional droughts are always slow-moving crises.</p>
+                     <div class="bg-gray-50 p-4 rounded-lg">
+                        <svg id="distribution-chart" viewBox="0 0 300 100" class="w-full">
+                             <!-- Axis -->
+                             <line x1="10" y1="90" x2="290" y2="90" stroke="#9ca3af" stroke-width="1"/>
+                             <text x="140" y="98" class="text-[8px] fill-current text-gray-500">Onset Duration (Days)</text>
+                             <!-- Flash Drought Curve -->
+                             <path d="M 50 90 Q 75 10, 100 90" stroke="#ef4444" stroke-width="2" fill="#ef4444" fill-opacity="0.3"/>
+                             <text x="70" y="40" class="text-[10px] fill-current text-red-600 font-bold">Flash</text>
+                             <text x="70" y="52" class="text-[9px] fill-current text-red-600">(15d)</text>
+                             <!-- Conventional Drought Curve -->
+                             <path d="M 150 90 Q 175 30, 200 90" stroke="#f97316" stroke-width="2" fill="#f97316" fill-opacity="0.3"/>
+                             <text x="165" y="55" class="text-[10px] fill-current text-orange-600 font-bold">Conventional</text>
+                             <text x="170" y="67" class="text-[9px] fill-current text-orange-600">(30d)</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+            </section>
+            
+            <!-- Step 5: Attribution -->
+            <section id="step5" class="text-center relative">
+                 <div class="inline-block bg-white p-6 rounded-full shadow-lg border-4 border-purple-200 mb-4">
+                     <span class="text-4xl font-bold text-purple-600">5</span>
+                </div>
+                <h2 class="text-3xl font-bold mb-6">Attributing the Cause</h2>
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-md border card-hover">
+                    <p class="text-gray-600 mb-8">Analyze meteorological driver anomalies to understand *why* the drought occurred. Flash droughts are typically caused by a greater <strong class="font-semibold">magnitude of anomalies</strong>.</p>
+                     <div class="mb-8">
+                        <h4 class="text-xl font-bold text-center mb-4">The Role of Antecedent Conditions</h4>
+                        <p class="text-gray-600 text-center mb-6 max-w-2xl mx-auto">A crucial finding is that droughts, especially flash droughts, often emerge from <strong class="font-semibold">near-normal or even wet conditions</strong>. They don't necessarily require pre-existing dryness to develop rapidly.</p>
+                        <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                             <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <p class="font-semibold">Before Onset</p>
+                                <p class="text-sm text-gray-500">Normal soil moisture & rainfall</p>
+                            </div>
+                             <svg class="w-8 h-8 text-gray-400 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                             <div class="text-center p-4 bg-red-50 rounded-lg border border-red-200">
+                                <p class="font-semibold">During Onset</p>
+                                <p class="text-sm text-gray-500">Intense meteorological anomalies trigger rapid drying</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-8 pt-8 border-t">
+                        <div class="bg-gray-100 p-6 rounded-lg text-left">
+                            <h4 class="font-bold text-lg mb-2">Precipitation Deficit-Driven</h4>
+                            <p class="text-sm text-gray-600">The primary cause is a severe lack of rain, leading to dry soil with little water available to evaporate.</p>
+                            <ul class="mt-4 space-y-2 text-sm">
+                                <li class="flex items-center"><span class="font-mono text-red-600 text-lg mr-2">↓</span> Negative Rainfall Anomaly</li>
+                                <li class="flex items-center"><span class="font-mono text-red-600 text-lg mr-2">↓</span> Negative ET Anomaly</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-100 p-6 rounded-lg text-left">
+                            <h4 class="font-bold text-lg mb-2">Evaporation-Driven ("Heatwave" type)</h4>
+                            <p class="text-sm text-gray-600">High temperatures and solar radiation rapidly pull remaining moisture from the ground.</p>
+                             <ul class="mt-4 space-y-2 text-sm">
+                                <li class="flex items-center"><span class="font-mono text-red-600 text-lg mr-2">↓</span> Negative Rainfall Anomaly</li>
+                                <li class="flex items-center"><span class="font-mono text-green-600 text-lg mr-2">↑</span> Positive ET Anomaly</li>
+                                <li class="flex items-center"><span class="font-mono text-green-600 text-lg mr-2">↑</span> Positive Solar Radiation Anomaly</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-16 pt-8 border-t border-gray-200">
+            <p class="text-sm text-gray-500">This infographic conceptualizes a hybrid method based on the findings from:</p>
+            <p class="text-xs text-gray-400 mt-1">Kowalski et al. (2023) "A generalized framework for drought monitoring..." & Goswami & Gallant (2025) "Understanding drought onset..."</p>
+        </footer>
+
+    </div>
+</body>
+</html>
+
