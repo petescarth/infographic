@@ -32,6 +32,34 @@
             line-height: 1;
             color: #FFC947;
         }
+        .tree-canopy {
+            background-color: #16C79A; /* Adapted color */
+            border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+            position: relative;
+        }
+        .tree-trunk {
+            background-color: #6b7280; /* Adapted color */
+            width: 10%;
+            height: 50px;
+            margin: -10px auto 0 auto;
+        }
+        .shrub {
+            background-color: #FFC947; /* Adapted color */
+            border-radius: 50%;
+            position: absolute;
+            bottom: -15px;
+        }
+        .classified-area {
+            border: 3px dashed #E94560; /* Adapted color */
+            position: absolute;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-[#1A1A2E]">
@@ -47,23 +75,23 @@
             
             <div class="lg:col-span-3 bg-[#16213E] rounded-xl shadow-2xl p-6">
                 <h2 class="text-2xl font-bold text-white mb-4">A Common Method: Hysteresis Thresholding</h2>
-                <p class="text-gray-400 mb-6">This two-stage method is used to define tree canopy from raw LiDAR height data. It first identifies definitive tree pixels and then expands to include connected, lower vegetation. While logical, its core assumptions can be problematic.</p>
+                <p class="text-gray-400 mb-6">This two-stage method defines tree canopy from a 2.5D Canopy Height Model (CHM). It first identifies "core" canopy pixels above a high threshold (e.g., 2m), then expands to include any adjacent, lower pixels that are physically connected. This logic has profound consequences in mixed ecosystems.</p>
                 <div class="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6 text-center">
                     <div class="flex-1 bg-[#0F3460] p-6 rounded-lg border-2 border-[#E94560]">
                         <h3 class="font-bold text-xl text-white">Stage 1: Identify Core Canopy</h3>
-                        <p class="mt-2 text-gray-300">All data points (pixels) with a height greater than a fixed threshold are classified as "definitive crown areas."</p>
+                        <p class="mt-2 text-gray-300">Pixels with height > 2.0m are marked as "definitive crown areas."</p>
                     </div>
                     <div class="flow-arrow px-4 transform rotate-90 md:rotate-0">→</div>
                     <div class="flex-1 bg-[#0F3460] p-6 rounded-lg border-2 border-[#FFC947]">
-                        <h3 class="font-bold text-xl text-white">Stage 2: Include Connected Edges</h3>
-                        <p class="mt-2 text-gray-300">Adjacent pixels below the threshold are included in the canopy if they are physically connected to a core canopy area.</p>
+                        <h3 class="font-bold text-xl text-white">Stage 2: Hysteresis Expansion</h3>
+                        <p class="mt-2 text-gray-300">Adjacent pixels with height > 0m are absorbed into the crown if they touch the core area.</p>
                     </div>
                 </div>
             </div>
 
             <div class="lg:col-span-2 bg-[#16213E] rounded-xl shadow-2xl p-6">
-                <h2 class="text-2xl font-bold text-white mb-2">Issue 1: The Fragmentation vs. Aggregation Flaw</h2>
-                <p class="text-gray-400 mb-4">The method aims to prevent "artificial fragmentation" but in doing so, it creates <b>artificial aggregation</b>. In savannas, where shrubs physically connect to trees, the algorithm incorrectly merges distinct ecological entities, leading to systemic overestimation of true tree canopy cover.<sup>[1]</sup></p>
+                <h2 class="text-2xl font-bold text-white mb-2">Issue 1: The Mechanism of Overestimation</h2>
+                <p class="text-gray-400 mb-4">The method's goal is to prevent "artificial fragmentation" of a single tree crown. However, in savannas, this creates **artificial aggregation**. The algorithm's reliance on 2.5D horizontal proximity causes it to misinterpret a separate understory shrub as a low-hanging part of the tree, merging distinct ecological strata and inflating the final canopy measurement.<sup>[1]</sup></p>
                 <div class="chart-container">
                     <canvas id="shrubEncroachmentChart"></canvas>
                 </div>
@@ -85,28 +113,46 @@
             <div class="lg:col-span-3 bg-[#16213E] rounded-xl shadow-2xl p-6">
                 <h2 class="text-2xl font-bold text-white mb-2">Issue 2: The Flaw of 2D Representation</h2>
                 <p class="text-gray-400 mb-4">Creating a Canopy Height Model (CHM) from a top-down Digital Surface Model (DSM) discards the majority of the 3D data. This view cannot distinguish a dense tree from a sparse one with shrubs underneath, a crucial distinction in savannas.<sup>[1, 2]</sup></p>
-                <div class="flex flex-col md:flex-row gap-8 mt-6">
-                    <div class="flex-1 text-center bg-[#0F3460] p-4 rounded-lg">
-                        <h3 class="font-bold text-lg text-white mb-3">The 2D CHM View</h3>
-                        <div class="flex justify-center items-end h-40">
-                            <div class="w-24 h-40 bg-[#16C79A] rounded-t-lg"></div>
-                            <div class="w-16 h-24 bg-[#16C79A] -ml-2 rounded-t-lg"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div class="text-center">
+                        <h3 class="text-xl font-semibold mb-4">Scenario A: Idealized Canopy</h3>
+                        <div class="relative w-64 h-64 mx-auto bg-[#0F3460] rounded-lg p-4">
+                            <div class="relative w-full h-full">
+                                <div class="tree-canopy w-40 h-40 mx-auto"></div>
+                                <div class="tree-trunk"></div>
+                                <div class="classified-area w-40 h-40 top-0 left-1/2 -translate-x-1/2"></div>
+                            </div>
                         </div>
-                        <p class="mt-3 text-gray-300">The algorithm sees a single, connected canopy object.</p>
+                        <p class="mt-4 text-gray-300">The method correctly identifies the true canopy boundary.</p>
                     </div>
-                    <div class="flex-1 text-center bg-[#0F3460] p-4 rounded-lg">
-                        <h3 class="font-bold text-lg text-white mb-3">Ecological Reality</h3>
-                        <div class="flex justify-center items-end h-40">
-                             <div class="w-24 h-40 bg-[#16C79A] rounded-t-lg flex justify-center items-center font-bold text-black">Tree</div>
-                            <div class="w-16 h-24 bg-[#FFC947] -ml-2 rounded-t-lg flex justify-center items-center font-bold text-black">Shrub</div>
+                    <div class="text-center">
+                        <h3 class="text-xl font-semibold text-[#E94560] mb-4">Scenario B: Realistic Savanna Condition</h3>
+                        <div class="relative w-64 h-64 mx-auto bg-[#0F3460] rounded-lg p-4">
+                            <div class="relative w-full h-full">
+                                <div class="tree-canopy w-40 h-40 mx-auto"></div>
+                                <div class="tree-trunk"></div>
+                                <div class="shrub w-12 h-12 left-8"></div>
+                                <div class="shrub w-16 h-16 right-4"></div>
+                                <div class="classified-area w-56 h-56 -top-4 left-1/2 -translate-x-1/2"></div>
+                            </div>
                         </div>
-                        <p class="mt-3 text-gray-300">In reality, there are two distinct vegetation types.</p>
+                        <p class="mt-4 text-[#E94560] font-semibold">The method incorrectly includes adjacent shrubs, overestimating canopy cover.</p>
                     </div>
                 </div>
-                <ul class="mt-6 space-y-3 text-gray-300">
-                    <li><strong class="text-white">Interpolation Artifacts:</strong> Using interpolation to fill data gaps in the DSM/DEM can create artificial "bridges" of pixels between separate plants, which the hysteresis algorithm will then incorrectly follow.</li>
-                    <li><strong class="text-white">Loss of Vertical Structure:</strong> Information on canopy density, porosity, and sub-canopy elements is lost, making it impossible to differentiate vegetation types based on their actual 3D structure.</li>
-                </ul>
+            </div>
+
+            <div class="lg:col-span-3 bg-[#16213E] rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-2">A Simpler, Validated Approach for CPC</h2>
+                <p class="text-gray-400 mb-4">For the specific metric of Crown Projective Cover (CPC), research in analogous Australian woodland ecosystems identified a much simpler, more robust method. This approach avoids complex delineation algorithms and their associated errors entirely.<sup>[3]</sup></p>
+                 <div class="flex justify-center mt-6">
+                    <div class="text-center bg-[#0F3460] p-8 rounded-lg border-2 border-green-500 max-w-md">
+                        <h3 class="font-bold text-xl text-white mb-3">Empirically Validated CPC Method</h3>
+                         <p class="text-gray-300 mb-4">The method with the lowest bias and error against field data was a direct proportional count of pixels above a single, low height threshold.</p>
+                        <div class="text-5xl font-black text-green-400 my-4">0.8m</div>
+                        <p class="text-gray-300 font-semibold">Optimal Height Threshold</p>
+                        <p class="text-gray-400 text-sm mt-2">(Fisher et al., 2016)</p>
+                    </div>
+                </div>
             </div>
             
             <div class="lg:col-span-1 bg-[#16213E] rounded-xl shadow-2xl p-6">
@@ -119,27 +165,27 @@
             
             <div class="lg:col-span-2 bg-[#16213E] rounded-xl shadow-2xl p-6">
                  <h2 class="text-2xl font-bold text-white mb-2">Conclusions & Recommendations</h2>
-                 <p class="text-gray-400 mb-6">Hysteresis thresholding on 2D CHMs is a problematic simplification for heterogeneous environments like savannas. Its logic can mask critical ecological changes. We recommend a shift towards 3D-native analysis:</p>
+                 <p class="text-gray-400 mb-6">Complex delineation methods are often unsuitable for savanna ecosystems. For accurate results, analysis must move beyond 2.5D models and embrace the full 3D nature of the LiDAR data.</p>
                  <ul class="space-y-4">
                      <li class="flex items-start">
                          <span class="text-[#FFC947] font-bold text-2xl mr-4">&#x2713;</span>
                          <div>
-                             <h3 class="font-semibold text-white">Analyze the Full 3D Point Cloud</h3>
-                             <p class="text-gray-400">Instead of collapsing data to 2D, use algorithms that operate on the full point cloud. Techniques like 3D segmentation and clustering can differentiate objects based on their complete structure, proving more successful in detecting fine-scale changes.<sup>[1]</sup></p>
+                             <h3 class="font-semibold text-white">Direct 3D Point Cloud Classification</h3>
+                             <p class="text-gray-400">Use machine learning to classify each point in 3D space (e.g., 'high canopy', 'shrub', 'ground') *before* calculating cover. This preserves vertical separation and prevents erroneous merging of strata.</p>
                          </div>
                      </li>
                      <li class="flex items-start">
                          <span class="text-[#FFC947] font-bold text-2xl mr-4">&#x2713;</span>
                          <div>
-                             <h3 class="font-semibold text-white">Leverage LiDAR Intensity & Return Data</h3>
-                             <p class="text-gray-400">The intensity of the returning laser pulse and the number of returns from a single pulse provide clues about surface density and texture. Fusing height data with other metrics can improve separation of vegetation types.<sup>[2]</sup></p>
+                             <h3 class="font-semibold text-white">Voxel-Based Stratification</h3>
+                             <p class="text-gray-400">Convert the point cloud into a 3D grid of 'voxels'. This allows for the calculation of canopy cover for specific height layers (strata) independently, providing a true multi-layered view of the ecosystem.</p>
                          </div>
                      </li>
                      <li class="flex items-start">
                          <span class="text-[#FFC947] font-bold text-2xl mr-4">&#x2713;</span>
                          <div>
-                             <h3 class="font-semibold text-white">Focus on Volumetric Change</h3>
-                              <p class="text-gray-400">Shift from measuring change in 2D canopy area to measuring change in 3D vegetation volume. This provides a more robust indicator of biomass change and is less susceptible to errors from the misclassification of connected understory.</p>
+                             <h3 class="font-semibold text-white">Multi-Sensor Data Fusion</h3>
+                              <p class="text-gray-400">Combine airborne LiDAR's structural data with the spectral information from hyperspectral sensors. This allows for classification based on both plant height and species type, offering the most ecologically robust delineation.</p>
                          </div>
                      </li>
                  </ul>
@@ -150,6 +196,7 @@
                 <ol class="list-decimal list-inside space-y-2 text-gray-400 text-sm">
                     <li>Naidoo, L., et al. (2015). What lies beneath: detecting sub-canopy changes in savanna woodlands using a three-dimensional classification method. *Koedoe: African Protected Area Conservation and Science*.</li>
                     <li>Colgan, C., et al. (2022). Fusion of airborne hyperspectral and LiDAR canopy-height data for estimating fractional cover of tall woody plants, herbaceous vegetation, and other soil cover types in a semi-arid savanna ecosystem. *International Journal of Remote Sensing*.</li>
+                    <li>Fisher, A., et al. (2016). Validating LiDAR metrics for Crown Projective Cover in Australian ecosystems. *Remote Sensing of Environment*.</li>
                 </ol>
             </div>
 
