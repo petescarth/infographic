@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Challenge of Measuring Canopy Cover with LiDAR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            line-height: 1;
+            color: #FFC947;
+        }
+    </style>
+</head>
+<body class="bg-[#1A1A2E]">
+
+    <main class="container mx-auto p-4 md:p-8 text-gray-200">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-black text-white uppercase tracking-wider">The Challenge of Measuring Canopy Cover with LiDAR</h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">A critical look at why top-down methods can misrepresent complex ecosystems like savannas.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-3 bg-[#16213E] rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">A Common Method: Hysteresis Thresholding</h2>
+                <p class="text-gray-400 mb-6">This two-stage method is used to define tree canopy from raw LiDAR height data. It first identifies definitive tree pixels and then expands to include connected, lower vegetation. While logical, its core assumptions can be problematic.</p>
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6 text-center">
+                    <div class="flex-1 bg-[#0F3460] p-6 rounded-lg border-2 border-[#E94560]">
+                        <h3 class="font-bold text-xl text-white">Stage 1: Identify Core Canopy</h3>
+                        <p class="mt-2 text-gray-300">All data points (pixels) with a height greater than a fixed threshold are classified as "definitive crown areas."</p>
+                    </div>
+                    <div class="flow-arrow px-4 transform rotate-90 md:rotate-0">→</div>
+                    <div class="flex-1 bg-[#0F3460] p-6 rounded-lg border-2 border-[#FFC947]">
+                        <h3 class="font-bold text-xl text-white">Stage 2: Include Connected Edges</h3>
+                        <p class="mt-2 text-gray-300">Adjacent pixels below the threshold are included in the canopy if they are physically connected to a core canopy area.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 bg-[#16213E] rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-2">Issue 1: The Fragmentation vs. Aggregation Flaw</h2>
+                <p class="text-gray-400 mb-4">The method aims to prevent "artificial fragmentation" but in doing so, it creates <b>artificial aggregation</b>. In savannas, where shrubs physically connect to trees, the algorithm incorrectly merges distinct ecological entities, leading to systemic overestimation of true tree canopy cover.<sup>[1]</sup></p>
+                <div class="chart-container">
+                    <canvas id="shrubEncroachmentChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-[#16213E] rounded-xl shadow-2xl p-6 flex flex-col justify-center">
+                <h2 class="text-2xl font-bold text-white mb-2">Canopy Inflation</h2>
+                <p class="text-gray-400 mb-4">Simulated data shows a potential scenario where a modest 5% increase in true tree canopy is reported as a 12% increase due to the inclusion of connected shrubs.</p>
+                <div class="text-center">
+                    <div class="text-6xl font-black text-[#E94560]">140%</div>
+                    <p class="text-lg text-gray-300 mt-2">Potential overestimation factor in change detection studies.</p>
+                </div>
+                <div class="mt-6 text-center">
+                    <div class="text-6xl font-black text-[#FFC947]">+7%</div>
+                    <p class="text-lg text-gray-300 mt-2">Error margin introduced by misclassified shrub cover.</p>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-3 bg-[#16213E] rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-2">Issue 2: The Flaw of 2D Representation</h2>
+                <p class="text-gray-400 mb-4">Creating a Canopy Height Model (CHM) from a top-down Digital Surface Model (DSM) discards the majority of the 3D data. This view cannot distinguish a dense tree from a sparse one with shrubs underneath, a crucial distinction in savannas.<sup>[1, 2]</sup></p>
+                <div class="flex flex-col md:flex-row gap-8 mt-6">
+                    <div class="flex-1 text-center bg-[#0F3460] p-4 rounded-lg">
+                        <h3 class="font-bold text-lg text-white mb-3">The 2D CHM View</h3>
+                        <div class="flex justify-center items-end h-40">
+                            <div class="w-24 h-40 bg-[#16C79A] rounded-t-lg"></div>
+                            <div class="w-16 h-24 bg-[#16C79A] -ml-2 rounded-t-lg"></div>
+                        </div>
+                        <p class="mt-3 text-gray-300">The algorithm sees a single, connected canopy object.</p>
+                    </div>
+                    <div class="flex-1 text-center bg-[#0F3460] p-4 rounded-lg">
+                        <h3 class="font-bold text-lg text-white mb-3">Ecological Reality</h3>
+                        <div class="flex justify-center items-end h-40">
+                             <div class="w-24 h-40 bg-[#16C79A] rounded-t-lg flex justify-center items-center font-bold text-black">Tree</div>
+                            <div class="w-16 h-24 bg-[#FFC947] -ml-2 rounded-t-lg flex justify-center items-center font-bold text-black">Shrub</div>
+                        </div>
+                        <p class="mt-3 text-gray-300">In reality, there are two distinct vegetation types.</p>
+                    </div>
+                </div>
+                <ul class="mt-6 space-y-3 text-gray-300">
+                    <li><strong class="text-white">Interpolation Artifacts:</strong> Using interpolation to fill data gaps in the DSM/DEM can create artificial "bridges" of pixels between separate plants, which the hysteresis algorithm will then incorrectly follow.</li>
+                    <li><strong class="text-white">Loss of Vertical Structure:</strong> Information on canopy density, porosity, and sub-canopy elements is lost, making it impossible to differentiate vegetation types based on their actual 3D structure.</li>
+                </ul>
+            </div>
+            
+            <div class="lg:col-span-1 bg-[#16213E] rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-2">Error Analysis by Vegetation Type</h2>
+                <p class="text-gray-400 mb-4">Simulated analysis reveals that while the method is highly accurate for isolated tall trees, significant errors arise when classifying understory vegetation physically connected to those trees.</p>
+                 <div class="chart-container h-96">
+                    <canvas id="errorAnalysisChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-2 bg-[#16213E] rounded-xl shadow-2xl p-6">
+                 <h2 class="text-2xl font-bold text-white mb-2">Conclusions & Recommendations</h2>
+                 <p class="text-gray-400 mb-6">Hysteresis thresholding on 2D CHMs is a problematic simplification for heterogeneous environments like savannas. Its logic can mask critical ecological changes. We recommend a shift towards 3D-native analysis:</p>
+                 <ul class="space-y-4">
+                     <li class="flex items-start">
+                         <span class="text-[#FFC947] font-bold text-2xl mr-4">&#x2713;</span>
+                         <div>
+                             <h3 class="font-semibold text-white">Analyze the Full 3D Point Cloud</h3>
+                             <p class="text-gray-400">Instead of collapsing data to 2D, use algorithms that operate on the full point cloud. Techniques like 3D segmentation and clustering can differentiate objects based on their complete structure, proving more successful in detecting fine-scale changes.<sup>[1]</sup></p>
+                         </div>
+                     </li>
+                     <li class="flex items-start">
+                         <span class="text-[#FFC947] font-bold text-2xl mr-4">&#x2713;</span>
+                         <div>
+                             <h3 class="font-semibold text-white">Leverage LiDAR Intensity & Return Data</h3>
+                             <p class="text-gray-400">The intensity of the returning laser pulse and the number of returns from a single pulse provide clues about surface density and texture. Fusing height data with other metrics can improve separation of vegetation types.<sup>[2]</sup></p>
+                         </div>
+                     </li>
+                     <li class="flex items-start">
+                         <span class="text-[#FFC947] font-bold text-2xl mr-4">&#x2713;</span>
+                         <div>
+                             <h3 class="font-semibold text-white">Focus on Volumetric Change</h3>
+                              <p class="text-gray-400">Shift from measuring change in 2D canopy area to measuring change in 3D vegetation volume. This provides a more robust indicator of biomass change and is less susceptible to errors from the misclassification of connected understory.</p>
+                         </div>
+                     </li>
+                 </ul>
+            </div>
+
+            <div class="lg:col-span-3 bg-[#16213E] rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">References</h2>
+                <ol class="list-decimal list-inside space-y-2 text-gray-400 text-sm">
+                    <li>Naidoo, L., et al. (2015). What lies beneath: detecting sub-canopy changes in savanna woodlands using a three-dimensional classification method. *Koedoe: African Protected Area Conservation and Science*.</li>
+                    <li>Colgan, C., et al. (2022). Fusion of airborne hyperspectral and LiDAR canopy-height data for estimating fractional cover of tall woody plants, herbaceous vegetation, and other soil cover types in a semi-arid savanna ecosystem. *International Journal of Remote Sensing*.</li>
+                </ol>
+            </div>
+
+        </div>
+
+        <footer class="text-center mt-12 py-4 border-t border-gray-700">
+            <p class="text-gray-500">Infographic generated for analysis of LiDAR data processing techniques. Data presented is illustrative and based on synthesis of peer-reviewed research concepts.</p>
+        </footer>
+
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const palette = {
+                primary: '#E94560',
+                secondary: '#FFC947',
+                tertiary: '#16C79A',
+                background: '#16213E',
+                text: '#FFFFFF',
+                grid: 'rgba(255, 255, 255, 0.2)'
+            };
+
+            function wrapLabel(str, maxWidth) {
+                if (str.length <= maxWidth) {
+                    return str;
+                }
+                const words = str.split(' ');
+                let lines = [];
+                let currentLine = words[0];
+                for (let i = 1; i < words.length; i++) {
+                    if (currentLine.length + words[i].length + 1 < maxWidth) {
+                        currentLine += ' ' + words[i];
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = words[i];
+                    }
+                }
+                lines.push(currentLine);
+                return lines;
+            }
+
+            const defaultTooltipCallback = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            if (document.getElementById('shrubEncroachmentChart')) {
+                const ctx1 = document.getElementById('shrubEncroachmentChart').getContext('2d');
+                new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['2015 Survey', '2025 Survey'],
+                        datasets: [
+                            {
+                                label: 'True Tree Canopy',
+                                data: [50, 52.5],
+                                backgroundColor: palette.tertiary,
+                                borderColor: 'white',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Shrub Encroachment (Misclassified)',
+                                data: [5, 8.5],
+                                backgroundColor: palette.primary,
+                                borderColor: 'white',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        ...defaultTooltipCallback,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            ...defaultTooltipCallback.plugins,
+                            title: { display: true, text: 'Change in Measured Canopy Cover Over 10 Years', color: palette.text, font: { size: 16 } },
+                            legend: { labels: { color: palette.text } }
+                        },
+                        scales: {
+                            x: {
+                                stacked: true,
+                                ticks: { color: palette.text, font: { size: 14 } },
+                                grid: { color: palette.grid }
+                            },
+                            y: {
+                                stacked: true,
+                                title: { display: true, text: 'Canopy Cover (%)', color: palette.text },
+                                ticks: { color: palette.text },
+                                grid: { color: palette.grid }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('errorAnalysisChart')) {
+                const ctx3 = document.getElementById('errorAnalysisChart').getContext('2d');
+                new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            wrapLabel('Isolated Tall Tree (>5m)', 20), 
+                            wrapLabel('Shrub Connected to Tree', 20), 
+                            wrapLabel('Isolated Shrub (<2m)', 20)
+                        ],
+                        datasets: [{
+                            label: 'Classification Error Rate (%)',
+                            data: [1, 25, 5],
+                            backgroundColor: [palette.tertiary, palette.primary, palette.secondary],
+                            borderColor: 'white',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...defaultTooltipCallback,
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            ...defaultTooltipCallback.plugins,
+                            title: { display: false },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Error Rate (%)', color: palette.text },
+                                ticks: { color: palette.text },
+                                grid: { color: palette.grid }
+                            },
+                            y: {
+                                ticks: { color: palette.text, font: { size: 12 } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
