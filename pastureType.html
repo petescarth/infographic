@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Pastures: Mapping Australian Grasslands</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            line-height: 1;
+            color: #EB6841;
+        }
+        .roadmap-step {
+            display: flex;
+            align-items: center;
+        }
+        .roadmap-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #EB6841;
+        }
+        .roadmap-dot {
+            width: 20px;
+            height: 20px;
+            background-color: #EB6841;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #EB6841;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    
+
+<header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-3xl font-bold text-[#00A0B0]">Smart Pastures</h1>
+            <p class="text-lg text-gray-600">Mapping Australia's Grasslands for Producer Success</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6 md:p-8 space-y-16">
+
+        <section id="dilemma" class="text-center">
+            <h2 class="text-4xl font-extrabold text-[#6A4A3C] mb-4">The Producer's Dilemma</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-700">Australia's grazing industry relies on vast and variable pasturelands. For producers, matching feed availability with livestock demand is a constant challenge, impacting profitability and sustainability. This project aims to bridge the information gap by creating the first wall-to-wall map of grass functional types for the entire continent.</p>
+        </section>
+
+        <section id="data" class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-[#00A0B0] mb-6 text-center">The View From Above: Data & Technology</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="text-gray-700">
+                    <h3 class="text-2xl font-semibold mb-3">High-Resolution Satellite Data</h3>
+                    <p class="mb-4">We use time-series satellite data captured every 5 days, from 2016 to the present. This provides an incredibly detailed look at how pastures change across seasons and years.</p>
+                    <p>Each pixel of the map is broken down into three key components: Green Fraction (active growth), Dry Fraction (cured vegetation), and Bare Ground. This "fractional cover" product gives a precise measure of ground conditions.</p>
+                </div>
+                <div>
+                    <div class="chart-container">
+                        <canvas id="fractionalCoverChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis">
+            <h2 class="text-3xl font-bold text-[#6A4A3C] mb-6 text-center">Advanced Analysis: From Pixels to Pasture Phenology</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-700 mb-8 text-center">We analyze the entire time-series for each pixel to extract its unique "phenological signature"—the fingerprint of its annual growth cycle. This allows us to classify the underlying vegetation type with high accuracy by identifying key differences in their growth patterns.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-center mb-4">Annual vs. Perennial Grasses</h3>
+                    <p class="text-gray-600 mb-4 text-sm">Perennials maintain a base level of green cover year-round, while annuals have a distinct, sharp peak followed by senescence.</p>
+                    <div class="chart-container h-64 md:h-[300px]">
+                        <canvas id="annualPerennialChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-center mb-4">Tropical (C4) vs. Temperate (C3) Grasses</h3>
+                    <p class="text-gray-600 mb-4 text-sm">These types have asynchronous growth seasons. Temperates (C3) peak in cooler, wetter months, while Tropicals (C4) thrive in summer heat.</p>
+                     <div class="chart-container h-64 md:h-[300px]">
+                        <canvas id="tropicalTemperateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-8 mt-8">
+                <h3 class="text-2xl font-bold text-center mb-6">Developing a Robust Classification Model</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h4 class="text-xl font-semibold text-center mb-4">Testing Classification Methods</h4>
+                        <p class="text-gray-600 mb-4 text-sm">Multiple machine learning algorithms will be tested to find the most robust and accurate classifier based on the extracted phenology metrics.</p>
+                        <div class="chart-container h-64 md:h-[300px]">
+                           <canvas id="modelComparisonChart"></canvas>
+                       </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-center mb-4">Beyond Certainty: Probabilistic Outputs</h4>
+                        <p class="text-gray-600 mb-4 text-sm">Instead of a single "best guess," our final model will produce a probability for each of the four grass types. This provides a measure of confidence and is vital for advanced risk analysis, showing which areas are mixed or transitional.</p>
+                         <div class="chart-container h-64 md:h-[300px]">
+                           <canvas id="probabilityChart"></canvas>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="workflow" class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-[#EB6841] mb-8 text-center">Proposed End-to-End Workflow</h2>
+            <div class="flex flex-col items-center justify-center space-y-6">
+
+                <div class="bg-gray-100 p-5 rounded-lg text-center shadow-md w-full max-w-2xl">
+                    <p class="font-bold text-xl text-[#00A0B0]">1. Data Foundation</p>
+                    <p class="text-gray-700 text-sm mt-2">Utilize the 5-day time series of Cibo Labs Sentinel 2 satellite-derived fractional cover (green, dry, bare) from 2016 to the present as the primary input, with rainfall, temperature, and elevation as ancillary data.</p>
+                </div>
+                <div class="flow-arrow rotate-90">&darr;</div>
+
+                <div class="bg-gray-100 p-5 rounded-lg text-center shadow-md w-full max-w-2xl">
+                    <p class="font-bold text-xl text-[#EDC951]">2. Pre-processing</p>
+                    <p class="text-gray-700 text-sm mt-2">Test the HANTS algorithm applicability to seasonal and episodic time series data across Australia, and apply this or a similar algorithm to each pixel's time series to smooth noise, reject outliers, and create a complete, gap-free dataset representing the true phenology.</p>
+                </div>
+                <div class="flow-arrow rotate-90">&darr;</div>
+
+                <div class="bg-gray-100 p-5 rounded-lg text-center shadow-md w-full max-w-2xl">
+                    <p class="font-bold text-xl text-[#CC333F]">3. Feature Engineering</p>
+                    <p class="text-gray-700 text-sm mt-2">Transform the time-series data for each pixel into a rich feature vector by calculating a comprehensive suite of phenological decompositions, metrics, harmonic analysis parameters, and multi-year statistical measures that capture the distinct temporal signatures of the four target grass classes. Augment this with static ancillary data (climate, topography, soils).</p>
+                </div>
+                <div class="flow-arrow rotate-90">&darr;</div>
+
+                <div class="bg-gray-100 p-5 rounded-lg text-center shadow-md w-full max-w-2xl">
+                    <p class="font-bold text-xl text-[#00A0B0]">4. Ground-Truthing</p>
+                    <p class="text-gray-700 text-sm mt-2">Assemble a continental-scale, harmonized training and validation dataset by systematically acquiring and processing data from the Atlas of Living Australia (ALA), the Terrestrial Ecosystem Research Network (TERN), and state-level vegetation survey databases (e.g., QLD's QBEIS, NSW's BioNet).</p>
+                </div>
+                <div class="flow-arrow rotate-90">&darr;</div>
+
+                <div class="bg-gray-100 p-5 rounded-lg text-center shadow-md w-full max-w-2xl">
+                    <p class="font-bold text-xl text-[#6A4A3C]">5. Classification</p>
+                    <p class="text-gray-700 text-sm mt-2">Test an ML classifier, trained on the ground-truth data, to predict the dominant grass functional type (Temperate Annual, Temperate Perennial, Tropical Annual, Tropical Perennial) for every 30-meter pixel across Australia.</p>
+                </div>
+                <div class="flow-arrow rotate-90">&darr;</div>
+
+                <div class="bg-[#EB6841] text-white p-6 rounded-lg text-center shadow-xl w-full max-w-2xl">
+                    <p class="font-bold text-xl">6. Application</p>
+                    <p class="text-sm mt-2">Link the final classification probability map to actionable feed quality parameters (Digestibility and Metabolisable Energy) through a dynamic model that uses the real-time green-to-dry fraction ratio from the satellite data to adjust baseline values according to the pasture's phenological stage.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pilot" class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-[#EB6841] mb-6 text-center">Phase 1: The NSW Northern Tablelands Pilot Study</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-700 mb-8 text-center">To ensure our national map is accurate, we will begin with a focused pilot study in the Northern Tablelands of New South Wales. This region is ideal due to its diverse mix of temperate and subtropical grasses, and both native and improved pastures.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="text-2xl font-semibold mb-3">Pilot Objectives</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Test and compare machine learning models (Random Forest, XGBoost, LSTMs).</li>
+                        <li>Calibrate models using intensive local ground-truth data from NSW DPI and LLS.</li>
+                        <li>Fine-tune phenological metrics for distinguishing local grass species.</li>
+                        <li>Develop a robust accuracy assessment protocol before national scaling.</li>
+                    </ul>
+                </div>
+                <div class="p-6">
+                    <h4 class="text-xl font-semibold text-center mb-4">Expected Model Performance in Pilot</h4>
+                    <div class="chart-container h-64 md:h-[300px]">
+                        <canvas id="pilotAccuracyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="validation">
+            <h2 class="text-3xl font-bold text-[#00A0B0] mb-6 text-center">Ground-Truthing: Ensuring Real-World Accuracy</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-700 mb-8 text-center">A map is only as good as its accuracy. We validate our satellite-derived classifications using extensive field data from Australia's leading ecological monitoring programs, ensuring our model reflects on-ground reality, with a primary focus during the pilot phase.</p>
+            <div class="flex flex-col md:flex-row justify-center gap-8">
+                <div class="bg-gray-50 border-l-4 border-[#00A0B0] p-6 rounded-r-lg shadow-md flex-1">
+                    <h3 class="text-2xl font-bold">Atlas of Living Australia (ALA)</h3>
+                    <p class="text-gray-600 mt-2">Provides millions of species occurrence records to train our model on locations where specific grass types are known to exist.</p>
+                </div>
+                <div class="bg-gray-50 border-l-4 border-[#EB6841] p-6 rounded-r-lg shadow-md flex-1">
+                    <h3 class="text-2xl font-bold">TERN Ecosystem Observatory</h3>
+                    <p class="text-gray-600 mt-2">Offers detailed, plot-based survey data on vegetation composition and productivity, perfect for validating the accuracy of our map's classifications.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="rollout" class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-[#CC333F] mb-6 text-center">Phase 2: The Path to a National System</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-700 mb-8 text-center">Following a successful pilot, the project will scale to a continental level. This requires a strategic approach to data processing, infrastructure, and product delivery to create a truly operational, national tool for producers.</p>
+            <div class="w-full max-w-4xl mx-auto mt-4">
+                <div class="flex flex-col md:flex-row justify-between text-center">
+                    <div class="flex-1 roadmap-step">
+                        <div class="flex flex-col items-center">
+                            <div class="roadmap-dot"></div>
+                            <p class="font-bold mt-2">Pilot Complete</p>
+                        </div>
+                        <div class="roadmap-line hidden md:block"></div>
+                    </div>
+                    <div class="flex-1 roadmap-step">
+                        <div class="roadmap-line hidden md:block"></div>
+                        <div class="flex flex-col items-center">
+                            <div class="roadmap-dot"></div>
+                            <p class="font-bold mt-2">Scale Infrastructure</p>
+                        </div>
+                        <div class="roadmap-line hidden md:block"></div>
+                    </div>
+                    <div class="flex-1 roadmap-step">
+                         <div class="roadmap-line hidden md:block"></div>
+                        <div class="flex flex-col items-center">
+                            <div class="roadmap-dot"></div>
+                            <p class="font-bold mt-2">National Rollout</p>
+                        </div>
+                        <div class="roadmap-line hidden md:block"></div>
+                    </div>
+                    <div class="flex-1 roadmap-step">
+                         <div class="roadmap-line hidden md:block"></div>
+                        <div class="flex flex-col items-center">
+                            <div class="roadmap-dot"></div>
+                            <p class="font-bold mt-2">Operational System</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="calculator">
+             <h2 class="text-3xl font-bold text-[#6A4A3C] mb-6 text-center">From Map to Menu: Fueling Feed Calculators</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                     <p class="text-gray-700 mb-4">The ultimate goal is to provide critical inputs for feed budgeting tools like ProGraze and EverGraze. The type of grass has a direct and significant impact on its feed quality for livestock.</p>
+                     <p class="text-gray-700">Temperate (C3) grasses are generally more digestible and energy-dense than Tropical (C4) grasses at a similar growth stage, which fundamentally changes calculations for stocking rates and animal performance.</p>
+                </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-center mb-4">Typical Feed Quality Comparison</h3>
+                    <div class="chart-container">
+                        <canvas id="feedQualityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="product" class="text-center">
+            <h2 class="text-4xl font-extrabold text-[#00A0B0] mb-4">The Four Key Grass Functional Types</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-700 mb-8">The final map classifies every pasture pixel in Australia into one of four functional types. This powerful new dataset will empower producers to more accurately manage their feed base, optimise stocking rates, and build more resilient and profitable grazing enterprises.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+                <div class="bg-[#00A0B0] text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-2">Temperate Annual</h3>
+                    <p class="text-sm">These C3 grasses germinate in autumn, grow through winter, and set seed in spring. They provide high-quality winter feed but create a summer feed gap. E.g., Annual Ryegrass, Silver Grass.</p>
+                </div>
+                <div class="bg-[#EDC951] text-[#6A4A3C] p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-2">Temperate Perennial</h3>
+                    <p class="text-sm">The backbone of southern grazing systems. These C3 grasses persist for years, providing a reliable feed base with peak growth in spring and autumn. E.g., Phalaris, Perennial Ryegrass, Cocksfoot.</p>
+                </div>
+                <div class="bg-[#EB6841] text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-2">Tropical Annual</h3>
+                    <p class="text-sm">Opportunistic C4 grasses that germinate after summer rains, grow rapidly in the heat, and are typically lower in digestibility than temperate types. E.g., Button Grass, some Sorghum varieties.</p>
+                </div>
+                <div class="bg-[#CC333F] text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-2">Tropical Perennial</h3>
+                    <p class="text-sm">Durable C4 grasses forming the basis of northern pastures. They are highly productive in summer but dormant and low-quality in winter. E.g., Mitchell Grass, Buffel Grass, Kikuyu.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-12 py-6 border-t">
+        <div class="container mx-auto text-center text-gray-500">
+            <p>&copy; Cibo Labs. A conceptual project for data-driven agriculture.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const chartColors = {
+        teal: '#00A0B0',
+        brown: '#6A4A3C',
+        red: '#CC333F',
+        orange: '#EB6841',
+        yellow: '#EDC951',
+        grey: '#E5E7EB'
+    };
+
+    const defaultTooltipOptions = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    };
+    
+    function renderFractionalCoverChart() {
+        const ctx = document.getElementById('fractionalCoverChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Green Fraction', 'Dry Fraction', 'Bare Ground'],
+                datasets: [{
+                    label: 'Fractional Cover',
+                    data: [45, 35, 20],
+                    backgroundColor: [chartColors.teal, chartColors.orange, chartColors.brown],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 4,
+                    hoverOffset: 8
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: defaultTooltipOptions.plugins.tooltip }}
+        });
+    }
+
+    function renderAnnualPerennialChart() {
+        const ctx = document.getElementById('annualPerennialChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov'],
+                datasets: [{
+                    label: 'Annual', data: [5, 15, 60, 70, 20, 5], borderColor: chartColors.orange, backgroundColor: chartColors.orange + '33', fill: true, tension: 0.4
+                }, {
+                    label: 'Perennial', data: [20, 25, 40, 50, 45, 30], borderColor: chartColors.teal, backgroundColor: chartColors.teal + '33', fill: true, tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Green Fraction (%)' }}}, ...defaultTooltipOptions }
+        });
+    }
+    
+    function renderTropicalTemperateChart() {
+        const ctx = document.getElementById('tropicalTemperateChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov'],
+                datasets: [{
+                    label: 'Temperate (C3)', data: [15, 25, 55, 65, 40, 20], borderColor: chartColors.red, backgroundColor: chartColors.red + '33', fill: true, tension: 0.4
+                }, {
+                    label: 'Tropical (C4)', data: [60, 50, 20, 10, 30, 55], borderColor: chartColors.yellow, backgroundColor: chartColors.yellow + '33', fill: true, tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Green Fraction (%)' }}}, ...defaultTooltipOptions }
+        });
+    }
+
+    function renderModelComparisonChart() {
+        const ctx = document.getElementById('modelComparisonChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Accuracy', 'Speed', 'Interpretability', ['Scalability for', 'National Data'], 'Handles Time Series'],
+                datasets: [{
+                    label: 'Random Forest', data: [8, 9, 7, 8, 4], fill: true, backgroundColor: 'rgba(235, 104, 65, 0.2)', borderColor: chartColors.orange, pointBackgroundColor: chartColors.orange
+                }, {
+                    label: 'XGBoost', data: [9, 8, 6, 9, 5], fill: true, backgroundColor: 'rgba(204, 51, 63, 0.2)', borderColor: chartColors.red, pointBackgroundColor: chartColors.red
+                },{
+                    label: 'LSTM (Deep Learning)', data: [9, 4, 3, 6, 9], fill: true, backgroundColor: 'rgba(0, 160, 176, 0.2)', borderColor: chartColors.teal, pointBackgroundColor: chartColors.teal
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: defaultTooltipOptions.plugins.tooltip }, scales: { r: { angleLines: { display: true }, suggestedMin: 0, suggestedMax: 10 }}}
+        });
+    }
+
+    function renderProbabilityChart() {
+        const ctx = document.getElementById('probabilityChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Pixel Classification'],
+                datasets: [
+                    { label: 'Temperate Perennial', data: [75], backgroundColor: chartColors.yellow },
+                    { label: 'Temperate Annual', data: [15], backgroundColor: chartColors.teal },
+                    { label: 'Tropical Perennial', data: [5], backgroundColor: chartColors.red },
+                    { label: 'Tropical Annual', data: [5], backgroundColor: chartColors.orange }
+                ]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' }, tooltip: { ...defaultTooltipOptions.plugins.tooltip, callbacks: { ...defaultTooltipOptions.plugins.tooltip.callbacks, label: c => `${c.dataset.label}: ${c.raw}%` }}},
+                scales: { x: { stacked: true, display: false }, y: { stacked: true, display: false } }
+            }
+        });
+    }
+
+    function renderPilotAccuracyChart() {
+        const ctx = document.getElementById('pilotAccuracyChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Random Forest', 'XGBoost', 'LSTM Network'],
+                datasets: [{
+                    label: 'Overall Classification Accuracy', data: [88, 90, 91],
+                    backgroundColor: [chartColors.teal, chartColors.orange, chartColors.red],
+                    borderColor: '#FFFFFF', borderWidth: 2
+                }]
+            },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, max: 100, title: { display: true, text: 'Accuracy (%)' }}}, plugins: { legend: { display: false }, tooltip: defaultTooltipOptions.plugins.tooltip }}
+        });
+    }
+
+    function renderFeedQualityChart() {
+        const ctx = document.getElementById('feedQualityChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Temperate (C3)', 'Tropical (C4)'],
+                datasets: [{
+                    label: 'Digestibility (%)', data: [75, 65], backgroundColor: chartColors.teal
+                }, {
+                    label: 'Energy (MJ ME/kg DM)', data: [11.2, 9.5], backgroundColor: chartColors.orange
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'Value' }}}, ...defaultTooltipOptions }
+        });
+    }
+
+    renderFractionalCoverChart();
+    renderAnnualPerennialChart();
+    renderTropicalTemperateChart();
+    renderModelComparisonChart();
+    renderProbabilityChart();
+    renderPilotAccuracyChart();
+    renderFeedQualityChart();
+});
+</script>
+
+</body>
+</html>
+

@@ -24,3 +24,4 @@ View the main collection of infographics.
 - [Segmenting Australia's Rangelands](rangelandSegments.html)
 - [EUDR Compliance for African Commodities](africaEUDR.html)
 - [Visualising Pasture Data with AgriWebb](agriwebbVisualiser.html)
+- [Smart Pastures: Mapping Australian Grasslands](pastureType.html)
