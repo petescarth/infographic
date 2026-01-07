@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Cibo Labs | 2026 Technical Roadmap</title>
+
+    <!-- Reveal.js CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/theme/white.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Cibo Labs Styling -->
+    <style>
+        :root {
+            --cibo-teal: #0d9488;
+            --cibo-dark: #1c1917;
+            --cibo-light: #fafaf9;
+            --cibo-amber: #d97706;
+            --cibo-blue: #2563eb;
+            --cibo-purple: #9333ea;
+        }
+
+        body { background-color: var(--cibo-light); }
+        
+        .reveal { color: var(--cibo-dark); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            color: var(--cibo-dark);
+            text-transform: none;
+            font-weight: 700;
+        }
+
+        .reveal h1 { font-size: 2.5em; }
+        .reveal h2 { color: var(--cibo-teal); }
+        
+        .accent { color: var(--cibo-teal); }
+        .bg-accent { background-color: var(--cibo-teal); color: white; padding: 5px 10px; border-radius: 4px; }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        .col { flex: 1; text-align: left; }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            font-size: 0.8em;
+        }
+
+        .icon-box {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: var(--cibo-teal);
+        }
+
+        .tag {
+            font-size: 0.6em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+            vertical-align: middle;
+        }
+
+        .tag-q1 { background-color: #64748b; }
+        .tag-q2 { background-color: #2563eb; }
+        .tag-q3 { background-color: #d97706; }
+        .tag-q4 { background-color: #059669; }
+
+        /* Role Matrix Table */
+        .role-table { font-size: 0.6em; width: 100%; border-collapse: collapse; }
+        .role-table th { background-color: var(--cibo-dark); color: white; padding: 10px; }
+        .role-table td { border-bottom: 1px solid #ddd; padding: 8px; }
+        .role-table tr:nth-child(even) { background-color: #f3f4f6; }
+
+        .reveal ul { margin-left: 0; padding-left: 20px; }
+        .reveal li { margin-bottom: 10px; }
+
+        .footer-logo {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.5em;
+            color: #999;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1: Title -->
+            <section>
+                <div class="icon-box"><i class="fas fa-satellite-dish"></i></div>
+                <h1>2026 Technical Roadmap</h1>
+                <h3>Image Processing & Algorithm Development</h3>
+                <p style="font-size: 0.8em; margin-top: 50px;">
+                    <span class="accent">Location:</span> Australia | <span class="accent">Date:</span> Jan 7, 2026
+                </p>
+                <p style="font-size: 0.6em; color: #666;">Cibo Labs Internal Strategy Document</p>
+            </section>
+
+            <!-- SLIDE 2: Executive Summary -->
+            <section>
+                <h2>Executive Summary</h2>
+                <div class="container" style="align-items: center;">
+                    <div class="col">
+                        <p>This roadmap optimizes our expanded 5-person technical team to deliver on major commercial contracts while advancing core IP.</p>
+                        <div class="fragment fade-up">
+                            <h4 style="margin-top: 30px;">Key Drivers:</h4>
+                            <ul>
+                                <li><strong>Commercial Delivery:</strong> MLA, AMPC, Woolworths.</li>
+                                <li><strong>Innovation:</strong> Moving from Landsat to Sentinel-2.</li>
+                                <li><strong>Scalability:</strong> National-scale AWS Batch processing.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card fragment fade-left">
+                            <h4><i class="fas fa-tree accent"></i> Theme A</h4>
+                            <p>EUDR/AFI Compliance & Deforestation</p>
+                        </div>
+                        <div class="card fragment fade-left">
+                            <h4><i class="fas fa-layer-group accent"></i> Theme B</h4>
+                            <p>Land Condition & LandLens App</p>
+                        </div>
+                        <div class="card fragment fade-left">
+                            <h4><i class="fas fa-globe-americas accent"></i> Theme C</h4>
+                            <p>Global PastureKey Expansion</p>
+                        </div>
+                        <div class="card fragment fade-left">
+                            <h4><i class="fas fa-rocket accent"></i> Theme D</h4>
+                            <p>Innovation & New Sensors</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: Theme A -->
+            <section>
+                <div class="tag" style="background-color: var(--cibo-teal);">Theme A</div>
+                <h2>Deforestation & Compliance</h2>
+                <div class="container">
+                    <div class="col">
+                        <h3>Objective</h3>
+                        <p class="fragment">Deliver <strong>4,000 verified farm assessments</strong> for EUDR compliance.</p>
+                        
+                        <h3 style="margin-top: 30px;">Critical Path</h3>
+                        <ul>
+                            <li class="fragment">Automated "Change Detection" pipelines.</li>
+                            <li class="fragment">Masking to a 2020 <strong>Natural Forest Baseline</strong>.</li>
+                            <li class="fragment">AgTrace "Verifiable Digital Credential" integration.</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <div class="card" style="background-color: #f0fdfa;">
+                            <h4><i class="fas fa-code"></i> Tech Stack</h4>
+                            <ul>
+                                <li>NASA OPERA Disturbance Alerts</li>
+                                <li>SLATS Data Integration</li>
+                                <li>Cibo Time Series Engine</li>
+                                <li>AgTrace API</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: Theme B -->
+            <section>
+                <div class="tag" style="background-color: var(--cibo-amber);">Theme B</div>
+                <h2>Land Condition & LandLens</h2>
+                <div class="container">
+                    <div class="col" style="font-size: 0.9em;">
+                        <h3>MLA & ABSF Projects</h3>
+                        <ul>
+                            <li><strong>Landscape Response Units (LRUs):</strong> Moving from Landsat (30m) to Sentinel-2 (10m).</li>
+                            <li><strong>New Indices:</strong> DRCM, Grazing Gradients, TSS-RESTREND.</li>
+                            <li><strong>Validation:</strong> "Dissimilarity Index" & "Area of Applicability".</li>
+                        </ul>
+                    </div>
+                    <div class="col" style="font-size: 0.9em;">
+                        <h3>LandLens App</h3>
+                        <div class="fragment card" style="border-left: 5px solid var(--cibo-amber);">
+                            <p><strong>Goal:</strong> Transition from prototype to secure, offline-capable commercial app.</p>
+                            <ul>
+                                <li><strong>Backend:</strong> AWS Cognito (Auth) & DynamoDB.</li>
+                                <li><strong>Launch:</strong> Beta in Q3, Commercial in Q4.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: Theme C -->
+            <section>
+                <div class="tag" style="background-color: var(--cibo-blue);">Theme C</div>
+                <h2>PastureKey Evolution</h2>
+                <div class="container">
+                    <div class="col">
+                        <h3>Global Expansion</h3>
+                        <p>Deploying nodes for:</p>
+                        <ul>
+                            <li>🇺🇸 USA (Texas/Wyoming)</li>
+                            <li>🇺🇾 South America (Uruguay)</li>
+                            <li>🇳🇦 Africa (Namibia)</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Product Enhancements</h3>
+                        <ul>
+                            <li><strong>Model 3:</strong> Green/Dead Biomass splits.</li>
+                            <li><strong>Sub-Paddock Stats:</strong> Dynamic API endpoints.</li>
+                            <li class="fragment highlight-current-blue"><strong>Pasture Quality (R&D):</strong> Protein proxies & Annual/Perennial classification via Red-Edge bands.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 6: Theme D (New) -->
+            <section>
+                <div class="tag" style="background-color: var(--cibo-purple);">Theme D</div>
+                <h2>Innovation & New Sensors</h2>
+                <p><em>Led by Geospatial Processing Manager</em></p>
+                <div class="container">
+                    <div class="col">
+                        <div class="card">
+                            <h4><i class="fas fa-wave-square"></i> NISAR (L-band SAR)</h4>
+                            <p>Biomass structure & soil moisture monitoring independent of cloud cover.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i class="fas fa-ruler-vertical"></i> GEDI (LiDAR)</h4>
+                            <p>Canopy height calibration for "Natural Forest" definitions.</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <h4><i class="fas fa-brain"></i> Foundation Models</h4>
+                            <p>Assessing geospatial foundation models for feature extraction and anomaly detection.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i class="fas fa-bell"></i> NASA OPERA</h4>
+                            <p>Near-real-time surface disturbance monitoring.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: Q1 Roadmap -->
+            <section>
+                <span class="tag tag-q1">Q1: Jan - Mar</span>
+                <h2>Foundation & Immediate Deliverables</h2>
+                <p class="accent">"Getting the Data Right" & LandLens Architecture</p>
+                
+                <div style="font-size: 0.8em; text-align: left;">
+                    <p><strong><i class="fas fa-cogs"></i> Infrastructure:</strong></p>
+                    <ul>
+                        <li><strong>ABSF:</strong> BigQuery SQL Migration & PSMA Cadastre Update.</li>
+                        <li><strong>LandLens:</strong> Backend Schema Design (No coding yet).</li>
+                    </ul>
+
+                    <p><strong><i class="fas fa-microchip"></i> R&D:</strong></p>
+                    <ul>
+                        <li><strong>Land Condition:</strong> Train Phase 1 models (AACo, Hewitt).</li>
+                        <li><strong>Innovation:</strong> Evaluation of NASA OPERA for EUDR alerts.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: Q2 Roadmap -->
+            <section>
+                <span class="tag tag-q2">Q2: Apr - Jun</span>
+                <h2>Scaling & Integration</h2>
+                <p class="accent">The "Compute Quarter" - Priority: National LRU</p>
+
+                <div class="container">
+                    <div class="col">
+                        <div class="card" style="background-color: #fee2e2; border-left: 5px solid #ef4444;">
+                            <h4><i class="fas fa-exclamation-triangle"></i> CRITICAL PATH</h4>
+                            <p><strong>National S2 LRU Rollout</strong></p>
+                            <p>Scale to full Australian rangelands using AWS Batch. <em>Must precede MLA Milestone 4.</em></p>
+                        </div>
+                    </div>
+                    <div class="col" style="font-size: 0.8em;">
+                        <ul>
+                            <li><strong>Global Pipelines:</strong> Deploy US/Namibia nodes.</li>
+                            <li><strong>LandLens:</strong> Basic backend setup (only after LRU is stable).</li>
+                            <li><strong>Innovation:</strong> Test NISAR sample data.</li>
+                            <li><strong>Expert Review:</strong> Land Condition (Stop/Go) - April 15.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 9: Q3 Roadmap -->
+            <section>
+                <span class="tag tag-q3">Q3: Jul - Sep</span>
+                <h2>National Scale & App Dev</h2>
+                <p class="accent">"The Sentinel-2 Era" & LandLens Beta</p>
+
+                <div style="font-size: 0.8em; text-align: left;">
+                    <ul>
+                        <li><strong>LandLens Beta:</strong> Release offline-capable app with AWS backend (Aug 30).</li>
+                        <li><strong>Land Condition (Phase 2):</strong> Apply predictive models to National LRUs.</li>
+                        <li><strong>Innovation:</strong> Integrate GEDI LiDAR for forest height.</li>
+                        <li><strong>Validation:</strong> Compute "Area of Applicability" maps.</li>
+                    </ul>
+                    <div class="card" style="margin-top: 20px;">
+                        <strong><i class="fas fa-flag-checkered"></i> Key Milestone:</strong> July 15 - MLA Milestone 4 Report (National S2 LRUs).
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 10: Q4 Roadmap -->
+            <section>
+                <span class="tag tag-q4">Q4: Oct - Dec</span>
+                <h2>Delivery & Reporting</h2>
+                <p class="accent">Finalising & Future Proofing</p>
+
+                <div class="container">
+                    <div class="col">
+                        <h3>Product Launch</h3>
+                        <ul>
+                            <li><strong>LandLens:</strong> Commercial V1.0 Release.</li>
+                            <li><strong>Pasture Quality:</strong> Operational Beta (Annual/Perennial layers).</li>
+                            <li><strong>Forage Budget Calc:</strong> Finalise farm-level tool.</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h3>Reporting</h3>
+                        <ul>
+                            <li><strong>EUDR:</strong> Delivery of 4,000 assessments.</li>
+                            <li><strong>ABSF 2026:</strong> Report using S2 + VMAP baseline.</li>
+                            <li><strong>Innovation:</strong> Final report on NISAR/GEDI viability.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 11: Team Matrix -->
+            <section>
+                <h2>Staff Allocation</h2>
+                <table class="role-table">
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>Primary Focus</th>
+                            <th>Key Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Geospatial Processing Mgr</strong></td>
+                            <td>Strategy, AWS Cost Control, <strong>Theme D (Innovation)</strong></td>
+                            <td>Moves to Research/Strategy Lead. Delegates coding.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Geospatial Developer</strong> <span class="tag tag-q2">New Hire</span></td>
+                            <td>Pipeline Engineering, <strong>National LRU (Batch)</strong></td>
+                            <td>The "Engine Room" for high-compute tasks.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>API Developer</strong></td>
+                            <td><strong>LandLens Backend</strong>, AgTrace Integration</td>
+                            <td>Focus on Mobile Arch & Connectivity.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tech Director</strong></td>
+                            <td>Architecture, <strong>Pasture Quality R&D</strong>, Natural Forest Defs</td>
+                            <td>Scientific oversight & complex algos.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Land Condition Lead</strong></td>
+                            <td>Model Training (ML), Field Data, Validation</td>
+                            <td>Delivering MLA contract metrics.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Geospatial Analyst</strong></td>
+                            <td>Python Analysis (EUDR/ABSF), Verification</td>
+                            <td>Elevated to Research Support & Ops.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SLIDE 12: Closing -->
+            <section>
+                <div class="icon-box"><i class="fas fa-check-circle"></i></div>
+                <h2>Next Steps</h2>
+                <ul>
+                    <li>Initiate <strong>BigQuery Migration</strong> (Q1 Critical).</li>
+                    <li>Start <strong>Theme D</strong> scoping (Opera/NISAR).</li>
+                    <li>Prepare <strong>Field Trip 1 Analysis</strong> for Jan 23 Milestone.</li>
+                </ul>
+                <p style="margin-top: 50px; font-size: 0.8em; color: var(--cibo-teal);"><strong>2026: From Research to Commercial Scale</strong></p>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Reveal.js Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: false, // Changed to false to prevent SecurityError
+            history: false, // Added explicit false to prevent SecurityError
+            transition: 'slide', // none/fade/slide/convex/concave/zoom
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>
