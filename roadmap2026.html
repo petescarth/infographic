@@ -33,29 +33,58 @@
             font-size: clamp(16px, 2.5vw, 32px);
         }
 
+        .reveal .slides {
+            text-align: center;
+        }
+
+        .reveal .slides section {
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .reveal .slides > section {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: visible !important;
+        }
+
+        .reveal .slides > section > * {
+            max-width: 100%;
+        }
+
         .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
             color: var(--cibo-dark);
             text-transform: none;
             font-weight: 700;
             line-height: 1.2;
-            margin-bottom: calc(var(--spacing-unit) * 3);
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            margin-top: calc(var(--spacing-unit) * 2);
         }
 
         .reveal h1 {
             font-size: clamp(1.8em, 4vw, 2.5em);
-            margin-bottom: calc(var(--spacing-unit) * 2);
+            margin-bottom: calc(var(--spacing-unit) * 1.5);
+            margin-top: 0;
         }
         .reveal h2 {
             color: var(--cibo-teal);
             font-size: clamp(1.4em, 3vw, 2em);
-            margin-bottom: calc(var(--spacing-unit) * 2);
+            margin-bottom: calc(var(--spacing-unit) * 1.5);
+            margin-top: 0;
         }
         .reveal h3 {
             font-size: clamp(1.2em, 2.5vw, 1.5em);
-            margin-top: calc(var(--spacing-unit) * 3);
+            margin-top: calc(var(--spacing-unit) * 2);
+            margin-bottom: calc(var(--spacing-unit) * 1.5);
         }
         .reveal h4 {
             font-size: clamp(1em, 2vw, 1.2em);
+            margin-top: calc(var(--spacing-unit) * 1.5);
+            margin-bottom: calc(var(--spacing-unit) * 1.5);
         }
 
         .reveal p {
@@ -74,8 +103,12 @@
         .container {
             display: flex;
             justify-content: space-between;
-            gap: calc(var(--spacing-unit) * 3);
+            gap: calc(var(--spacing-unit) * 2.5);
             align-items: flex-start;
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .col {
@@ -86,10 +119,10 @@
 
         .card {
             background: white;
-            padding: calc(var(--spacing-unit) * 3);
+            padding: calc(var(--spacing-unit) * 2.5);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: calc(var(--spacing-unit) * 3);
+            margin-bottom: calc(var(--spacing-unit) * 2);
             font-size: 0.85em;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -174,9 +207,10 @@
             margin-left: 0;
             padding-left: calc(var(--spacing-unit) * 3);
             line-height: 1.6;
+            margin-bottom: calc(var(--spacing-unit) * 1);
         }
         .reveal li {
-            margin-bottom: calc(var(--spacing-unit) * 2);
+            margin-bottom: calc(var(--spacing-unit) * 1.5);
         }
 
         .footer-logo {
@@ -222,35 +256,50 @@
                 font-size: clamp(13px, 2vw, 24px);
             }
 
+            .reveal .slides section {
+                padding: 15px;
+            }
+
             .reveal h1 {
                 font-size: clamp(1.5em, 5vw, 2em);
+                margin-bottom: calc(var(--spacing-unit) * 1);
             }
 
             .reveal h2 {
                 font-size: clamp(1.3em, 4vw, 1.7em);
+                margin-bottom: calc(var(--spacing-unit) * 1);
             }
 
             .reveal h3 {
                 font-size: clamp(1.1em, 3vw, 1.3em);
+                margin-top: calc(var(--spacing-unit) * 1.5);
+                margin-bottom: calc(var(--spacing-unit) * 1);
+            }
+
+            .reveal h4 {
+                margin-top: calc(var(--spacing-unit) * 1);
+                margin-bottom: calc(var(--spacing-unit) * 1);
             }
 
             .container {
-                gap: calc(var(--spacing-unit) * 2);
+                gap: calc(var(--spacing-unit) * 1.5);
             }
 
             .card {
-                padding: calc(var(--spacing-unit) * 2);
+                padding: calc(var(--spacing-unit) * 1.5);
                 font-size: 1em;
-                margin-bottom: calc(var(--spacing-unit) * 2);
+                margin-bottom: calc(var(--spacing-unit) * 1.5);
             }
 
             .icon-box {
                 font-size: clamp(1.8em, 6vw, 2.5em);
+                margin-bottom: calc(var(--spacing-unit) * 1);
             }
 
             .tag {
                 font-size: 0.7em;
                 padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.5);
+                margin-bottom: calc(var(--spacing-unit) * 1);
             }
 
             .role-table {
@@ -263,10 +312,11 @@
 
             .reveal ul {
                 padding-left: calc(var(--spacing-unit) * 2);
+                margin-bottom: calc(var(--spacing-unit) * 0.5);
             }
 
             .reveal li {
-                margin-bottom: calc(var(--spacing-unit) * 1.5);
+                margin-bottom: calc(var(--spacing-unit) * 1);
                 font-size: 0.95em;
             }
         }
@@ -351,27 +401,27 @@
             <!-- SLIDE 3: Theme A -->
             <section>
                 <div class="tag" style="background-color: var(--cibo-teal);">Theme A</div>
-                <h2>Deforestation & Compliance</h2>
-                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
+                <h2 style="margin-bottom: calc(var(--spacing-unit) * 2);">Deforestation & Compliance</h2>
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 2); width: 100%; max-width: 1200px;">
                     <div class="col">
-                        <h3 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 2);">Objective</h3>
-                        <p class="fragment" style="font-size: 1.05em; line-height: 1.7;">Deliver <strong>4,000 verified farm assessments</strong> for EUDR compliance.</p>
+                        <h3 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 1.5); margin-top: 0;">Objective</h3>
+                        <p class="fragment" style="font-size: 1em; line-height: 1.6; margin-bottom: calc(var(--spacing-unit) * 2);">Deliver <strong>4,000 verified farm assessments</strong> for EUDR compliance.</p>
 
-                        <h3 style="margin-top: calc(var(--spacing-unit) * 4); color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 2);">Critical Path</h3>
-                        <ul style="line-height: 1.7;">
-                            <li class="fragment">Automated "Change Detection" pipelines.</li>
-                            <li class="fragment">Masking to a 2020 <strong>Natural Forest Baseline</strong>.</li>
-                            <li class="fragment">AgTrace "Verifiable Digital Credential" integration.</li>
+                        <h3 style="margin-top: calc(var(--spacing-unit) * 2); color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 1.5);">Critical Path</h3>
+                        <ul style="line-height: 1.6; margin-bottom: calc(var(--spacing-unit) * 1);">
+                            <li class="fragment" style="margin-bottom: calc(var(--spacing-unit) * 1);">Automated "Change Detection" pipelines.</li>
+                            <li class="fragment" style="margin-bottom: calc(var(--spacing-unit) * 1);">Masking to a 2020 <strong>Natural Forest Baseline</strong>.</li>
+                            <li class="fragment" style="margin-bottom: calc(var(--spacing-unit) * 1);">AgTrace "Verifiable Digital Credential" integration.</li>
                         </ul>
                     </div>
                     <div class="col">
-                        <div class="card" style="background-color: #f0fdfa; border-left: 4px solid var(--cibo-teal);">
-                            <h4 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-code"></i> Tech Stack</h4>
-                            <ul style="line-height: 1.7; margin: 0;">
-                                <li>NASA OPERA Disturbance Alerts</li>
-                                <li>SLATS Data Integration</li>
-                                <li>Cibo Time Series Engine</li>
-                                <li>AgTrace API</li>
+                        <div class="card" style="background-color: #f0fdfa; border-left: 4px solid var(--cibo-teal); margin-top: 0;">
+                            <h4 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 1.5); margin-top: 0;"><i class="fas fa-code"></i> Tech Stack</h4>
+                            <ul style="line-height: 1.6; margin: 0;">
+                                <li style="margin-bottom: calc(var(--spacing-unit) * 1);">NASA OPERA Disturbance Alerts</li>
+                                <li style="margin-bottom: calc(var(--spacing-unit) * 1);">SLATS Data Integration</li>
+                                <li style="margin-bottom: calc(var(--spacing-unit) * 1);">Cibo Time Series Engine</li>
+                                <li style="margin-bottom: 0;">AgTrace API</li>
                             </ul>
                         </div>
                     </div>
@@ -381,23 +431,23 @@
             <!-- SLIDE 4: Theme B -->
             <section>
                 <div class="tag" style="background-color: var(--cibo-amber);">Theme B</div>
-                <h2>Land Condition & LandLens</h2>
-                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
+                <h2 style="margin-bottom: calc(var(--spacing-unit) * 2);">Land Condition & LandLens</h2>
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 2);">
                     <div class="col">
-                        <h3 style="color: var(--cibo-amber); margin-bottom: calc(var(--spacing-unit) * 2);">MLA & ABSF Projects</h3>
-                        <ul style="line-height: 1.7; font-size: 0.95em;">
-                            <li><strong>Landscape Response Units (LRUs):</strong> Moving from Landsat (30m) to Sentinel-2 (10m).</li>
-                            <li><strong>New Indices:</strong> DRCM, Grazing Gradients, TSS-RESTREND.</li>
-                            <li><strong>Validation:</strong> "Dissimilarity Index" & "Area of Applicability".</li>
+                        <h3 style="color: var(--cibo-amber); margin-bottom: calc(var(--spacing-unit) * 1.5); margin-top: 0;">MLA & ABSF Projects</h3>
+                        <ul style="line-height: 1.6; font-size: 0.95em;">
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>Landscape Response Units (LRUs):</strong> Moving from Landsat (30m) to Sentinel-2 (10m).</li>
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>New Indices:</strong> DRCM, Grazing Gradients, TSS-RESTREND.</li>
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>Validation:</strong> "Dissimilarity Index" & "Area of Applicability".</li>
                         </ul>
                     </div>
                     <div class="col">
-                        <h3 style="color: var(--cibo-amber); margin-bottom: calc(var(--spacing-unit) * 2);">LandLens App</h3>
-                        <div class="fragment card" style="border-left: 4px solid var(--cibo-amber); background-color: #fffbeb;">
-                            <p style="font-weight: 600; margin-bottom: calc(var(--spacing-unit) * 2);"><strong>Goal:</strong> Transition from prototype to secure, offline-capable commercial app.</p>
-                            <ul style="line-height: 1.7; margin: 0;">
-                                <li><strong>Backend:</strong> AWS Cognito (Auth) & DynamoDB.</li>
-                                <li><strong>Launch:</strong> Beta in Q3, Commercial in Q4.</li>
+                        <h3 style="color: var(--cibo-amber); margin-bottom: calc(var(--spacing-unit) * 1.5); margin-top: 0;">LandLens App</h3>
+                        <div class="fragment card" style="border-left: 4px solid var(--cibo-amber); background-color: #fffbeb; margin-top: 0;">
+                            <p style="font-weight: 600; margin-bottom: calc(var(--spacing-unit) * 1.5);"><strong>Goal:</strong> Transition from prototype to secure, offline-capable commercial app.</p>
+                            <ul style="line-height: 1.6; margin: 0;">
+                                <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>Backend:</strong> AWS Cognito (Auth) & DynamoDB.</li>
+                                <li style="margin-bottom: 0;"><strong>Launch:</strong> Beta in Q3, Commercial in Q4.</li>
                             </ul>
                         </div>
                     </div>
@@ -407,23 +457,23 @@
             <!-- SLIDE 5: Theme C -->
             <section>
                 <div class="tag" style="background-color: var(--cibo-blue);">Theme C</div>
-                <h2>PastureKey Evolution</h2>
-                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
+                <h2 style="margin-bottom: calc(var(--spacing-unit) * 2);">PastureKey Evolution</h2>
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 2);">
                     <div class="col">
-                        <h3 style="color: var(--cibo-blue); margin-bottom: calc(var(--spacing-unit) * 2);">Global Expansion</h3>
-                        <p style="font-size: 1.05em; margin-bottom: calc(var(--spacing-unit) * 2);">Deploying nodes for:</p>
-                        <ul style="line-height: 1.8; font-size: 1.05em;">
-                            <li><strong>USA</strong> (Texas/Wyoming)</li>
-                            <li><strong>South America</strong> (Uruguay)</li>
-                            <li><strong>Africa</strong> (Namibia)</li>
+                        <h3 style="color: var(--cibo-blue); margin-bottom: calc(var(--spacing-unit) * 1.5); margin-top: 0;">Global Expansion</h3>
+                        <p style="font-size: 1em; margin-bottom: calc(var(--spacing-unit) * 1.5);">Deploying nodes for:</p>
+                        <ul style="line-height: 1.6; font-size: 1em;">
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>USA</strong> (Texas/Wyoming)</li>
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>South America</strong> (Uruguay)</li>
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>Africa</strong> (Namibia)</li>
                         </ul>
                     </div>
                     <div class="col">
-                        <h3 style="color: var(--cibo-blue); margin-bottom: calc(var(--spacing-unit) * 2);">Product Enhancements</h3>
-                        <ul style="line-height: 1.7; font-size: 0.95em;">
-                            <li><strong>Model 3:</strong> Green/Dead Biomass splits.</li>
-                            <li><strong>Sub-Paddock Stats:</strong> Dynamic API endpoints.</li>
-                            <li class="fragment highlight-current-blue"><strong>Pasture Quality (R&D):</strong> Protein proxies & Annual/Perennial classification via Red-Edge bands.</li>
+                        <h3 style="color: var(--cibo-blue); margin-bottom: calc(var(--spacing-unit) * 1.5); margin-top: 0;">Product Enhancements</h3>
+                        <ul style="line-height: 1.6; font-size: 0.95em;">
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>Model 3:</strong> Green/Dead Biomass splits.</li>
+                            <li style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>Sub-Paddock Stats:</strong> Dynamic API endpoints.</li>
+                            <li class="fragment highlight-current-blue" style="margin-bottom: calc(var(--spacing-unit) * 1);"><strong>Pasture Quality (R&D):</strong> Protein proxies & Annual/Perennial classification via Red-Edge bands.</li>
                         </ul>
                     </div>
                 </div>
@@ -432,27 +482,27 @@
             <!-- SLIDE 6: Theme D (New) -->
             <section>
                 <div class="tag" style="background-color: var(--cibo-purple);">Theme D</div>
-                <h2>Innovation & New Sensors</h2>
-                <p style="font-style: italic; font-size: 1em; color: #666; margin-bottom: calc(var(--spacing-unit) * 4);">Led by Geospatial Processing Manager</p>
-                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
+                <h2 style="margin-bottom: calc(var(--spacing-unit) * 1.5);">Innovation & New Sensors</h2>
+                <p style="font-style: italic; font-size: 0.9em; color: #666; margin-bottom: calc(var(--spacing-unit) * 2);">Led by Geospatial Processing Manager</p>
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 2);">
                     <div class="col">
-                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
-                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-wave-square"></i> NISAR (L-band SAR)</h4>
-                            <p style="margin: 0; line-height: 1.7;">Biomass structure & soil moisture monitoring independent of cloud cover.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff; margin-bottom: calc(var(--spacing-unit) * 1.5);">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 1); margin-top: 0;"><i class="fas fa-wave-square"></i> NISAR (L-band SAR)</h4>
+                            <p style="margin: 0; line-height: 1.6; font-size: 0.95em;">Biomass structure & soil moisture monitoring independent of cloud cover.</p>
                         </div>
-                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
-                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-ruler-vertical"></i> GEDI (LiDAR)</h4>
-                            <p style="margin: 0; line-height: 1.7;">Canopy height calibration for "Natural Forest" definitions.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff; margin-bottom: 0;">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 1); margin-top: 0;"><i class="fas fa-ruler-vertical"></i> GEDI (LiDAR)</h4>
+                            <p style="margin: 0; line-height: 1.6; font-size: 0.95em;">Canopy height calibration for "Natural Forest" definitions.</p>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
-                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-brain"></i> Foundation Models</h4>
-                            <p style="margin: 0; line-height: 1.7;">Assessing geospatial foundation models for feature extraction and anomaly detection.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff; margin-bottom: calc(var(--spacing-unit) * 1.5);">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 1); margin-top: 0;"><i class="fas fa-brain"></i> Foundation Models</h4>
+                            <p style="margin: 0; line-height: 1.6; font-size: 0.95em;">Assessing geospatial foundation models for feature extraction and anomaly detection.</p>
                         </div>
-                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
-                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-bell"></i> NASA OPERA</h4>
-                            <p style="margin: 0; line-height: 1.7;">Near-real-time surface disturbance monitoring.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff; margin-bottom: 0;">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 1); margin-top: 0;"><i class="fas fa-bell"></i> NASA OPERA</h4>
+                            <p style="margin: 0; line-height: 1.6; font-size: 0.95em;">Near-real-time surface disturbance monitoring.</p>
                         </div>
                     </div>
                 </div>
@@ -681,10 +731,16 @@
             controls: true,
             progress: true,
             center: true,
-            hash: false, // Changed to false to prevent SecurityError
-            history: false, // Added explicit false to prevent SecurityError
-            transition: 'slide', // none/fade/slide/convex/concave/zoom
-            backgroundTransition: 'fade'
+            hash: false,
+            history: false,
+            transition: 'slide',
+            backgroundTransition: 'fade',
+            width: '100%',
+            height: '100%',
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0,
+            overflow: 'visible'
         });
     </script>
 </body>
