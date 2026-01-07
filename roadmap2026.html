@@ -22,56 +22,100 @@
             --cibo-amber: #d97706;
             --cibo-blue: #2563eb;
             --cibo-purple: #9333ea;
+            --spacing-unit: 8px;
         }
 
         body { background-color: var(--cibo-light); }
-        
-        .reveal { color: var(--cibo-dark); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-        
+
+        .reveal {
+            color: var(--cibo-dark);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: clamp(16px, 2.5vw, 32px);
+        }
+
         .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
             color: var(--cibo-dark);
             text-transform: none;
             font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: calc(var(--spacing-unit) * 3);
         }
 
-        .reveal h1 { font-size: 2.5em; }
-        .reveal h2 { color: var(--cibo-teal); }
-        
+        .reveal h1 {
+            font-size: clamp(1.8em, 4vw, 2.5em);
+            margin-bottom: calc(var(--spacing-unit) * 2);
+        }
+        .reveal h2 {
+            color: var(--cibo-teal);
+            font-size: clamp(1.4em, 3vw, 2em);
+            margin-bottom: calc(var(--spacing-unit) * 2);
+        }
+        .reveal h3 {
+            font-size: clamp(1.2em, 2.5vw, 1.5em);
+            margin-top: calc(var(--spacing-unit) * 3);
+        }
+        .reveal h4 {
+            font-size: clamp(1em, 2vw, 1.2em);
+        }
+
+        .reveal p {
+            line-height: 1.6;
+            margin-bottom: calc(var(--spacing-unit) * 2);
+        }
+
         .accent { color: var(--cibo-teal); }
-        .bg-accent { background-color: var(--cibo-teal); color: white; padding: 5px 10px; border-radius: 4px; }
+        .bg-accent {
+            background-color: var(--cibo-teal);
+            color: white;
+            padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+            border-radius: 4px;
+        }
 
         .container {
             display: flex;
             justify-content: space-between;
-            gap: 20px;
+            gap: calc(var(--spacing-unit) * 3);
+            align-items: flex-start;
         }
-        
-        .col { flex: 1; text-align: left; }
-        
+
+        .col {
+            flex: 1;
+            text-align: left;
+            min-width: 0;
+        }
+
         .card {
             background: white;
-            padding: 20px;
+            padding: calc(var(--spacing-unit) * 3);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            font-size: 0.8em;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+            font-size: 0.85em;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
         .icon-box {
-            font-size: 3em;
-            margin-bottom: 15px;
+            font-size: clamp(2em, 5vw, 3em);
+            margin-bottom: calc(var(--spacing-unit) * 2);
             color: var(--cibo-teal);
         }
 
         .tag {
-            font-size: 0.6em;
+            font-size: clamp(0.65em, 1.5vw, 0.75em);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+            border-radius: 6px;
             color: white;
             vertical-align: middle;
+            display: inline-block;
+            margin-bottom: calc(var(--spacing-unit) * 2);
         }
 
         .tag-q1 { background-color: #64748b; }
@@ -79,14 +123,61 @@
         .tag-q3 { background-color: #d97706; }
         .tag-q4 { background-color: #059669; }
 
-        /* Role Matrix Table */
-        .role-table { font-size: 0.6em; width: 100%; border-collapse: collapse; }
-        .role-table th { background-color: var(--cibo-dark); color: white; padding: 10px; }
-        .role-table td { border-bottom: 1px solid #ddd; padding: 8px; }
+        .role-table {
+            font-size: 0.7em;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: calc(var(--spacing-unit) * 2);
+        }
+        .role-table th {
+            background-color: var(--cibo-dark);
+            color: white;
+            padding: calc(var(--spacing-unit) * 2);
+            text-align: left;
+        }
+        .role-table td {
+            border-bottom: 1px solid #ddd;
+            padding: calc(var(--spacing-unit) * 2);
+            vertical-align: top;
+        }
         .role-table tr:nth-child(even) { background-color: #f3f4f6; }
 
-        .reveal ul { margin-left: 0; padding-left: 20px; }
-        .reveal li { margin-bottom: 10px; }
+        .role-card {
+            background: white;
+            padding: calc(var(--spacing-unit) * 3);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            display: none;
+        }
+
+        .role-card h4 {
+            color: var(--cibo-teal);
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            border-bottom: 2px solid var(--cibo-teal);
+            padding-bottom: calc(var(--spacing-unit) * 1);
+        }
+
+        .role-card-item {
+            margin-bottom: calc(var(--spacing-unit) * 1);
+            font-size: 0.9em;
+        }
+
+        .role-card-label {
+            font-weight: 600;
+            color: var(--cibo-dark);
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .reveal ul {
+            margin-left: 0;
+            padding-left: calc(var(--spacing-unit) * 3);
+            line-height: 1.6;
+        }
+        .reveal li {
+            margin-bottom: calc(var(--spacing-unit) * 2);
+        }
 
         .footer-logo {
             position: absolute;
@@ -95,6 +186,114 @@
             font-size: 0.5em;
             color: #999;
             z-index: 1000;
+        }
+
+        @media screen and (max-width: 1024px) {
+            .reveal {
+                font-size: clamp(14px, 2.2vw, 28px);
+            }
+
+            .container {
+                flex-direction: column;
+                gap: calc(var(--spacing-unit) * 2);
+            }
+
+            .col {
+                width: 100%;
+            }
+
+            .card {
+                padding: calc(var(--spacing-unit) * 2.5);
+                font-size: 0.9em;
+            }
+
+            .role-table {
+                font-size: 0.65em;
+            }
+
+            .role-table th,
+            .role-table td {
+                padding: calc(var(--spacing-unit) * 1.5);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .reveal {
+                font-size: clamp(13px, 2vw, 24px);
+            }
+
+            .reveal h1 {
+                font-size: clamp(1.5em, 5vw, 2em);
+            }
+
+            .reveal h2 {
+                font-size: clamp(1.3em, 4vw, 1.7em);
+            }
+
+            .reveal h3 {
+                font-size: clamp(1.1em, 3vw, 1.3em);
+            }
+
+            .container {
+                gap: calc(var(--spacing-unit) * 2);
+            }
+
+            .card {
+                padding: calc(var(--spacing-unit) * 2);
+                font-size: 1em;
+                margin-bottom: calc(var(--spacing-unit) * 2);
+            }
+
+            .icon-box {
+                font-size: clamp(1.8em, 6vw, 2.5em);
+            }
+
+            .tag {
+                font-size: 0.7em;
+                padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.5);
+            }
+
+            .role-table {
+                display: none;
+            }
+
+            .role-card {
+                display: block;
+            }
+
+            .reveal ul {
+                padding-left: calc(var(--spacing-unit) * 2);
+            }
+
+            .reveal li {
+                margin-bottom: calc(var(--spacing-unit) * 1.5);
+                font-size: 0.95em;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .reveal {
+                font-size: clamp(12px, 1.8vw, 20px);
+            }
+
+            .card {
+                padding: calc(var(--spacing-unit) * 1.5);
+                border-radius: 8px;
+            }
+
+            .container {
+                gap: calc(var(--spacing-unit) * 1.5);
+            }
+
+            .tag {
+                font-size: 0.65em;
+                padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 1);
+                margin-bottom: calc(var(--spacing-unit) * 1.5);
+            }
+
+            .icon-box {
+                margin-bottom: calc(var(--spacing-unit) * 1.5);
+            }
         }
     </style>
 </head>
@@ -106,22 +305,22 @@
             <section>
                 <div class="icon-box"><i class="fas fa-satellite-dish"></i></div>
                 <h1>2026 Technical Roadmap</h1>
-                <h3>Image Processing & Algorithm Development</h3>
-                <p style="font-size: 0.8em; margin-top: 50px;">
-                    <span class="accent">Location:</span> Australia | <span class="accent">Date:</span> Jan 7, 2026
+                <h3 style="color: var(--cibo-teal); font-weight: 500;">Image Processing & Algorithm Development</h3>
+                <p style="font-size: clamp(0.75em, 2vw, 0.85em); margin-top: calc(var(--spacing-unit) * 6);">
+                    <span class="accent" style="font-weight: 600;">Location:</span> Australia <span style="margin: 0 8px;">|</span> <span class="accent" style="font-weight: 600;">Date:</span> Jan 7, 2026
                 </p>
-                <p style="font-size: 0.6em; color: #666;">Cibo Labs Internal Strategy Document</p>
+                <p style="font-size: clamp(0.6em, 1.5vw, 0.7em); color: #666; margin-top: calc(var(--spacing-unit) * 2);">Cibo Labs Internal Strategy Document</p>
             </section>
 
             <!-- SLIDE 2: Executive Summary -->
             <section>
                 <h2>Executive Summary</h2>
-                <div class="container" style="align-items: center;">
+                <div class="container" style="align-items: flex-start; margin-top: calc(var(--spacing-unit) * 3);">
                     <div class="col">
-                        <p>This roadmap optimizes our expanded 5-person technical team to deliver on major commercial contracts while advancing core IP.</p>
+                        <p style="font-size: 1.05em; line-height: 1.7; margin-bottom: calc(var(--spacing-unit) * 4);">This roadmap optimizes our expanded 5-person technical team to deliver on major commercial contracts while advancing core IP.</p>
                         <div class="fragment fade-up">
-                            <h4 style="margin-top: 30px;">Key Drivers:</h4>
-                            <ul>
+                            <h4 style="margin-top: calc(var(--spacing-unit) * 4); margin-bottom: calc(var(--spacing-unit) * 2); color: var(--cibo-teal);">Key Drivers</h4>
+                            <ul style="line-height: 1.7;">
                                 <li><strong>Commercial Delivery:</strong> MLA, AMPC, Woolworths.</li>
                                 <li><strong>Innovation:</strong> Moving from Landsat to Sentinel-2.</li>
                                 <li><strong>Scalability:</strong> National-scale AWS Batch processing.</li>
@@ -130,20 +329,20 @@
                     </div>
                     <div class="col">
                         <div class="card fragment fade-left">
-                            <h4><i class="fas fa-tree accent"></i> Theme A</h4>
-                            <p>EUDR/AFI Compliance & Deforestation</p>
+                            <h4 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 1.5);"><i class="fas fa-tree"></i> Theme A</h4>
+                            <p style="margin: 0;">EUDR/AFI Compliance & Deforestation</p>
                         </div>
                         <div class="card fragment fade-left">
-                            <h4><i class="fas fa-layer-group accent"></i> Theme B</h4>
-                            <p>Land Condition & LandLens App</p>
+                            <h4 style="color: var(--cibo-amber); margin-bottom: calc(var(--spacing-unit) * 1.5);"><i class="fas fa-layer-group"></i> Theme B</h4>
+                            <p style="margin: 0;">Land Condition & LandLens App</p>
                         </div>
                         <div class="card fragment fade-left">
-                            <h4><i class="fas fa-globe-americas accent"></i> Theme C</h4>
-                            <p>Global PastureKey Expansion</p>
+                            <h4 style="color: var(--cibo-blue); margin-bottom: calc(var(--spacing-unit) * 1.5);"><i class="fas fa-globe-americas"></i> Theme C</h4>
+                            <p style="margin: 0;">Global PastureKey Expansion</p>
                         </div>
                         <div class="card fragment fade-left">
-                            <h4><i class="fas fa-rocket accent"></i> Theme D</h4>
-                            <p>Innovation & New Sensors</p>
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 1.5);"><i class="fas fa-rocket"></i> Theme D</h4>
+                            <p style="margin: 0;">Innovation & New Sensors</p>
                         </div>
                     </div>
                 </div>
@@ -153,22 +352,22 @@
             <section>
                 <div class="tag" style="background-color: var(--cibo-teal);">Theme A</div>
                 <h2>Deforestation & Compliance</h2>
-                <div class="container">
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
                     <div class="col">
-                        <h3>Objective</h3>
-                        <p class="fragment">Deliver <strong>4,000 verified farm assessments</strong> for EUDR compliance.</p>
-                        
-                        <h3 style="margin-top: 30px;">Critical Path</h3>
-                        <ul>
+                        <h3 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 2);">Objective</h3>
+                        <p class="fragment" style="font-size: 1.05em; line-height: 1.7;">Deliver <strong>4,000 verified farm assessments</strong> for EUDR compliance.</p>
+
+                        <h3 style="margin-top: calc(var(--spacing-unit) * 4); color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 2);">Critical Path</h3>
+                        <ul style="line-height: 1.7;">
                             <li class="fragment">Automated "Change Detection" pipelines.</li>
                             <li class="fragment">Masking to a 2020 <strong>Natural Forest Baseline</strong>.</li>
                             <li class="fragment">AgTrace "Verifiable Digital Credential" integration.</li>
                         </ul>
                     </div>
                     <div class="col">
-                        <div class="card" style="background-color: #f0fdfa;">
-                            <h4><i class="fas fa-code"></i> Tech Stack</h4>
-                            <ul>
+                        <div class="card" style="background-color: #f0fdfa; border-left: 4px solid var(--cibo-teal);">
+                            <h4 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-code"></i> Tech Stack</h4>
+                            <ul style="line-height: 1.7; margin: 0;">
                                 <li>NASA OPERA Disturbance Alerts</li>
                                 <li>SLATS Data Integration</li>
                                 <li>Cibo Time Series Engine</li>
@@ -183,20 +382,20 @@
             <section>
                 <div class="tag" style="background-color: var(--cibo-amber);">Theme B</div>
                 <h2>Land Condition & LandLens</h2>
-                <div class="container">
-                    <div class="col" style="font-size: 0.9em;">
-                        <h3>MLA & ABSF Projects</h3>
-                        <ul>
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
+                    <div class="col">
+                        <h3 style="color: var(--cibo-amber); margin-bottom: calc(var(--spacing-unit) * 2);">MLA & ABSF Projects</h3>
+                        <ul style="line-height: 1.7; font-size: 0.95em;">
                             <li><strong>Landscape Response Units (LRUs):</strong> Moving from Landsat (30m) to Sentinel-2 (10m).</li>
                             <li><strong>New Indices:</strong> DRCM, Grazing Gradients, TSS-RESTREND.</li>
                             <li><strong>Validation:</strong> "Dissimilarity Index" & "Area of Applicability".</li>
                         </ul>
                     </div>
-                    <div class="col" style="font-size: 0.9em;">
-                        <h3>LandLens App</h3>
-                        <div class="fragment card" style="border-left: 5px solid var(--cibo-amber);">
-                            <p><strong>Goal:</strong> Transition from prototype to secure, offline-capable commercial app.</p>
-                            <ul>
+                    <div class="col">
+                        <h3 style="color: var(--cibo-amber); margin-bottom: calc(var(--spacing-unit) * 2);">LandLens App</h3>
+                        <div class="fragment card" style="border-left: 4px solid var(--cibo-amber); background-color: #fffbeb;">
+                            <p style="font-weight: 600; margin-bottom: calc(var(--spacing-unit) * 2);"><strong>Goal:</strong> Transition from prototype to secure, offline-capable commercial app.</p>
+                            <ul style="line-height: 1.7; margin: 0;">
                                 <li><strong>Backend:</strong> AWS Cognito (Auth) & DynamoDB.</li>
                                 <li><strong>Launch:</strong> Beta in Q3, Commercial in Q4.</li>
                             </ul>
@@ -209,19 +408,19 @@
             <section>
                 <div class="tag" style="background-color: var(--cibo-blue);">Theme C</div>
                 <h2>PastureKey Evolution</h2>
-                <div class="container">
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
                     <div class="col">
-                        <h3>Global Expansion</h3>
-                        <p>Deploying nodes for:</p>
-                        <ul>
-                            <li>🇺🇸 USA (Texas/Wyoming)</li>
-                            <li>🇺🇾 South America (Uruguay)</li>
-                            <li>🇳🇦 Africa (Namibia)</li>
+                        <h3 style="color: var(--cibo-blue); margin-bottom: calc(var(--spacing-unit) * 2);">Global Expansion</h3>
+                        <p style="font-size: 1.05em; margin-bottom: calc(var(--spacing-unit) * 2);">Deploying nodes for:</p>
+                        <ul style="line-height: 1.8; font-size: 1.05em;">
+                            <li><strong>USA</strong> (Texas/Wyoming)</li>
+                            <li><strong>South America</strong> (Uruguay)</li>
+                            <li><strong>Africa</strong> (Namibia)</li>
                         </ul>
                     </div>
                     <div class="col">
-                        <h3>Product Enhancements</h3>
-                        <ul>
+                        <h3 style="color: var(--cibo-blue); margin-bottom: calc(var(--spacing-unit) * 2);">Product Enhancements</h3>
+                        <ul style="line-height: 1.7; font-size: 0.95em;">
                             <li><strong>Model 3:</strong> Green/Dead Biomass splits.</li>
                             <li><strong>Sub-Paddock Stats:</strong> Dynamic API endpoints.</li>
                             <li class="fragment highlight-current-blue"><strong>Pasture Quality (R&D):</strong> Protein proxies & Annual/Perennial classification via Red-Edge bands.</li>
@@ -234,26 +433,26 @@
             <section>
                 <div class="tag" style="background-color: var(--cibo-purple);">Theme D</div>
                 <h2>Innovation & New Sensors</h2>
-                <p><em>Led by Geospatial Processing Manager</em></p>
-                <div class="container">
+                <p style="font-style: italic; font-size: 1em; color: #666; margin-bottom: calc(var(--spacing-unit) * 4);">Led by Geospatial Processing Manager</p>
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 3);">
                     <div class="col">
-                        <div class="card">
-                            <h4><i class="fas fa-wave-square"></i> NISAR (L-band SAR)</h4>
-                            <p>Biomass structure & soil moisture monitoring independent of cloud cover.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-wave-square"></i> NISAR (L-band SAR)</h4>
+                            <p style="margin: 0; line-height: 1.7;">Biomass structure & soil moisture monitoring independent of cloud cover.</p>
                         </div>
-                        <div class="card">
-                            <h4><i class="fas fa-ruler-vertical"></i> GEDI (LiDAR)</h4>
-                            <p>Canopy height calibration for "Natural Forest" definitions.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-ruler-vertical"></i> GEDI (LiDAR)</h4>
+                            <p style="margin: 0; line-height: 1.7;">Canopy height calibration for "Natural Forest" definitions.</p>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="card">
-                            <h4><i class="fas fa-brain"></i> Foundation Models</h4>
-                            <p>Assessing geospatial foundation models for feature extraction and anomaly detection.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-brain"></i> Foundation Models</h4>
+                            <p style="margin: 0; line-height: 1.7;">Assessing geospatial foundation models for feature extraction and anomaly detection.</p>
                         </div>
-                        <div class="card">
-                            <h4><i class="fas fa-bell"></i> NASA OPERA</h4>
-                            <p>Near-real-time surface disturbance monitoring.</p>
+                        <div class="card" style="border-left: 4px solid var(--cibo-purple); background-color: #faf5ff;">
+                            <h4 style="color: var(--cibo-purple); margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-bell"></i> NASA OPERA</h4>
+                            <p style="margin: 0; line-height: 1.7;">Near-real-time surface disturbance monitoring.</p>
                         </div>
                     </div>
                 </div>
@@ -263,17 +462,17 @@
             <section>
                 <span class="tag tag-q1">Q1: Jan - Mar</span>
                 <h2>Foundation & Immediate Deliverables</h2>
-                <p class="accent">"Getting the Data Right" & LandLens Architecture</p>
-                
-                <div style="font-size: 0.8em; text-align: left;">
-                    <p><strong><i class="fas fa-cogs"></i> Infrastructure:</strong></p>
-                    <ul>
+                <p class="accent" style="font-weight: 600; font-size: 1.1em;">"Getting the Data Right" & LandLens Architecture</p>
+
+                <div style="font-size: 0.9em; text-align: left; margin-top: calc(var(--spacing-unit) * 4);">
+                    <h4 style="margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-cogs"></i> Infrastructure</h4>
+                    <ul style="line-height: 1.7; margin-bottom: calc(var(--spacing-unit) * 4);">
                         <li><strong>ABSF:</strong> BigQuery SQL Migration & PSMA Cadastre Update.</li>
                         <li><strong>LandLens:</strong> Backend Schema Design (No coding yet).</li>
                     </ul>
 
-                    <p><strong><i class="fas fa-microchip"></i> R&D:</strong></p>
-                    <ul>
+                    <h4 style="margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-microchip"></i> R&D</h4>
+                    <ul style="line-height: 1.7;">
                         <li><strong>Land Condition:</strong> Train Phase 1 models (AACo, Hewitt).</li>
                         <li><strong>Innovation:</strong> Evaluation of NASA OPERA for EUDR alerts.</li>
                     </ul>
@@ -284,18 +483,19 @@
             <section>
                 <span class="tag tag-q2">Q2: Apr - Jun</span>
                 <h2>Scaling & Integration</h2>
-                <p class="accent">The "Compute Quarter" - Priority: National LRU</p>
+                <p class="accent" style="font-weight: 600; font-size: 1.1em;">The "Compute Quarter" - Priority: National LRU</p>
 
-                <div class="container">
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 4);">
                     <div class="col">
-                        <div class="card" style="background-color: #fee2e2; border-left: 5px solid #ef4444;">
-                            <h4><i class="fas fa-exclamation-triangle"></i> CRITICAL PATH</h4>
-                            <p><strong>National S2 LRU Rollout</strong></p>
-                            <p>Scale to full Australian rangelands using AWS Batch. <em>Must precede MLA Milestone 4.</em></p>
+                        <div class="card" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 5px solid #ef4444; border: 2px solid #ef4444;">
+                            <h4 style="color: #dc2626; margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-exclamation-triangle"></i> CRITICAL PATH</h4>
+                            <p style="font-size: 1.05em; font-weight: 700; color: var(--cibo-dark); margin-bottom: calc(var(--spacing-unit) * 2);">National S2 LRU Rollout</p>
+                            <p style="line-height: 1.7;">Scale to full Australian rangelands using AWS Batch. <em style="font-weight: 600;">Must precede MLA Milestone 4.</em></p>
                         </div>
                     </div>
-                    <div class="col" style="font-size: 0.8em;">
-                        <ul>
+                    <div class="col" style="font-size: 0.9em;">
+                        <h4 style="margin-bottom: calc(var(--spacing-unit) * 2);">Additional Deliverables</h4>
+                        <ul style="line-height: 1.7;">
                             <li><strong>Global Pipelines:</strong> Deploy US/Namibia nodes.</li>
                             <li><strong>LandLens:</strong> Basic backend setup (only after LRU is stable).</li>
                             <li><strong>Innovation:</strong> Test NISAR sample data.</li>
@@ -309,17 +509,19 @@
             <section>
                 <span class="tag tag-q3">Q3: Jul - Sep</span>
                 <h2>National Scale & App Dev</h2>
-                <p class="accent">"The Sentinel-2 Era" & LandLens Beta</p>
+                <p class="accent" style="font-weight: 600; font-size: 1.1em;">"The Sentinel-2 Era" & LandLens Beta</p>
 
-                <div style="font-size: 0.8em; text-align: left;">
-                    <ul>
+                <div style="font-size: 0.9em; text-align: left; margin-top: calc(var(--spacing-unit) * 4);">
+                    <h4 style="margin-bottom: calc(var(--spacing-unit) * 3);">Quarter Deliverables</h4>
+                    <ul style="line-height: 1.7;">
                         <li><strong>LandLens Beta:</strong> Release offline-capable app with AWS backend (Aug 30).</li>
                         <li><strong>Land Condition (Phase 2):</strong> Apply predictive models to National LRUs.</li>
                         <li><strong>Innovation:</strong> Integrate GEDI LiDAR for forest height.</li>
                         <li><strong>Validation:</strong> Compute "Area of Applicability" maps.</li>
                     </ul>
-                    <div class="card" style="margin-top: 20px;">
-                        <strong><i class="fas fa-flag-checkered"></i> Key Milestone:</strong> July 15 - MLA Milestone 4 Report (National S2 LRUs).
+                    <div class="card" style="margin-top: calc(var(--spacing-unit) * 4); background-color: #ecfdf5; border-left: 5px solid #059669; padding: calc(var(--spacing-unit) * 3);">
+                        <h4 style="color: #059669; margin-bottom: calc(var(--spacing-unit) * 2);"><i class="fas fa-flag-checkered"></i> Key Milestone</h4>
+                        <p style="font-weight: 600; margin: 0;">July 15 - MLA Milestone 4 Report (National S2 LRUs)</p>
                     </div>
                 </div>
             </section>
@@ -328,20 +530,20 @@
             <section>
                 <span class="tag tag-q4">Q4: Oct - Dec</span>
                 <h2>Delivery & Reporting</h2>
-                <p class="accent">Finalising & Future Proofing</p>
+                <p class="accent" style="font-weight: 600; font-size: 1.1em;">Finalising & Future Proofing</p>
 
-                <div class="container">
+                <div class="container" style="margin-top: calc(var(--spacing-unit) * 4);">
                     <div class="col">
-                        <h3>Product Launch</h3>
-                        <ul>
+                        <h3 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 3);"><i class="fas fa-rocket"></i> Product Launch</h3>
+                        <ul style="line-height: 1.7; font-size: 0.95em;">
                             <li><strong>LandLens:</strong> Commercial V1.0 Release.</li>
                             <li><strong>Pasture Quality:</strong> Operational Beta (Annual/Perennial layers).</li>
                             <li><strong>Forage Budget Calc:</strong> Finalise farm-level tool.</li>
                         </ul>
                     </div>
                     <div class="col">
-                        <h3>Reporting</h3>
-                        <ul>
+                        <h3 style="color: var(--cibo-teal); margin-bottom: calc(var(--spacing-unit) * 3);"><i class="fas fa-file-alt"></i> Reporting</h3>
+                        <ul style="line-height: 1.7; font-size: 0.95em;">
                             <li><strong>EUDR:</strong> Delivery of 4,000 assessments.</li>
                             <li><strong>ABSF 2026:</strong> Report using S2 + VMAP baseline.</li>
                             <li><strong>Innovation:</strong> Final report on NISAR/GEDI viability.</li>
@@ -353,6 +555,7 @@
             <!-- SLIDE 11: Team Matrix -->
             <section>
                 <h2>Staff Allocation</h2>
+
                 <table class="role-table">
                     <thead>
                         <tr>
@@ -394,18 +597,78 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <div class="role-card">
+                    <h4><i class="fas fa-user-tie"></i> Geospatial Processing Mgr</h4>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Primary Focus:</span> Strategy, AWS Cost Control, Theme D (Innovation)
+                    </div>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Key Change:</span> Moves to Research/Strategy Lead. Delegates coding.
+                    </div>
+                </div>
+
+                <div class="role-card">
+                    <h4><i class="fas fa-code"></i> Geospatial Developer <span class="tag tag-q2">New Hire</span></h4>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Primary Focus:</span> Pipeline Engineering, National LRU (Batch)
+                    </div>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Key Change:</span> The "Engine Room" for high-compute tasks.
+                    </div>
+                </div>
+
+                <div class="role-card">
+                    <h4><i class="fas fa-server"></i> API Developer</h4>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Primary Focus:</span> LandLens Backend, AgTrace Integration
+                    </div>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Key Change:</span> Focus on Mobile Arch & Connectivity.
+                    </div>
+                </div>
+
+                <div class="role-card">
+                    <h4><i class="fas fa-user-graduate"></i> Tech Director</h4>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Primary Focus:</span> Architecture, Pasture Quality R&D, Natural Forest Defs
+                    </div>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Key Change:</span> Scientific oversight & complex algos.
+                    </div>
+                </div>
+
+                <div class="role-card">
+                    <h4><i class="fas fa-chart-line"></i> Land Condition Lead</h4>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Primary Focus:</span> Model Training (ML), Field Data, Validation
+                    </div>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Key Change:</span> Delivering MLA contract metrics.
+                    </div>
+                </div>
+
+                <div class="role-card">
+                    <h4><i class="fas fa-chart-area"></i> Geospatial Analyst</h4>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Primary Focus:</span> Python Analysis (EUDR/ABSF), Verification
+                    </div>
+                    <div class="role-card-item">
+                        <span class="role-card-label">Key Change:</span> Elevated to Research Support & Ops.
+                    </div>
+                </div>
             </section>
 
             <!-- SLIDE 12: Closing -->
             <section>
                 <div class="icon-box"><i class="fas fa-check-circle"></i></div>
                 <h2>Next Steps</h2>
-                <ul>
+                <ul style="line-height: 1.8; font-size: 1.05em; margin-top: calc(var(--spacing-unit) * 4); text-align: left; max-width: 800px; margin-left: auto; margin-right: auto;">
                     <li>Initiate <strong>BigQuery Migration</strong> (Q1 Critical).</li>
                     <li>Start <strong>Theme D</strong> scoping (Opera/NISAR).</li>
                     <li>Prepare <strong>Field Trip 1 Analysis</strong> for Jan 23 Milestone.</li>
                 </ul>
-                <p style="margin-top: 50px; font-size: 0.8em; color: var(--cibo-teal);"><strong>2026: From Research to Commercial Scale</strong></p>
+                <p style="margin-top: calc(var(--spacing-unit) * 8); font-size: clamp(1em, 2.5vw, 1.3em); color: var(--cibo-teal); font-weight: 700;">2026: From Research to Commercial Scale</p>
             </section>
 
         </div>
