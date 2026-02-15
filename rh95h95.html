@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiDAR Model: Geometric vs Energy Height</title>
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --bg: #f7fafc;
+            --panel: #ffffff;
+            --text: #2d3748;
+            --accent: #ed8936;
+            --ground: #795548;
+            --leaf: #48bb78;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: var(--panel);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column; 
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; }
+        p.subtitle { margin: 0.5rem 0 0; opacity: 0.9; font-size: 0.9rem; }
+
+        /* Text Sections */
+        .text-section {
+            padding: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            line-height: 1.6;
+        }
+        
+        .text-section h2 { margin-top: 0; color: var(--primary); font-size: 1.25rem; }
+        .text-section p { margin-bottom: 1rem; color: #4a5568; }
+
+        .definition-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .def-box {
+            background: #f8fafc;
+            padding: 1rem;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+        }
+        .def-box.rh { border-color: var(--accent); }
+
+        .def-title { font-weight: bold; margin-bottom: 0.5rem; display: block; }
+
+        /* Main Simulation Area */
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            padding: 2rem;
+            border-right: 1px solid #e2e8f0;
+            background: #fafbfc;
+        }
+
+        .visualization {
+            flex: 2;
+            min-width: 400px;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            position: relative;
+            min-height: 500px;
+            background: linear-gradient(to bottom, #ebf8ff 0%, #ffffff 80%, #e6fffa 100%);
+        }
+
+        /* Sliders */
+        .control-group { margin-bottom: 2rem; }
+        
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        input[type=range] {
+            width: 100%;
+            height: 6px;
+            background: #cbd5e0;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: background .15s ease-in-out;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover { background: #2c5282; }
+
+        /* Stats Box */
+        .stats-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .stat-row:last-child { border-bottom: none; }
+        .stat-val { font-family: monospace; font-weight: bold; }
+        .stat-val.h95 { color: #2f855a; }
+        .stat-val.rh95 { color: var(--accent); }
+
+        .formula-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+            line-height: 1.4;
+        }
+
+        /* SVG Elements */
+        svg {
+            width: 100%;
+            height: 450px;
+            overflow: visible;
+        }
+
+        .axis-label { font-size: 12px; fill: #718096; }
+        .marker-line { stroke-dasharray: 4; stroke-width: 1.5; }
+        .marker-text { font-size: 14px; font-weight: bold; }
+
+        /* Deep Dive Section */
+        .deep-dive {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 2rem;
+        }
+
+        .deep-dive h3 { color: #90cdf4; border-bottom: 1px solid #4a5568; padding-bottom: 0.5rem; margin-top: 0; }
+        .deep-dive p { margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.7; color: #cbd5e0;}
+        .deep-dive strong { color: white; }
+
+        .viz-caption {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 1rem;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>The Porosity Gap</h1>
+        <p class="subtitle">Reconciling Waveform Energy with Geometric Structure in Savanna Ecosystems</p>
+    </header>
+
+    <!-- Academic Introduction -->
+    <section class="text-section">
+        <h2>Introduction: The Energy-Geometry Discrepancy</h2>
+        <p>
+            In dense temperate forests, LiDAR metrics derived from waveform energy typically correlate 1:1 with geometric canopy height. 
+            However, in open-canopy ecosystems such as Australian Acacia woodlands, a significant bias emerges. This tool explores the divergence between 
+            the physical canopy envelope and the returned energy profile, driven by canopy porosity and leaf orientation.
+        </p>
+
+        <div class="definition-grid">
+            <div class="def-box">
+                <span class="def-title" style="color: #2f855a">\(H_{95}\) (Geometric Height)</span>
+                derived from Airborne Laser Scanning (ALS). It represents the <strong>95th percentile of discrete return heights</strong> above ground. 
+                It effectively maps the physical surface of the canopy, as even sparse leaves trigger discrete return pulses.
+            </div>
+            <div class="def-box rh">
+                <span class="def-title" style="color: #ed8936">\(rh_{95}\) (Waveform Energy Height)</span>
+                derived from Large-footprint LiDAR (GEDI). It represents the height at which <strong>95% of the total returned waveform energy</strong> 
+                (accumulated from the ground up) is reached. It is an integral of backscatter cross-section.
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Simulation -->
+    <div class="main-content">
+        <!-- Controls Section -->
+        <div class="controls">
+            <h3 style="margin-top:0; font-size: 1rem; color:#4a5568; text-transform:uppercase; letter-spacing: 0.05em;">Simulation Parameters</h3>
+            <div class="control-group">
+                <label>
+                    <span>True Geometric Height (\(H_{95}\))</span>
+                    <span id="h95-val">10.0 m</span>
+                </label>
+                <input type="range" id="h95-slider" min="2" max="25" step="0.5" value="10">
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <span>Canopy Cover (CCP)</span>
+                    <span id="ccp-val">10 %</span>
+                </label>
+                <input type="range" id="ccp-slider" min="0" max="60" step="1" value="10">
+                <div style="font-size: 0.8rem; color: #718096; margin-top: 5px;">
+                    Simulated range: 0% to 60%
+                </div>
+            </div>
+
+            <div class="stats-box">
+                <div class="stat-row">
+                    <span>True Height (\(H_{95}\)):</span>
+                    <span class="stat-val h95" id="stat-h95">10.00 m</span>
+                </div>
+                <div class="stat-row">
+                    <span>Energy Height (\(rh_{95}\)):</span>
+                    <span class="stat-val rh95" id="stat-rh95">-- m</span>
+                </div>
+                <div class="stat-row">
+                    <span>Bias (Underestimation):</span>
+                    <span class="stat-val" id="stat-bias">-- m</span>
+                </div>
+                <div class="stat-row">
+                    <span>Porosity Factor:</span>
+                    <span class="stat-val" id="stat-factor">--</span>
+                </div>
+            </div>
+
+            <div class="formula-display">
+                <strong>Empirical Correction Model:</strong><br>
+                \(H_{95} \approx rh_{95} \cdot (b \cdot Cover + a)\)<br><br>
+                <em>Fit Parameters:</em> \(a \approx 3.95, b \approx -0.096\)
+            </div>
+        </div>
+
+        <!-- Visualization Section -->
+        <div class="visualization">
+            <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMax meet">
+                <!-- Ground -->
+                <line x1="0" y1="400" x2="400" y2="400" stroke="#795548" stroke-width="4" />
+                <text x="5" y="395" class="axis-label">Ground (0m)</text>
+
+                <!-- Tree Group -->
+                <g id="tree-group" transform="translate(100, 400)">
+                    <!-- Trunk -->
+                    <rect id="trunk" x="-5" y="0" width="10" height="0" fill="#8d6e63" />
+                    <!-- Canopy -->
+                    <g id="canopy"></g>
+                </g>
+
+                <!-- Waveform Group -->
+                <g id="waveform-group" transform="translate(280, 0)">
+                    <!-- Axis Line -->
+                    <line x1="0" y1="0" x2="0" y2="400" stroke="#cbd5e0" stroke-width="1" />
+                    <!-- Waveform Path -->
+                    <path id="waveform-path" fill="rgba(66, 153, 225, 0.2)" stroke="#4299e1" stroke-width="2" />
+                    <text x="10" y="395" class="axis-label">Energy Return</text>
+                </g>
+
+                <!-- Markers -->
+                <line id="line-h95" class="marker-line" stroke="#2f855a" x1="50" y1="0" x2="350" y2="0" />
+                <text id="text-h95" class="marker-text" fill="#2f855a" x="355" y="0">H95</text>
+
+                <line id="line-rh95" class="marker-line" stroke="#ed8936" x1="150" y1="0" x2="350" y2="0" />
+                <text id="text-rh95" class="marker-text" fill="#ed8936" x="355" y="0">rh95</text>
+            </svg>
+        </div>
+    </div>
+    
+    <div class="viz-caption">
+        Figure 1: Interactive simulation of canopy porosity effects. Note how the energy centroid (orange) drops significantly below the geometric envelope (green) as cover decreases.
+    </div>
+
+    <!-- Deep Dive / Mechanisms -->
+    <section class="deep-dive">
+        <h3>Mechanism of Divergence: Signal Integration vs. Discrete Sampling</h3>
+        <p>
+            The discrepancy illustrated above is fundamentally a difference between <strong>probability of interception</strong> (ALS) and <strong>integration of backscatter cross-section</strong> (Waveform).
+        </p>
+        <p>
+            <strong>1. The "Soft" Canopy Problem:</strong><br>
+            In Acacia woodlands, the foliage is often microphyllous (small leaves) and vertically oriented (phyllodes). This results in a low backscatter cross-section (\(\sigma\)) per unit volume. A GEDI pulse (approx. 25m footprint) integrates this signal. At the top of the canopy, the accumulated \(\sigma\) is often insufficient to exceed the background noise threshold. The signal only becomes significant deeper in the crown where biomass density increases.
+        </p>
+        <p>
+            <strong>2. Waveform Energy Quantiles (\(rh\)):</strong><br>
+            Metrics like \(rh_{95}\) are calculated by integrating the total energy from the ground return up to the canopy top. In sparse canopies, the ground return is dominant (often >80% of total energy). Because the "tail" of the canopy energy is weak, the 95th percentile of the <em>accumulated integral</em> is reached much lower in the vertical profile than in a dense canopy, where the top layers reflect strongly.
+        </p>
+        <p>
+            <strong>3. Discrete ALS Sensitivity:</strong><br>
+            Conversely, Airborne Laser Scanning (ALS) uses small-footprint (<1m) discrete pulses. Even a single sparse leaf at the canopy apex can trigger a return if intercepted. Therefore, \(H_{95}\) derived from ALS effectively captures the <em>geometric envelope</em>, whereas \(rh_{95}\) captures the <em>radiometric center of mass</em>.
+        </p>
+    </section>
+</div>
+
+<script>
+    // Constants from the user's fit
+    const A_PARAM = 3.94786;
+    const B_PARAM = -0.09564;
+    const PIXELS_PER_METER = 14; // Scaling factor for drawing
+    const GROUND_Y = 400;
+
+    // DOM Elements
+    const h95Slider = document.getElementById('h95-slider');
+    const ccpSlider = document.getElementById('ccp-slider');
+    const h95Display = document.getElementById('h95-val');
+    const ccpDisplay = document.getElementById('ccp-val');
+    
+    // Stats elements
+    const statH95 = document.getElementById('stat-h95');
+    const statRH95 = document.getElementById('stat-rh95');
+    const statBias = document.getElementById('stat-bias');
+    const statFactor = document.getElementById('stat-factor');
+
+    // SVG elements
+    const trunk = document.getElementById('trunk');
+    const canopyGroup = document.getElementById('canopy');
+    const lineH95 = document.getElementById('line-h95');
+    const textH95 = document.getElementById('text-h95');
+    const lineRH95 = document.getElementById('line-rh95');
+    const textRH95 = document.getElementById('text-rh95');
+    const waveformPath = document.getElementById('waveform-path');
+
+    function updateModel() {
+        const h95 = parseFloat(h95Slider.value);
+        const ccp = parseFloat(ccpSlider.value); // Percent (0-100)
+
+        // Update Labels
+        h95Display.textContent = h95.toFixed(1) + ' m';
+        ccpDisplay.textContent = ccp.toFixed(0) + ' %';
+
+        // --- MATH: Inverse Model ---
+        // Forward: H95 = rh95 * (b * ccp + a)
+        // Inverse: rh95 = H95 / (b * ccp + a)
+        
+        let multiplier = (B_PARAM * ccp) + A_PARAM;
+        
+        // Safety Clamp: The physics break if multiplier < 1 (implies rh95 > H95)
+        // In reality, as cover increases, rh95 approaches H95.
+        // We simulate this by clamping the divider to 1.0.
+        const clampedMultiplier = Math.max(multiplier, 1.0);
+
+        const rh95 = h95 / clampedMultiplier;
+        const bias = h95 - rh95;
+
+        // --- Update Stats ---
+        statH95.textContent = h95.toFixed(2) + ' m';
+        statRH95.textContent = rh95.toFixed(2) + ' m';
+        statBias.textContent = bias.toFixed(2) + ' m';
+        statFactor.textContent = clampedMultiplier.toFixed(2) + 'x';
+
+        // --- DRAWING ---
+        
+        // 1. Calculate pixel heights (Y=0 is top, Y=400 is bottom)
+        const h95Pixels = h95 * PIXELS_PER_METER;
+        const rh95Pixels = rh95 * PIXELS_PER_METER;
+        
+        const h95Y = GROUND_Y - h95Pixels;
+        const rh95Y = GROUND_Y - rh95Pixels;
+
+        // 2. Draw Markers
+        lineH95.setAttribute('y1', h95Y);
+        lineH95.setAttribute('y2', h95Y);
+        textH95.setAttribute('y', h95Y - 5);
+
+        lineRH95.setAttribute('y1', rh95Y);
+        lineRH95.setAttribute('y2', rh95Y);
+        textRH95.setAttribute('y', rh95Y + 15);
+
+        // 3. Draw Tree
+        // Trunk height
+        // We assume trunk goes up to ~40% of the H95 height
+        const trunkHeight = h95Pixels * 0.4;
+        trunk.setAttribute('height', trunkHeight); 
+        trunk.setAttribute('y', -trunkHeight); 
+        trunk.removeAttribute('transform'); // Remove incorrect flip
+
+        // Canopy - Procedural generation based on Cover
+        // We now pass H95, but inside the function we assume the visual tree
+        // is slightly taller (H100) than H95.
+        drawCanopy(h95Pixels, ccp);
+
+        // 4. Draw Waveform (Schematic)
+        drawWaveform(h95Pixels, rh95Pixels);
+    }
+
+    function drawCanopy(h95Px, ccp) {
+        canopyGroup.innerHTML = '';
+        
+        // CORRECTION: H95 is the 95th percentile. The absolute top of the tree (H100)
+        // is slightly higher. We scale the visual tree volume up by ~5% (1.05)
+        // so the H95 line visually cuts through the top of the canopy.
+        const h100Px = h95Px * 1.05;
+
+        // Define crown ellipsoid
+        const crownBase = h100Px * 0.3; // Starts 30% up
+        const crownTop = h100Px;
+        const crownHeight = crownTop - crownBase;
+        const crownWidth = h100Px * 0.6; // Width proportional to height
+
+        // --- Draw Canopy Volume (Transparent Ellipsoid) ---
+        const volume = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+        volume.setAttribute("cx", 0);
+        // Center Y is midpoint between base (negative y) and top (negative y)
+        volume.setAttribute("cy", -(crownBase + crownHeight / 2));
+        volume.setAttribute("rx", crownWidth / 2);
+        volume.setAttribute("ry", crownHeight / 2);
+        volume.setAttribute("fill", "#48bb78");
+        volume.setAttribute("opacity", "0.15"); // Highly transparent
+        canopyGroup.appendChild(volume);
+
+        // Number of leaves scales with CCP and Height
+        // Sparse cover = fewer circles
+        const leafCount = Math.floor((ccp / 100) * 80) + 5; 
+
+        for (let i = 0; i < leafCount; i++) {
+            // Random position within ellipsoid
+            // Simple rejection sampling for circular shape
+            const angle = Math.random() * Math.PI * 2;
+            const r = Math.sqrt(Math.random()) * (crownWidth / 2);
+            
+            const dx = r * Math.cos(angle);
+            // Distribute vertically in upper 70% of tree
+            const dy = -(crownBase + Math.random() * crownHeight);
+
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", dx);
+            circle.setAttribute("cy", dy);
+            // Radius slightly random
+            circle.setAttribute("r", (Math.random() * 4 + 3)); 
+            circle.setAttribute("fill", "#48bb78");
+            circle.setAttribute("opacity", "0.7");
+            canopyGroup.appendChild(circle);
+        }
+    }
+
+    function drawWaveform(h95Px, rh95Px) {
+        // We draw a schematic waveform
+        // It should have a ground peak at the bottom
+        // And a canopy peak roughly centered around the energy return height
+        // The width (amplitude) of the canopy peak should scale with CCP
+        
+        const path = [];
+        const centerX = 0; // Relative to group transform
+        const width = 80; // Max width of waveform display
+
+        // Start at top of axis
+        path.push(`M ${centerX} 0`);
+        
+        // Iterate down the Y axis
+        for (let y = 0; y <= 400; y += 5) {
+            const heightAboveGround = 400 - y;
+            let amplitude = 0;
+
+            // 1. Ground Return (Gaussian at bottom)
+            // Stronger if canopy is sparse (more energy hits ground)
+            const ccpFactor = parseFloat(ccpSlider.value) / 100;
+            const groundStrength = (1 - ccpFactor) * width; 
+            const groundGauss = groundStrength * Math.exp(-Math.pow(heightAboveGround - 0, 2) / 200);
+
+            // 2. Canopy Return 
+            // Peak centered slightly below geometric top, skewed towards rh95
+            // But for simplicity in this schematic, let's center a blob near rh95
+            const canopyStrength = (ccpFactor) * width * 1.5; 
+            const canopyGauss = canopyStrength * Math.exp(-Math.pow(heightAboveGround - (rh95Px * 0.9), 2) / (h95Px * 20));
+
+            amplitude = groundGauss + canopyGauss;
+
+            // Clamp max width visual
+            amplitude = Math.min(amplitude, width);
+
+            path.push(`L ${centerX + amplitude} ${y}`);
+        }
+
+        // Close path back to axis
+        path.push(`L ${centerX} 400`);
+        
+        waveformPath.setAttribute('d', path.join(" "));
+    }
+
+    // Initialize
+    h95Slider.addEventListener('input', updateModel);
+    ccpSlider.addEventListener('input', updateModel);
+    updateModel(); // First run
+
+</script>
+
+</body>
+</html>
