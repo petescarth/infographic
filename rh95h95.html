@@ -240,7 +240,7 @@
                     <span>True Geometric Height (\(H_{95}\))</span>
                     <span id="h95-val">6.0 m</span>
                 </label>
-                <!-- Updated range 1 to 10 -->
+                <!-- Range 1 to 10 -->
                 <input type="range" id="h95-slider" min="1" max="10" step="0.1" value="6">
             </div>
 
@@ -275,9 +275,9 @@
             </div>
 
             <div class="formula-display">
-                <strong>Empirical Correction Model:</strong><br>
-                \(H_{95} \approx rh_{95} \cdot (b \cdot Cover + a)\)<br><br>
-                <em>Fit Parameters:</em> \(a \approx 2.00, b \approx -0.025\)
+                <strong>Physics-Based Correction Model:</strong><br>
+                \(H_{95} \approx rh_{95} \cdot (1 + \alpha \cdot e^{-\beta \cdot Cover})\)<br><br>
+                <em>Fit Parameters:</em> \(\alpha = 3.00, \beta = 0.10\)
             </div>
         </div>
 
@@ -321,29 +321,28 @@
 
     <!-- Deep Dive / Mechanisms -->
     <section class="deep-dive">
-        <h3>Mechanism of Divergence: Signal Integration vs. Discrete Sampling</h3>
+        <h3>Mechanisms of Divergence: A Physical Analysis</h3>
         <p>
-            The discrepancy illustrated above is fundamentally a difference between <strong>probability of interception</strong> (ALS) and <strong>integration of backscatter cross-section</strong> (Waveform).
+            The updated model adopts an exponential decay function, grounded in the <strong>Beer-Lambert Law</strong> of light extinction. In LiDAR remote sensing, the probability of a pulse penetrating the canopy is a function of gap fraction, which decays exponentially with increasing foliage density. Consequently, the "porosity penalty"—the distance the signal travels before reflecting enough energy to trigger \(rh_{95}\)—decreases exponentially as the canopy closes. This approach correctly captures the saturation effect: once the canopy is optically opaque, the energy return aligns with the geometric surface, a physical constraint that linear models fail to respect.
         </p>
+
         <p>
-            <strong>1. The "Soft" Canopy Problem:</strong><br>
-            In Acacia woodlands, the foliage is often microphyllous (small leaves) and vertically oriented (phyllodes). This results in a low backscatter cross-section (\(\sigma\)) per unit volume. A GEDI pulse (approx. 25m footprint) integrates this signal. At the top of the canopy, the accumulated \(\sigma\) is often insufficient to exceed the background noise threshold. The signal only becomes significant deeper in the crown where biomass density increases.
+            <strong>1. The "Invisible Top" Hypothesis (Thresholding Bias):</strong><br>
+            The parameter \(\alpha = 3.00\) implies that at extremely low cover (near 0%), the geometric height is <strong>4x</strong> the energy height (\(1 + \alpha\)). This confirms that the sparse upper canopy of Acacia woodlands often fails to reflect enough photons to exceed the GEDI sensor's background noise threshold. The "visible" signal only begins deep in the crown.
         </p>
+
         <p>
-            <strong>2. Waveform Energy Quantiles (\(rh\)):</strong><br>
-            Metrics like \(rh_{95}\) are calculated by integrating the total energy from the ground return up to the canopy top. In sparse canopies, the ground return is dominant (often >80% of total energy). Because the "tail" of the canopy energy is weak, the 95th percentile of the <em>accumulated integral</em> is reached much lower in the vertical profile than in a dense canopy, where the top layers reflect strongly.
-        </p>
-        <p>
-            <strong>3. Discrete ALS Sensitivity:</strong><br>
-            Conversely, Airborne Laser Scanning (ALS) uses small-footprint (<1m) discrete pulses. Even a single sparse leaf at the canopy apex can trigger a return if intercepted. Therefore, \(H_{95}\) derived from ALS effectively captures the <em>geometric envelope</em>, whereas \(rh_{95}\) captures the <em>radiometric center of mass</em>.
+            <strong>2. Saturation via Exponential Decay:</strong><br>
+            Unlike linear models which can predict negative heights at high cover, this model follows the physical reality of light attenuation. As canopy cover increases, the "porosity penalty" decays exponentially (\(e^{-\beta \cdot Cover}\)). This ensures that once the canopy becomes optically opaque (around 30-40% cover in this model), the correction factor naturally asymptotes to 1.0, where energy height equals geometric height.
         </p>
     </section>
 </div>
 
 <script>
     // Constants from the user's fit
-    const A_PARAM = 2.00;
-    const B_PARAM = -0.025;
+    const A_PARAM = 3.00; // Alpha
+    const B_PARAM = 0.10; // Beta
+    
     // UPDATED: Increased scale so 10m fills about ~350px of the 400px height.
     const PIXELS_PER_METER = 35; 
     const GROUND_Y = 400;
@@ -377,25 +376,22 @@
         h95Display.textContent = h95.toFixed(1) + ' m';
         ccpDisplay.textContent = ccp.toFixed(0) + ' %';
 
-        // --- MATH: Inverse Model ---
-        // Forward: H95 = rh95 * (b * ccp + a)
-        // Inverse: rh95 = H95 / (b * ccp + a)
+        // --- MATH: Inverse Exponential Model ---
+        // Forward: H95 = rh95 * (1 + alpha * exp(-beta * ccp))
+        // Inverse: rh95 = H95 / (1 + alpha * exp(-beta * ccp))
         
-        let multiplier = (B_PARAM * ccp) + A_PARAM;
+        let multiplier = 1 + A_PARAM * Math.exp(-B_PARAM * ccp);
         
-        // Safety Clamp: The physics break if multiplier < 1 (implies rh95 > H95)
-        // In reality, as cover increases, rh95 approaches H95.
-        // We simulate this by clamping the divider to 1.0.
-        const clampedMultiplier = Math.max(multiplier, 1.0);
-
-        const rh95 = h95 / clampedMultiplier;
+        // No safety clamp needed for exponential decay as it asymptotes to 1.0 naturally.
+        
+        const rh95 = h95 / multiplier;
         const bias = h95 - rh95;
 
         // --- Update Stats ---
         statH95.textContent = h95.toFixed(2) + ' m';
         statRH95.textContent = rh95.toFixed(2) + ' m';
         statBias.textContent = bias.toFixed(2) + ' m';
-        statFactor.textContent = clampedMultiplier.toFixed(2) + 'x';
+        statFactor.textContent = multiplier.toFixed(2) + 'x';
 
         // --- DRAWING ---
         
