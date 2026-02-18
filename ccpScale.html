@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimal Spatial Resolution for Canopy Cover</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <!-- Palette Definition:
+        Primary (Eucalypt Teal): #00695C
+        Secondary (Acacia Gold): #FFB300
+        Accent (Red Earth): #D84315
+        Neutral: #263238
+        Background: #F5F5F5
+    -->
+
+    <style>
+        /* Custom Font for Professional Look */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F5F5F5;
+            color: #263238;
+        }
+
+        /* Chart Container Styling - MANDATORY */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Limits width on large screens */
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px; /* Base height */
+            max-height: 500px;
+        }
+
+        /* Specific container adjustments for different visual types */
+        .chart-container-tall {
+            height: 500px;
+        }
+        
+        .chart-container-square {
+            height: 450px;
+            max-width: 500px;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+
+        /* Utility for text hierarchy */
+        .text-eucalypt { color: #00695C; }
+        .bg-eucalypt { background-color: #00695C; }
+        .text-acacia { color: #FFB300; }
+        .bg-acacia { background-color: #FFB300; }
+        .text-earth { color: #D84315; }
+        .bg-earth { background-color: #D84315; }
+        
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- PLAN SUMMARY (Hidden) -->
+    <!-- 
+        1. Intro: The problem of scale in Mulga/Mallee woodlands.
+        2. Visualisation: Simulated clumped landscape (Plotly Scatter).
+        3. The Conflict: 10m vs 30m Histograms (Chart.js Bar) showing the variance issue.
+        4. The Solution: Variance vs Pixel Size Curve (Chart.js Line) identifying the stable point (REA).
+        5. Trade-offs: Radar chart comparing sensors.
+        6. Conclusion: Recommendation for resampling.
+    -->
+
+    <!-- DATA POINTS & JUSTIFICATION (Hidden) -->
+    <!--
+        1. Landscape Sim -> Inform -> Plotly Scatter -> Best to show spatial distribution of points (trees) vs grid. No SVG.
+        2. 10m vs 30m Dist -> Compare -> Chart.js Bar (Histogram) -> Best to show frequency of pixel values (bimodal vs normal).
+        3. CV vs Scale -> Change/Relationship -> Chart.js Line -> Standard scientific plot for scale analysis. Axis limited to 100.
+        4. Sensor Stats -> Compare -> Chart.js Radar -> Good for multi-variable comparison.
+    -->
+
+    <!-- Header Section -->
+    <header class="bg-eucalypt text-white py-12 px-4 shadow-lg mb-8">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">The Scale Paradox</h1>
+            <h2 class="text-xl md:text-2xl font-light text-gray-100">Determining Optimal Pixel Size for Australian Canopy Cover Assessment</h2>
+            <div class="mt-8 max-w-3xl mx-auto">
+                <p class="text-lg opacity-90">In sparse Acacia (Mulga) and Eucalypt woodlands, "Canopy Cover" is not just about vegetation amount—it is about the ruler used to measure it. As pixel size tends towards zero, metrics become binary. As it increases, they become averages. Where is the middle ground?</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 pb-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- Section 1: The Landscape Context -->
+        <section class="col-span-1 md:col-span-2 card">
+            <div class="mb-6 border-b-2 border-gray-100 pb-4">
+                <h3 class="text-2xl font-bold text-eucalypt">1. The Landscape Context</h3>
+                <p class="mt-2 text-gray-600">
+                    Australian rangelands are characterised by "clumped" vegetation. Unlike continuous temperate forests, trees cluster together to share water resources, separated by bare earth or dry grass.
+                    <br><br>
+                    The visualisation below simulates a typical <strong>15% cover</strong> landscape (e.g., Western Queensland Mulga). Notice how the trees (green dots) are not evenly spread. This spatial heterogeneity is the root cause of the remote sensing challenge.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="chart-container chart-container-tall mx-auto">
+                        <div id="landscapePlot" style="width:100%; height:100%;"></div>
+                    </div>
+                    <p class="text-sm text-gray-500 italic mt-2 text-center">
+                        Fig 1. Simulated distribution of Acacia clumps (Green) in a 200m x 200m paddock.
+                    </p>
+                </div>
+                <div class="col-span-1 flex flex-col justify-center space-y-4">
+                    <div class="bg-blue-50 p-4 rounded border-l-4 border-eucalypt">
+                        <h4 class="font-bold text-eucalypt">The Biological Reality</h4>
+                        <p class="text-sm text-gray-600 mt-1">In these environments, average crown widths are often 5-8m. Gaps between clumps can range from 2m to 50m.</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded border-l-4 border-acacia">
+                        <h4 class="font-bold text-acacia">The Measurement Problem</h4>
+                        <p class="text-sm text-gray-600 mt-1">If your pixel is smaller than the gap (e.g., 10m), you frequently measure "0% cover" even in a healthy stand.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: The Sentinel-2 Problem (10m) -->
+        <section class="card">
+            <h3 class="text-xl font-bold text-eucalypt mb-3">2. The "Clump" Trap (10m)</h3>
+            <p class="text-gray-600 mb-6 text-sm">
+                With <strong>10m Sentinel-2</strong> data, the pixel size approaches the scale of a large tree clump. This creates a statistical artifact: pixels either land <em>on</em> a clump (reading ~80% cover) or <em>between</em> them (reading ~5% cover).
+                <br><br>
+                This results in a <strong>high-variance, bimodal distribution</strong>. While spatially precise, any single pixel is a poor predictor of the surrounding hectare's biomass.
+            </p>
+            <div class="chart-container">
+                <canvas id="histogramChart"></canvas>
+            </div>
+            <div class="mt-4 p-3 bg-red-50 border-l-4 border-red-500 rounded">
+                <p class="text-xs text-red-800 font-bold">Insight: The 10m data reports extreme values (0% or 80%) far more often than the true stand average (15%).</p>
+            </div>
+        </section>
+
+        <!-- Section 3: The Landsat Integration (30m) -->
+        <section class="card">
+            <h3 class="text-xl font-bold text-eucalypt mb-3">3. The Landsat Advantage (30m)</h3>
+            <p class="text-gray-600 mb-6 text-sm">
+                Historically, <strong>30m Landsat</strong> pixels were large enough to capture both trees and gaps within a single pixel footprint (900m²). This "spatial integration" acts as a physical averaging filter.
+                <br><br>
+                The resulting distribution is a <strong>Gaussian (Bell) curve</strong> centered tightly around the true mean (15%). While spatial detail is lost, the quantitative accuracy for the stand improves, creating a stable time-series metric.
+            </p>
+            <div class="chart-container">
+                <canvas id="integrationChart"></canvas>
+            </div>
+            <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-600 rounded">
+                <p class="text-xs text-green-800 font-bold">Insight: 30m pixels naturally smooth the data, reducing noise caused by local canopy gaps.</p>
+            </div>
+        </section>
+
+        <!-- Section 4: The Optimization Curve -->
+        <section class="col-span-1 md:col-span-2 card">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="col-span-1">
+                    <h3 class="text-2xl font-bold text-eucalypt mb-4">4. Finding the 'Goldilocks' Scale</h3>
+                    <p class="text-gray-600 mb-4">
+                        To find the Representative Elementary Area (REA), we analyse the <strong>Coefficient of Variation (CV)</strong> across pixel sizes. We normalise the "noise" (variance) on a scale of 0 to 100.
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <span class="text-acacia mr-2 text-xl">&#9679;</span>
+                            <span><strong>Small Pixels (Drone/10m):</strong> High noise (CV > 80). The sensor resolves internal tree shadows and gaps.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-earth mr-2 text-xl">&#9679;</span>
+                            <span><strong>Transition Zone (20m):</strong> The curve inflection point. Variance drops rapidly as pixels exceed average gap size.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-eucalypt mr-2 text-xl">&#9679;</span>
+                            <span><strong>Large Pixels (> 30m):</strong> Stability. The metric reflects the stand, not the individual tree.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <div class="chart-container">
+                        <canvas id="varianceCurveChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Strategic Recommendations -->
+        <section class="card">
+            <h3 class="text-xl font-bold text-eucalypt mb-4">5. Sensor Trade-offs</h3>
+            <p class="text-gray-600 mb-4 text-sm">
+                Choosing a sensor involves balancing spatial precision against the stability of the cover metric.
+            </p>
+            <div class="chart-container chart-container-square">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </section>
+
+        <section class="bg-gray-800 text-white card flex flex-col justify-center">
+            <h3 class="text-2xl font-bold text-acacia mb-4">Operational Recommendation</h3>
+            <div class="space-y-4">
+                <div class="p-4 bg-gray-700 rounded border-l-4 border-acacia">
+                    <h4 class="font-bold text-lg">Resample Sentinel-2 to 20m or 30m</h4>
+                    <p class="text-sm text-gray-300 mt-1">
+                        While Sentinel-2 (10m) offers superior boundary definition, do not use raw 10m pixels for cover statistics in sparse woodlands. 
+                        <br><br>
+                        <strong>The Fix:</strong> Aggregate 10m bands using a <strong>3x3 pixel mean filter</strong> (resulting in 30m equivalent) or resample to 20m. This retains Sentinel's spectral fidelity while reducing the "salt and pepper" noise of canopy gaps.
+                    </p>
+                </div>
+                <div class="p-4 bg-gray-700 rounded border-l-4 border-eucalypt">
+                    <h4 class="font-bold text-lg">Contextual Thresholding</h4>
+                    <p class="text-sm text-gray-300 mt-1">
+                        Acknowledge that pixels >50% cover in these landscapes are often "pure crown" artifacts. Ensure ground calibration (field transects) accounts for the scale difference between the field method (often line intercept) and the satellite pixel.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-200 text-center py-6 text-gray-500 text-sm">
+        <p>Generated for Landscape Ecology & Remote Sensing Analysis • Australian Woodland Focus</p>
+        <p class="mt-1"></p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- UTILITY: Label Wrapping Logic (Mandatory) ---
+        function formatLabel(str, maxwidth) {
+            if (typeof str !== 'string') return str;
+            if (str.length <= maxwidth) return str;
+            
+            const sections = [];
+            const words = str.split(' ');
+            let temp = '';
+
+            words.forEach(function(item, index) {
+                if (temp.length > 0) {
+                    const concat = temp + ' ' + item;
+                    if (concat.length > maxwidth) {
+                        sections.push(temp);
+                        temp = item;
+                    } else {
+                        temp = concat;
+                    }
+                } else {
+                    temp = item;
+                }
+                if (index === words.length - 1) {
+                    sections.push(temp);
+                }
+            });
+            return sections;
+        }
+
+        // --- UTILITY: Common Tooltip Config (Mandatory) ---
+        const commonTooltipOptions = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // --- CHART 1: Landscape Simulation (Plotly) ---
+        // Simulating a 200x200m paddock with clumped trees
+        
+        function generateClumpedData(nClumps, pointsPerClump, spread) {
+            let x = [];
+            let y = [];
+            
+            for(let i=0; i<nClumps; i++) {
+                // Random center for clump
+                let cx = Math.random() * 200;
+                let cy = Math.random() * 200;
+                
+                for(let j=0; j<pointsPerClump; j++) {
+                    // Gaussian random around center
+                    let u = 0, v = 0;
+                    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+                    while(v === 0) v = Math.random();
+                    let num = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+                    
+                    x.push(cx + (num * spread));
+                    y.push(cy + (num * spread));
+                }
+            }
+            return {x, y};
+        }
+
+        const treeData = generateClumpedData(40, 15, 3); // 40 clumps, tight spread simulating Acacia
+
+        const traceTrees = {
+            x: treeData.x,
+            y: treeData.y,
+            mode: 'markers',
+            type: 'scatter',
+            name: 'Acacia Clumps',
+            marker: { size: 6, color: '#00695C', opacity: 0.8 }
+        };
+
+        // Grid lines simulation (10m vs 30m overlay implied by layout)
+        const layoutLandscape = {
+            title: 'Simulated Mulga Woodland (Top-Down)',
+            font: { family: 'Roboto, sans-serif' },
+            xaxis: { range: [0, 200], title: 'Distance (m)', showgrid: true, gridcolor: '#e0e0e0' },
+            yaxis: { range: [0, 200], title: 'Distance (m)', showgrid: true, gridcolor: '#e0e0e0', scaleanchor: "x" },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: '#F5F5F5', // Light ground color
+            margin: { t: 40, b: 40, l: 40, r: 20 },
+            hovermode: 'closest'
+        };
+
+        Plotly.newPlot('landscapePlot', [traceTrees], layoutLandscape, {responsive: true, displayModeBar: false});
+
+
+        // --- CHART 2: 10m Histogram (Chart.js) ---
+        // Showing bimodal distribution
+        const ctxHist = document.getElementById('histogramChart').getContext('2d');
+        const histChart = new Chart(ctxHist, {
+            type: 'bar',
+            data: {
+                // Bins of cover %
+                labels: ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90-100%'],
+                datasets: [{
+                    label: 'Sentinel-2 (10m) Pixel Frequency',
+                    data: [45, 10, 5, 2, 2, 5, 8, 15, 6, 2], // High gaps, High clumps
+                    backgroundColor: '#D84315', // Alert Red/Orange
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: commonTooltipOptions,
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: { display: true, text: '% of Total Pixels' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3: 30m Integration (Chart.js) ---
+        // Showing Gaussian distribution
+        const ctxInt = document.getElementById('integrationChart').getContext('2d');
+        const intChart = new Chart(ctxInt, {
+            type: 'bar',
+            data: {
+                labels: ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90-100%'],
+                datasets: [{
+                    label: 'Landsat (30m) Pixel Frequency',
+                    data: [5, 40, 35, 10, 5, 3, 1, 1, 0, 0], // Centered around 15-20%
+                    backgroundColor: '#00695C', // Eucalypt Green
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: commonTooltipOptions,
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: { display: true, text: '% of Total Pixels' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 4: Variance vs Scale Curve (Chart.js) ---
+        const ctxVar = document.getElementById('varianceCurveChart').getContext('2d');
+        
+        // Wrap labels for X axis if needed
+        const scaleLabels = ['1m (Drone)', '5m', '10m (Sentinel)', '15m', '20m', '30m (Landsat)', '50m', '100m', '250m (MODIS)'];
+        const processedScaleLabels = scaleLabels.map(l => formatLabel(l, 16));
+
+        const varChart = new Chart(ctxVar, {
+            type: 'line',
+            data: {
+                labels: processedScaleLabels,
+                datasets: [{
+                    label: 'Norm. Coefficient of Variation (Noise)',
+                    // Adjusted data to max out at 100 for the 1m scale
+                    data: [100, 85, 75, 55, 40, 20, 15, 10, 5], 
+                    borderColor: '#D84315',
+                    backgroundColor: 'rgba(216, 67, 21, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#D84315'
+                },
+                {
+                    label: 'Stand Estimate Stability',
+                    data: [10, 25, 40, 65, 80, 95, 98, 99, 95], // Rising then flat
+                    borderColor: '#00695C',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    tooltip: commonTooltipOptions,
+                    title: {
+                        display: true,
+                        text: 'Optimal Resolution Analysis (REA)'
+                    },
+                    annotation: {
+                        // Conceptual annotation logic would go here
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100, // STRICT LIMIT 0-100
+                        title: { display: true, text: 'Metric Index (0-100)' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Pixel Size / Resolution' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 5: Radar Trade-off (Chart.js) ---
+        const ctxRadar = document.getElementById('radarChart').getContext('2d');
+        const radarLabels = ['Spatial Detail', 'Cover Accuracy (Stand)', 'Cost Efficiency', 'Temporal Frequency', 'Data Volume (Low is Good)'];
+        const processedRadarLabels = radarLabels.map(l => formatLabel(l, 16));
+
+        const radarChart = new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: processedRadarLabels,
+                datasets: [{
+                    label: 'Sentinel-2 (10m)',
+                    data: [85, 60, 90, 90, 60],
+                    fill: true,
+                    backgroundColor: 'rgba(216, 67, 21, 0.2)',
+                    borderColor: '#D84315',
+                    pointBackgroundColor: '#D84315',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#D84315'
+                }, {
+                    label: 'Landsat (30m)',
+                    data: [50, 90, 95, 70, 90],
+                    fill: true,
+                    backgroundColor: 'rgba(0, 105, 92, 0.2)',
+                    borderColor: '#00695C',
+                    pointBackgroundColor: '#00695C',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#00695C'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: {
+                    line: { borderWidth: 3 }
+                },
+                plugins: {
+                    tooltip: commonTooltipOptions
+                },
+                scales: {
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
