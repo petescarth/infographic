@@ -99,7 +99,7 @@
             <h1 class="text-4xl md:text-5xl font-bold mb-4">The Scale Paradox</h1>
             <h2 class="text-xl md:text-2xl font-light text-gray-100">Determining Optimal Pixel Size for Australian Canopy Cover Assessment</h2>
             <div class="mt-8 max-w-3xl mx-auto">
-                <p class="text-lg opacity-90">In sparse Acacia (Mulga) and Eucalypt woodlands, "Canopy Cover" is not just about vegetation amount—it is about the ruler used to measure it. As pixel size tends towards zero, metrics become binary. As it increases, they become averages. Where is the middle ground?</p>
+                <p class="text-lg opacity-90">In sparse Acacia (Mulga) and Eucalypt woodlands, "Canopy Cover" is not just about vegetation amount. It is about the ruler used to measure it. As pixel size tends towards zero, metrics become binary. As it increases, they become averages. Where is the middle ground?</p>
             </div>
         </div>
     </header>
@@ -134,7 +134,7 @@
                     </div>
                     <div class="bg-orange-50 p-4 rounded border-l-4 border-acacia">
                         <h4 class="font-bold text-acacia">The Measurement Problem</h4>
-                        <p class="text-sm text-gray-600 mt-1">If your pixel is smaller than the gap (e.g., 10m), you frequently measure "0% cover" even in a healthy stand.</p>
+                        <p class="text-sm text-gray-600 mt-1">If your pixel is smaller than the gap (e.g. 10m), you frequently measure "0% cover" even in a healthy stand.</p>
                     </div>
                 </div>
             </div>
@@ -238,7 +238,7 @@
 
     <footer class="bg-gray-200 text-center py-6 text-gray-500 text-sm">
         <p>Generated for Landscape Ecology & Remote Sensing Analysis • Australian Woodland Focus</p>
-        <p class="mt-1"></p>
+        <p class="mt-1">@petescarth</p>
     </footer>
 
     <!-- JAVASCRIPT LOGIC -->
@@ -299,20 +299,28 @@
                 let cy = Math.random() * 200;
                 
                 for(let j=0; j<pointsPerClump; j++) {
-                    // Gaussian random around center
-                    let u = 0, v = 0;
-                    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
-                    while(v === 0) v = Math.random();
-                    let num = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+                    // Generate Offset X (Independent Gaussian)
+                    let u1 = Math.random();
+                    let v1 = Math.random();
+                    // Avoid log(0)
+                    while(u1 === 0) u1 = Math.random(); 
+                    let numX = Math.sqrt( -2.0 * Math.log( u1 ) ) * Math.cos( 2.0 * Math.PI * v1 );
+
+                    // Generate Offset Y (Independent Gaussian)
+                    let u2 = Math.random();
+                    let v2 = Math.random();
+                    while(u2 === 0) u2 = Math.random();
+                    let numY = Math.sqrt( -2.0 * Math.log( u2 ) ) * Math.cos( 2.0 * Math.PI * v2 );
                     
-                    x.push(cx + (num * spread));
-                    y.push(cy + (num * spread));
+                    x.push(cx + (numX * spread));
+                    y.push(cy + (numY * spread));
                 }
             }
             return {x, y};
         }
 
-        const treeData = generateClumpedData(40, 15, 3); // 40 clumps, tight spread simulating Acacia
+        // Increase spread slightly for better visual circularity
+        const treeData = generateClumpedData(45, 18, 4); 
 
         const traceTrees = {
             x: treeData.x,
@@ -320,7 +328,7 @@
             mode: 'markers',
             type: 'scatter',
             name: 'Acacia Clumps',
-            marker: { size: 6, color: '#00695C', opacity: 0.8 }
+            marker: { size: 5, color: '#00695C', opacity: 0.8 }
         };
 
         // Grid lines simulation (10m vs 30m overlay implied by layout)
