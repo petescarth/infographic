@@ -276,8 +276,8 @@
 
             <div class="formula-display">
                 <strong>Physics-Based Correction Model:</strong><br>
-                \(H_{95} \approx rh_{95} \cdot (1 + \alpha \cdot e^{-\beta \cdot Cover})\)<br><br>
-                <em>Fit Parameters:</em> \(\alpha = 3.000, \beta = 0.125\)
+                \(H_{95} \approx rh_{95} \cdot \left(1 + \frac{\alpha}{\sqrt{rh_{95}}} \cdot e^{-\beta \cdot Cover}\right)\)<br><br>
+                <em>Fit Parameters:</em> \(\alpha = 3.5, \beta = 0.1\)
             </div>
         </div>
 
@@ -321,27 +321,39 @@
 
     <!-- Deep Dive / Mechanisms -->
     <section class="deep-dive">
-        <h3>Mechanisms of Divergence: A Physical Analysis</h3>
+        <h3>Methodological Note: Lidar Height Correction in Savannah Landscapes</h3>
+        
         <p>
-            The updated model adopts an exponential decay function, grounded in the <strong>Beer-Lambert Law</strong> of light extinction. In LiDAR remote sensing, the probability of a pulse penetrating the canopy is a function of gap fraction, which decays exponentially with increasing foliage density. Consequently, the "porosity penalty"—the distance the signal travels before reflecting enough energy to trigger \(rh_{95}\)—decreases exponentially as the canopy closes. This approach correctly captures the saturation effect: once the canopy is optically opaque, the energy return aligns with the geometric surface, a physical constraint that linear models fail to respect.
+            Australian savannahs present a unique structural challenge for spaceborne Lidar systems. These landscapes typically feature a sparse overstorey of tall trees situated above a distinct 1 to 3 metre grassy or shrubby understorey. Because the upper canopy is highly porous, raw satellite Lidar metrics like \(rh_{95}\) often suffer from signal trailing. The weak return from the sparse top canopy frequently fails to cross noise thresholds, while the dense understorey triggers a strong, late return. This creates a "porosity gap" where the energy centroid drops significantly below the true geometric surface.
         </p>
 
         <p>
-            <strong>1. The "Invisible Top" Hypothesis (Thresholding Bias):</strong><br>
-            The parameter \(\alpha = 3.00\) implies that at extremely low cover (near 0%), the geometric height is <strong>4x</strong> the energy height (\(1 + \alpha\)). This confirms that the sparse upper canopy of Acacia woodlands often fails to reflect enough photons to exceed the GEDI sensor's background noise threshold. The "visible" signal only begins deep in the crown.
+            To resolve this bias, we apply a structurally-aware, volumetric correction model:
         </p>
+        
+        <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 6px; text-align: center; margin: 1.5rem 0;">
+            \(H_{95} \approx rh_{95} \cdot \left(1 + \frac{\alpha}{\sqrt{rh_{95}}} \cdot e^{-\beta \cdot Cover}\right)\)
+        </div>
 
         <p>
-            <strong>2. Saturation via Exponential Decay:</strong><br>
-            Unlike linear models which can predict negative heights at high cover, this model follows the physical reality of light attenuation. As canopy cover increases, the "porosity penalty" decays exponentially (\(e^{-\beta \cdot Cover}\)). This ensures that once the canopy becomes optically opaque (around 30-40% cover in this model), the correction factor naturally asymptotes to 1.0, where energy height equals geometric height.
+            This mathematical structure bridges the gap between 2D canopy cover and 3D volumetric penetration through two core mechanisms:
+        </p>
+
+        <ul style="color: #cbd5e0; line-height: 1.7; font-size: 0.95rem; margin-bottom: 1.5rem;">
+            <li style="margin-bottom: 0.5rem"><strong>Scale-Dependent Volumetric Depth (\(\frac{\alpha}{\sqrt{rh_{95}}}\)):</strong> By dividing the correction coefficient by the square root of the energy height, the model applies a strong, targeted boost to short, dense understorey layers (e.g., a 2 metre shrub) while ensuring the multiplier naturally attenuates for a 20 metre tree. This prevents the erroneous over-amplification of tall canopies.</li>
+            <li><strong>Beer-Lambert Extinction (\(e^{-\beta \cdot Cover}\)):</strong> Grounded in the physics of light attenuation, the "porosity penalty" decays exponentially as foliage density increases. As the canopy closes and becomes optically opaque, the exponential term approaches zero. This correctly captures physical saturation, smoothly asymptoting the correction factor towards 1.0 where the energy return successfully aligns with the geometric surface.</li>
+        </ul>
+
+        <p>
+            By combining volumetric depth scaling with exponential light extinction, this approach directly addresses the "invisible top" thresholding bias at low cover, while strictly respecting the physical boundaries of saturated canopies. The result is a highly accurate representation of both sparse overstoreys and dense understoreys in complex woodland environments.
         </p>
     </section>
 </div>
 
 <script>
     // Constants from the user's fit
-    const A_PARAM = 3.000; // Alpha
-    const B_PARAM = 0.125; // Beta
+    const A_PARAM = 3.5; // Alpha
+    const B_PARAM = 0.1; // Beta
     
     // UPDATED: Increased scale so 10m fills about ~350px of the 400px height.
     const PIXELS_PER_METER = 35; 
@@ -376,15 +388,19 @@
         h95Display.textContent = h95.toFixed(1) + ' m';
         ccpDisplay.textContent = ccp.toFixed(0) + ' %';
 
-        // --- MATH: Inverse Exponential Model ---
-        // Forward: H95 = rh95 * (1 + alpha * exp(-beta * ccp))
-        // Inverse: rh95 = H95 / (1 + alpha * exp(-beta * ccp))
+        // --- MATH: Updated Height-Interaction Model ---
+        // Forward: H95 = rh95 * (1 + (alpha / Math.sqrt(rh95)) * Math.exp(-beta * ccp))
+        // To find rh95 given H95, let x = Math.sqrt(rh95).
+        // Then H95 = x^2 + (alpha * Math.exp(-beta * ccp)) * x
+        // This is a quadratic equation: x^2 + b*x - H95 = 0, where b = alpha * Math.exp(-beta * ccp)
+        // Solving for x (we take the positive root): x = (-b + Math.sqrt(b^2 + 4 * h95)) / 2
+        // rh95 = x^2
         
-        let multiplier = 1 + A_PARAM * Math.exp(-B_PARAM * ccp);
-        
-        // No safety clamp needed for exponential decay as it asymptotes to 1.0 naturally.
-        
-        const rh95 = h95 / multiplier;
+        const b = A_PARAM * Math.exp(-B_PARAM * ccp);
+        const x = (-b + Math.sqrt(b * b + 4 * h95)) / 2;
+        const rh95 = x * x;
+
+        let multiplier = h95 / rh95; // Used for stats display
         const bias = h95 - rh95;
 
         // --- Update Stats ---
