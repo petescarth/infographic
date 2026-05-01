@@ -107,76 +107,115 @@
     <!-- Main Content Grid -->
     <main class="max-w-7xl mx-auto px-4 pb-12 grid grid-cols-1 md:grid-cols-2 gap-8">
 
-        <!-- Section 1: The Landscape Context -->
+        <!-- Section 1: The Scale Paradox Simulator -->
         <section class="col-span-1 md:col-span-2 card">
             <div class="mb-6 border-b-2 border-gray-100 pb-4">
-                <h3 class="text-2xl font-bold text-eucalypt">1. The Landscape Context</h3>
+                <h3 class="text-2xl font-bold text-eucalypt">1. The Scale Paradox Simulator</h3>
                 <p class="mt-2 text-gray-600">
-                    Australian rangelands are characterised by "clumped" vegetation. Unlike continuous temperate forests, trees cluster together to share water resources, separated by bare earth or dry grass.
+                    Australian rangelands are characterised by "clumped" vegetation. In sparse woodlands, canopy cover statistics are highly dependent on the measurement scale. Use the sliders to simulate tree distribution and observe the resulting statistical distribution of pixel measurements.
                     <br><br>
-                    The visualisation below simulates a typical <strong>15% cover</strong> landscape (e.g., Western Queensland Mulga). Notice how the trees (green dots) are not evenly spread. This spatial heterogeneity is the root cause of the remote sensing challenge.
+                    Notice how small pixels (like Sentinel-2 at 10m) create a high-variance, bimodal distribution, while larger pixels (like Landsat at 30m) integrate the canopy and gaps into a stable bell curve.
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="chart-container chart-container-tall mx-auto">
-                        <div id="landscapePlot" style="width:100%; height:100%;"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Sidebar / Controls -->
+                <div class="lg:col-span-1 flex flex-col gap-2">
+                    <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 mb-2 shadow-inner">
+                        <div class="mb-4">
+                            <div class="flex justify-between font-bold text-sm text-gray-700 mb-1">
+                                <span>Simulated True CCP</span>
+                                <span id="ccpValue" class="text-eucalypt">15%</span>
+                            </div>
+                            <input type="range" id="ccpSlider" min="5" max="50" value="15" class="w-full accent-[#00695C] cursor-pointer" />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between font-bold text-sm text-gray-700 mb-1">
+                                <span>Clumping Factor</span>
+                                <span id="clumpValue" class="text-eucalypt">0.85</span>
+                            </div>
+                            <input type="range" id="clumpSlider" min="0" max="1" step="0.05" value="0.85" class="w-full accent-[#00695C] cursor-pointer" />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between font-bold text-sm text-gray-700 mb-1">
+                                <span>Canopy Radius</span>
+                                <span id="canopyValue" class="text-eucalypt">3m</span>
+                            </div>
+                            <input type="range" id="canopySlider" min="1" max="12" step="1" value="3" class="w-full accent-[#00695C] cursor-pointer" />
+                        </div>
+                        
+                        <div class="mb-0">
+                            <div class="flex justify-between font-bold text-sm text-gray-700 mb-1">
+                                <span>Sample Pixel Size</span>
+                                <span id="pixelValue" class="text-earth">10m</span>
+                            </div>
+                            <input type="range" id="pixelSlider" min="5" max="50" step="5" value="10" class="w-full accent-[#D84315] cursor-pointer" />
+                            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                <span>5m</span>
+                                <span>Sen(10m)</span>
+                                <span>LS(30m)</span>
+                                <span>50m</span>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-500 italic mt-2 text-center">
-                        Fig 1. Simulated distribution of Acacia clumps (Green) in a 200m x 200m paddock.
-                    </p>
+                    
+                    <!-- Dynamic Statistics Box -->
+                    <div class="bg-green-50 p-5 rounded-lg border border-green-100 shadow-sm">
+                        <h3 class="font-bold text-eucalypt mb-3">Sample Statistics</h3>
+                        <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                            <div class="bg-white p-3 rounded shadow-sm border border-green-50 text-center">
+                                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Mean Cover</p>
+                                <p id="statMean" class="font-bold text-xl text-gray-800">0%</p>
+                            </div>
+                            <div class="bg-white p-3 rounded shadow-sm border border-green-50 text-center">
+                                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Coeff of Var</p>
+                                <p id="statCV" class="font-bold text-xl text-gray-800">0</p>
+                            </div>
+                        </div>
+                        <div class="bg-white/80 p-3 rounded border border-green-100">
+                            <p id="statInsight" class="text-sm text-eucalypt font-medium leading-relaxed"></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-span-1 flex flex-col justify-center space-y-4">
-                    <div class="bg-blue-50 p-4 rounded border-l-4 border-eucalypt">
-                        <h4 class="font-bold text-eucalypt">The Biological Reality</h4>
-                        <p class="text-sm text-gray-600 mt-1">In these environments, average crown widths are often 5-8m. Gaps between clumps can range from 2m to 50m.</p>
+                
+                <!-- Visualisations -->
+                <div class="lg:col-span-2 flex flex-col gap-6">
+                    <!-- Landscape Map -->
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center justify-between">
+                            <span>Landscape Map <span class="font-normal text-gray-500 text-sm">(500m x 500m)</span></span>
+                        </h2>
+                        <div class="bg-gray-200 rounded-lg overflow-hidden border border-gray-300 flex justify-center items-center shadow-inner aspect-square md:aspect-auto" style="image-rendering: pixelated;">
+                            <canvas id="landscapeCanvas" width="500" height="500" class="w-full max-w-[500px] h-auto bg-[#d6c39e]"></canvas>
+                        </div>
                     </div>
-                    <div class="bg-orange-50 p-4 rounded border-l-4 border-acacia">
-                        <h4 class="font-bold text-acacia">The Measurement Problem</h4>
-                        <p class="text-sm text-gray-600 mt-1">If your pixel is smaller than the gap (e.g. 10m), you frequently measure "0% cover" even in a healthy stand.</p>
+                    
+                    <!-- Histogram -->
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800 mb-3">CCP Sample Distribution</h2>
+                        <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm relative pt-6 pb-8 pl-8 pr-4">
+                            <canvas id="simHistogramCanvas" width="600" height="200" class="w-full h-[200px]"></canvas>
+                            
+                            <!-- Axis Labels -->
+                            <div class="absolute bottom-2 left-0 right-0 text-center text-xs font-semibold text-gray-500">
+                                Percentage Canopy Cover in Sampled Pixels
+                            </div>
+                            <div class="absolute top-1/2 left-2 -translate-y-1/2 -rotate-90 text-xs font-semibold text-gray-500 tracking-wider">
+                                Frequency
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: The Sentinel-2 Problem (10m) -->
-        <section class="card">
-            <h3 class="text-xl font-bold text-eucalypt mb-3">2. The "Clump" Trap (10m)</h3>
-            <p class="text-gray-600 mb-6 text-sm">
-                With <strong>10m Sentinel-2</strong> data, the pixel size approaches the scale of a large tree clump. This creates a statistical artifact: pixels either land <em>on</em> a clump (reading ~80% cover) or <em>between</em> them (reading ~5% cover).
-                <br><br>
-                This results in a <strong>high-variance, bimodal distribution</strong>. While spatially precise, any single pixel is a poor predictor of the surrounding hectare's biomass.
-            </p>
-            <div class="chart-container">
-                <canvas id="histogramChart"></canvas>
-            </div>
-            <div class="mt-4 p-3 bg-red-50 border-l-4 border-red-500 rounded">
-                <p class="text-xs text-red-800 font-bold">Insight: The 10m data reports extreme values (0% or 80%) far more often than the true stand average (15%).</p>
-            </div>
-        </section>
-
-        <!-- Section 3: The Landsat Integration (30m) -->
-        <section class="card">
-            <h3 class="text-xl font-bold text-eucalypt mb-3">3. The Landsat Advantage (30m)</h3>
-            <p class="text-gray-600 mb-6 text-sm">
-                Historically, <strong>30m Landsat</strong> pixels were large enough to capture both trees and gaps within a single pixel footprint (900m²). This "spatial integration" acts as a physical averaging filter.
-                <br><br>
-                The resulting distribution is a <strong>Gaussian (Bell) curve</strong> centered tightly around the true mean (15%). While spatial detail is lost, the quantitative accuracy for the stand improves, creating a stable time-series metric.
-            </p>
-            <div class="chart-container">
-                <canvas id="integrationChart"></canvas>
-            </div>
-            <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-600 rounded">
-                <p class="text-xs text-green-800 font-bold">Insight: 30m pixels naturally smooth the data, reducing noise caused by local canopy gaps.</p>
-            </div>
-        </section>
-
-        <!-- Section 4: The Optimization Curve -->
+        <!-- Section 2: The Optimization Curve -->
         <section class="col-span-1 md:col-span-2 card">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="col-span-1">
-                    <h3 class="text-2xl font-bold text-eucalypt mb-4">4. Finding the 'Goldilocks' Scale</h3>
+                    <h3 class="text-2xl font-bold text-eucalypt mb-4">2. Finding the 'Goldilocks' Scale</h3>
                     <p class="text-gray-600 mb-4">
                         To find the Representative Elementary Area (REA), we analyse the <strong>Coefficient of Variation (CV)</strong> across pixel sizes. We normalise the "noise" (variance) on a scale of 0 to 100.
                     </p>
@@ -203,9 +242,9 @@
             </div>
         </section>
 
-        <!-- Section 5: Strategic Recommendations -->
+        <!-- Section 3: Strategic Recommendations -->
         <section class="card">
-            <h3 class="text-xl font-bold text-eucalypt mb-4">5. Sensor Trade-offs</h3>
+            <h3 class="text-xl font-bold text-eucalypt mb-4">3. Sensor Trade-offs</h3>
             <p class="text-gray-600 mb-4 text-sm">
                 Choosing a sensor involves balancing spatial precision against the stability of the cover metric.
             </p>
@@ -286,126 +325,234 @@
             }
         };
 
-        // --- CHART 1: Landscape Simulation (Plotly) ---
-        // Simulating a 200x200m paddock with clumped trees
+        // --- INTERACTIVE SIMULATION LOGIC ---
+        const SIZE = 500; // 500m x 500m area
+        let landscape = new Uint8Array(SIZE * SIZE);
         
-        function generateClumpedData(nClumps, pointsPerClump, spread) {
-            let x = [];
-            let y = [];
-            
-            for(let i=0; i<nClumps; i++) {
-                // Random center for clump
-                let cx = Math.random() * 200;
-                let cy = Math.random() * 200;
-                
-                for(let j=0; j<pointsPerClump; j++) {
-                    // Generate Offset X (Independent Gaussian)
-                    let u1 = Math.random();
-                    let v1 = Math.random();
-                    // Avoid log(0)
-                    while(u1 === 0) u1 = Math.random(); 
-                    let numX = Math.sqrt( -2.0 * Math.log( u1 ) ) * Math.cos( 2.0 * Math.PI * v1 );
-
-                    // Generate Offset Y (Independent Gaussian)
-                    let u2 = Math.random();
-                    let v2 = Math.random();
-                    while(u2 === 0) u2 = Math.random();
-                    let numY = Math.sqrt( -2.0 * Math.log( u2 ) ) * Math.cos( 2.0 * Math.PI * v2 );
-                    
-                    x.push(cx + (numX * spread));
-                    y.push(cy + (numY * spread));
-                }
-            }
-            return {x, y};
+        const numClusters = 70;
+        const clusters = [];
+        for(let i = 0; i < numClusters; i++) {
+            clusters.push({
+                x: Math.random() * SIZE,
+                y: Math.random() * SIZE
+            });
         }
 
-        // Increase spread slightly for better visual circularity
-        const treeData = generateClumpedData(45, 18, 4); 
+        const imgData = new ImageData(SIZE, SIZE);
+        const dirtColor = [214, 195, 158, 255]; 
+        const treeColor = [0, 105, 92, 255]; // Eucalypt Teal
 
-        const traceTrees = {
-            x: treeData.x,
-            y: treeData.y,
-            mode: 'markers',
-            type: 'scatter',
-            name: 'Acacia Clumps',
-            marker: { size: 5, color: '#00695C', opacity: 0.8 }
-        };
+        document.getElementById('ccpSlider').addEventListener('input', (e) => {
+            document.getElementById('ccpValue').textContent = e.target.value + '%';
+            updateSimulation();
+        });
 
-        // Grid lines simulation (10m vs 30m overlay implied by layout)
-        const layoutLandscape = {
-            title: 'Simulated Mulga Woodland (Top-Down)',
-            font: { family: 'Roboto, sans-serif' },
-            xaxis: { range: [0, 200], title: 'Distance (m)', showgrid: true, gridcolor: '#e0e0e0' },
-            yaxis: { range: [0, 200], title: 'Distance (m)', showgrid: true, gridcolor: '#e0e0e0', scaleanchor: "x" },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: '#F5F5F5', // Light ground color
-            margin: { t: 40, b: 40, l: 40, r: 20 },
-            hovermode: 'closest'
-        };
+        document.getElementById('clumpSlider').addEventListener('input', (e) => {
+            document.getElementById('clumpValue').textContent = parseFloat(e.target.value).toFixed(2);
+            updateSimulation();
+        });
 
-        Plotly.newPlot('landscapePlot', [traceTrees], layoutLandscape, {responsive: true, displayModeBar: false});
+        document.getElementById('canopySlider').addEventListener('input', (e) => {
+            document.getElementById('canopyValue').textContent = e.target.value + 'm';
+            updateSimulation();
+        });
 
+        document.getElementById('pixelSlider').addEventListener('input', (e) => {
+            document.getElementById('pixelValue').textContent = e.target.value + 'm';
+            updateSampling();
+        });
 
-        // --- CHART 2: 10m Histogram (Chart.js) ---
-        // Showing bimodal distribution
-        const ctxHist = document.getElementById('histogramChart').getContext('2d');
-        const histChart = new Chart(ctxHist, {
-            type: 'bar',
-            data: {
-                // Bins of cover %
-                labels: ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90-100%'],
-                datasets: [{
-                    label: 'Sentinel-2 (10m) Pixel Frequency',
-                    data: [45, 10, 5, 2, 2, 5, 8, 15, 6, 2], // High gaps, High clumps
-                    backgroundColor: '#D84315', // Alert Red/Orange
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: commonTooltipOptions,
-                    legend: { position: 'top' }
-                },
-                scales: {
-                    y: { 
-                        beginAtZero: true,
-                        title: { display: true, text: '% of Total Pixels' }
+        function updateSimulation() {
+            generateLandscape();
+            updateSampling();
+        }
+
+        function generateLandscape() {
+            const targetCCP = parseFloat(document.getElementById('ccpSlider').value) / 100;
+            const clumping = parseFloat(document.getElementById('clumpSlider').value);
+            
+            landscape.fill(0);
+            const targetPixels = Math.floor(SIZE * SIZE * targetCCP);
+            let currentPixels = 0;
+            const treeRadius = parseFloat(document.getElementById('canopySlider').value); 
+            const r2 = treeRadius * treeRadius;
+            
+            let iterations = 0;
+            const maxIterations = 500000; 
+            
+            while (currentPixels < targetPixels && iterations < maxIterations) {
+                iterations++;
+                let tx, ty;
+                
+                if (Math.random() < clumping) {
+                    let cluster = clusters[Math.floor(Math.random() * clusters.length)];
+                    let u1 = Math.max(Math.random(), 0.000001); 
+                    let u2 = Math.random();
+                    let z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                    let z1 = Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(2.0 * Math.PI * u2);
+                    
+                    let stdDev = 12; 
+                    tx = cluster.x + z0 * stdDev;
+                    ty = cluster.y + z1 * stdDev;
+                } else {
+                    tx = Math.random() * SIZE;
+                    ty = Math.random() * SIZE;
+                }
+                
+                if (tx < 0) tx += SIZE; if (tx >= SIZE) tx -= SIZE;
+                if (ty < 0) ty += SIZE; if (ty >= SIZE) ty -= SIZE;
+
+                let cx = Math.round(tx);
+                let cy = Math.round(ty);
+                
+                let minX = Math.max(0, cx - treeRadius);
+                let maxX = Math.min(SIZE - 1, cx + treeRadius);
+                let minY = Math.max(0, cy - treeRadius);
+                let maxY = Math.min(SIZE - 1, cy + treeRadius);
+
+                for (let x = minX; x <= maxX; x++) {
+                    let dx = x - cx;
+                    let dx2 = dx * dx;
+                    for (let y = minY; y <= maxY; y++) {
+                        let dy = y - cy;
+                        if (dx2 + (dy * dy) <= r2) {
+                            let idx = y * SIZE + x;
+                            if (landscape[idx] === 0) {
+                                landscape[idx] = 1;
+                                currentPixels++;
+                            }
+                        }
                     }
                 }
             }
-        });
+        }
 
-        // --- CHART 3: 30m Integration (Chart.js) ---
-        // Showing Gaussian distribution
-        const ctxInt = document.getElementById('integrationChart').getContext('2d');
-        const intChart = new Chart(ctxInt, {
-            type: 'bar',
-            data: {
-                labels: ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90-100%'],
-                datasets: [{
-                    label: 'Landsat (30m) Pixel Frequency',
-                    data: [5, 40, 35, 10, 5, 3, 1, 1, 0, 0], // Centered around 15-20%
-                    backgroundColor: '#00695C', // Eucalypt Green
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: commonTooltipOptions,
-                    legend: { position: 'top' }
-                },
-                scales: {
-                    y: { 
-                        beginAtZero: true,
-                        title: { display: true, text: '% of Total Pixels' }
+        function updateSampling() {
+            const pixelSize = parseInt(document.getElementById('pixelSlider').value);
+            
+            let samples = [];
+            for (let sy = 0; sy < SIZE; sy += pixelSize) {
+                for (let sx = 0; sx < SIZE; sx += pixelSize) {
+                    let cover = 0;
+                    let total = 0;
+                    for (let y = sy; y < Math.min(SIZE, sy + pixelSize); y++) {
+                        for (let x = sx; x < Math.min(SIZE, sx + pixelSize); x++) {
+                            if (landscape[y * SIZE + x] === 1) cover++;
+                            total++;
+                        }
+                    }
+                    if (total > 0) {
+                        samples.push(cover / total);
                     }
                 }
             }
-        });
+            
+            const mapCanvas = document.getElementById('landscapeCanvas');
+            const ctx = mapCanvas.getContext('2d');
+            
+            for (let i = 0; i < SIZE * SIZE; i++) {
+                let offset = i * 4;
+                if (landscape[i] === 1) {
+                    imgData.data[offset] = treeColor[0];
+                    imgData.data[offset+1] = treeColor[1];
+                    imgData.data[offset+2] = treeColor[2];
+                    imgData.data[offset+3] = treeColor[3];
+                } else {
+                    imgData.data[offset] = dirtColor[0];
+                    imgData.data[offset+1] = dirtColor[1];
+                    imgData.data[offset+2] = dirtColor[2];
+                    imgData.data[offset+3] = dirtColor[3];
+                }
+            }
+            
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = SIZE;
+            tempCanvas.height = SIZE;
+            tempCanvas.getContext('2d').putImageData(imgData, 0, 0);
+            
+            ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+            ctx.drawImage(tempCanvas, 0, 0, mapCanvas.width, mapCanvas.height);
+            
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let i = 0; i <= SIZE; i += pixelSize) {
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, SIZE);
+                ctx.moveTo(0, i);
+                ctx.lineTo(SIZE, i);
+            }
+            ctx.stroke();
+
+            drawHistogram(samples);
+            updateStats(samples, pixelSize);
+        }
+
+        function drawHistogram(samples) {
+            const canvas = document.getElementById('simHistogramCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const numBins = 20; 
+            let bins = new Array(numBins).fill(0);
+            for (let s of samples) {
+                let binIdx = Math.floor(s * numBins);
+                if (binIdx >= numBins) binIdx = numBins - 1;
+                bins[binIdx]++;
+            }
+
+            let maxBin = Math.max(...bins, 1);
+            let binWidth = canvas.width / numBins;
+
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for(let i = 1; i <= 4; i++) {
+                let y = canvas.height - 20 - (i/4)*(canvas.height-30);
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+            }
+            ctx.stroke();
+
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            
+            for (let i = 0; i < numBins; i++) {
+                let barHeight = (bins[i] / maxBin) * (canvas.height - 30);
+                ctx.fillStyle = '#00695C'; // Eucalypt Green
+                ctx.fillRect(i * binWidth + 2, canvas.height - 20 - barHeight, binWidth - 4, barHeight);
+            }
+
+            for (let i = 0; i <= numBins; i += 2) {
+                ctx.fillStyle = '#64748b';
+                let xPos = i * binWidth;
+                if (i === numBins) xPos -= 12; 
+                if (i === 0) xPos += 6;        
+                ctx.fillText(`${(i/numBins)*100}%`, xPos, canvas.height - 4);
+            }
+        }
+
+        function updateStats(samples, pixelSize) {
+            let mean = samples.reduce((a,b) => a+b, 0) / samples.length;
+            let variance = samples.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / samples.length;
+            let cv = mean > 0 ? (Math.sqrt(variance) / mean) * 100 : 0;
+            
+            document.getElementById('statMean').textContent = (mean * 100).toFixed(1) + '%';
+            document.getElementById('statCV').textContent = cv.toFixed(1);
+            
+            let insightText = "";
+            if (pixelSize <= 10) {
+                insightText = "Small Pixels (High Noise): The sensor resolves internal tree gaps or pure canopy clumps. Notice the high-variance, bimodal distribution peaking at extreme values.";
+            } else if (pixelSize <= 25) {
+                insightText = "Transition Zone: Pixels are beginning to exceed the average gap size. Variance drops rapidly as the metric starts to stabilise.";
+            } else {
+                insightText = "Large Pixels (Stable): Spatial integration naturally smooths the data. The distribution forms a stable Gaussian bell curve centered on the true stand average.";
+            }
+            document.getElementById('statInsight').textContent = insightText;
+        }
+
+        updateSimulation();
 
         // --- CHART 4: Variance vs Scale Curve (Chart.js) ---
         const ctxVar = document.getElementById('varianceCurveChart').getContext('2d');
